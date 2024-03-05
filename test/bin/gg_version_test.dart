@@ -7,7 +7,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:colorize/colorize.dart';
 import 'package:gg_capture_print/gg_capture_print.dart';
 import 'package:test/test.dart';
 
@@ -21,15 +20,13 @@ void main() {
       // Execute bin/gg_version.dart and check if it prints help
       final result = await Process.run(
         './bin/gg_version.dart',
-        ['my-command'],
+        ['version-from-git', '--head-only'],
         stdoutEncoding: utf8,
         stderrEncoding: utf8,
       );
 
       final expectedMessages = [
-        'Invalid argument(s): Option',
-        Colorize('input').red().toString(),
-        'is mandatory.',
+        'No version tag found in head.',
       ];
 
       final stdout = result.stdout as String;
@@ -46,9 +43,13 @@ void main() {
       test('should print "value"', () async {
         // Execute bin/gg_version.dart and check if it prints "value"
         final messages = <String>[];
-        await run(args: ['my-command', '--input', '5'], log: messages.add);
+        await run(args: ['--param', '5'], log: messages.add);
 
-        final expectedMessages = ['Running my-command with param 5'];
+        final expectedMessages = [
+          'version-from-git',
+          'Returns the version tag of the latest state or nothing '
+              'if not tagged',
+        ];
 
         for (final msg in expectedMessages) {
           expect(hasLog(messages, msg), isTrue);

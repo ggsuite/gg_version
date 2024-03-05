@@ -6,34 +6,17 @@
 
 // #############################################################################
 import 'package:args/command_runner.dart';
-import './commands/my_command.dart';
+import 'package:gg_version/gg_version.dart';
 
-/// Gg Version
-class GgVersion {
-  /// Constructor
-  GgVersion({
-    required this.param,
-    required this.log,
-  });
-
-  /// The param to work with
-  final String param;
-
-  /// The log function
-  final void Function(String msg) log;
-
-  /// The function to be executed
-  Future<void> exec() async {
-    log('Executing ggVersion with param $param');
-  }
-}
-
-// #############################################################################
 /// The command line interface for GgVersion
-class GgVersionCmd extends Command<dynamic> {
+class GgVersion extends Command<dynamic> {
   /// Constructor
-  GgVersionCmd({required this.log}) {
-    addSubcommand(MyCommand(log: log));
+  GgVersion({required this.log}) {
+    addSubcommand(AddVersionTag(log: log));
+    addSubcommand(GetVersion(log: log));
+    addSubcommand(VersionFromGit(log: log));
+    addSubcommand(VersionFromPubspec(log: log));
+    addSubcommand(VersionFromChangelog(log: log));
   }
 
   /// The log function
@@ -43,5 +26,5 @@ class GgVersionCmd extends Command<dynamic> {
   @override
   final name = 'ggVersion';
   @override
-  final description = 'Add your description here.';
+  final description = 'A collection of packages for managing package versions';
 }

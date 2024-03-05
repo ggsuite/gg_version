@@ -22,32 +22,13 @@ void main() {
 
   group('GgVersion()', () {
     // #########################################################################
-    group('exec()', () {
-      test('description of the test ', () async {
-        final ggVersion =
-            GgVersion(param: 'foo', log: (msg) => messages.add(msg));
-
-        await ggVersion.exec();
-      });
-    });
-
-    // #########################################################################
     group('GgVersion', () {
-      final ggVersion = GgVersionCmd(log: (msg) => messages.add(msg));
+      final ggGit = GgVersion(log: (msg) => messages.add(msg));
 
       final CommandRunner<void> runner = CommandRunner<void>(
         'ggVersion',
         'Description goes here.',
-      )..addCommand(ggVersion);
-
-      test('should allow to run the code from command line', () async {
-        await capturePrint(
-          log: messages.add,
-          code: () async =>
-              await runner.run(['ggVersion', 'my-command', '--input', 'foo']),
-        );
-        expect(messages, contains('Running my-command with param foo'));
-      });
+      )..addCommand(ggGit);
 
       // .......................................................................
       test('should show all sub commands', () async {
@@ -73,14 +54,14 @@ void main() {
         );
 
         for (final subCommand in subCommands) {
-          final subCommandStr = subCommand.pascalCase;
+          final ggSubCommand = subCommand.pascalCase;
 
           expect(
             hasLog(messages, subCommand),
             isTrue,
-            reason: '\nMissing subcommand "$subCommandStr"\n'
-                'Please open  "lib/src/gg_version.dart" and add\n'
-                '"addSubcommand($subCommandStr(log: log));',
+            reason: '\nMissing subcommand "$ggSubCommand"\n'
+                'Please open  "lib/src/gg_git.dart" and add\n'
+                '"addSubcommand($ggSubCommand(log: log));',
           );
         }
       });

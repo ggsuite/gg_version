@@ -15,7 +15,7 @@ Future<void> run({
 }) =>
     GgCommandRunner(
       log: log,
-      command: GgVersionCmd(log: log),
+      command: GgVersion(log: log),
     ).run(args: args);
 
 // .............................................................................
