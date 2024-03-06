@@ -255,7 +255,7 @@ void main() {
           gitHead: '1.2.3',
         );
 
-        await runner.run(['get', '--directory', d.path]);
+        await runner.run(['get', '--input', d.path]);
         expect(messages, ['1.2.3']);
       });
     });

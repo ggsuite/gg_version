@@ -7,14 +7,14 @@
 import 'dart:io';
 
 import 'package:checked_yaml/checked_yaml.dart';
-import 'package:gg_git/gg_git.dart';
+import 'package:gg_args/gg_args.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 
 // #############################################################################
 /// Provides "ggGit current-version-tag <dir>" command
-class FromPubspec extends GgDirBase {
+class FromPubspec extends GgDirCommand {
   /// Constructor
   FromPubspec({
     required super.log,
@@ -32,7 +32,7 @@ class FromPubspec extends GgDirBase {
     await super.run();
 
     final result = await fromDirectory(
-      directory: directory,
+      directory: inputDir,
     );
 
     log(result.toString());
@@ -41,7 +41,7 @@ class FromPubspec extends GgDirBase {
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
   static Future<Version> fromDirectory({required String directory}) async {
-    await GgDirBase.checkDir(directory: directory);
+    await GgDirCommand.checkDir(directory: directory);
     final pubspec = File('$directory/pubspec.yaml');
     final dirName = basename(canonicalize(directory));
 

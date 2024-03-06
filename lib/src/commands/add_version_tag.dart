@@ -31,7 +31,7 @@ class AddVersionTag extends GgGitBase {
     String? lastLog;
 
     await add(
-      directory: directory,
+      directory: inputDir,
       processWrapper: processWrapper,
       log: (msg) {
         lastLog = msg;

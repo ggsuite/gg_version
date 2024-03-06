@@ -35,7 +35,7 @@ class FromGit extends GgGitBase {
 
     if (headOnly) {
       final result = await fromHead(
-        directory: directory,
+        directory: inputDir,
         processWrapper: processWrapper,
         log: super.log,
       );
@@ -43,7 +43,7 @@ class FromGit extends GgGitBase {
       log(result?.toString() ?? 'No version tag found in head.');
     } else {
       final result = await latest(
-        directory: directory,
+        directory: inputDir,
         processWrapper: processWrapper,
         log: super.log,
       );

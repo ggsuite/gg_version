@@ -295,7 +295,7 @@ void main() {
 
           initCommand();
           await expectLater(
-            () => runner.run(['add-version-tag', '--directory', d.path]),
+            () => runner.run(['add-version-tag', '--input', d.path]),
             throwsA(
               isA<StateError>().having(
                 (e) => e.message,
@@ -322,7 +322,7 @@ void main() {
           initCommand();
 
           // Run add-version-tag
-          await runner.run(['add-version-tag', '--directory', d.path]);
+          await runner.run(['add-version-tag', '--input', d.path]);
 
           // The git head should have tag "4.5.6"
           expect(

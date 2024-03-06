@@ -6,13 +6,13 @@
 
 import 'dart:io';
 
-import 'package:gg_git/gg_git.dart';
+import 'package:gg_args/gg_args.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 // #############################################################################
 /// Provides "ggGit current-version-tag <dir>" command
-class FromChangelog extends GgDirBase {
+class FromChangelog extends GgDirCommand {
   /// Constructor
   FromChangelog({
     required super.log,
@@ -30,7 +30,7 @@ class FromChangelog extends GgDirBase {
     await super.run();
 
     final result = await fromDirectory(
-      directory: directory,
+      directory: inputDir,
     );
 
     log(result.toString());
@@ -39,7 +39,7 @@ class FromChangelog extends GgDirBase {
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
   static Future<Version> fromDirectory({required String directory}) async {
-    await GgDirBase.checkDir(directory: directory);
+    await GgDirCommand.checkDir(directory: directory);
     final pubspec = File('$directory/CHANGELOG.md');
     final dirName = basename(canonicalize(directory));
 

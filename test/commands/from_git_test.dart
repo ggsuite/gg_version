@@ -175,7 +175,7 @@ void main() {
             final runner = CommandRunner<void>('test', 'test');
             runner.addCommand(FromGit(log: messages.add));
             await runner.run(
-              ['from-git', '--directory', d.path, '--head-only'],
+              ['from-git', '--input', d.path, '--head-only'],
             );
             expect(messages.last, '0.1.0');
           });
@@ -193,12 +193,12 @@ void main() {
 
             // No version tag in head. With '--head-only' nothing is returned
             await runner.run(
-              ['from-git', '--directory', d.path, '--head-only'],
+              ['from-git', '--input', d.path, '--head-only'],
             );
             expect(messages.last, 'No version tag found in head.');
 
             // Without --head-only, the previous verion is returned
-            await runner.run(['from-git', '--directory', d.path]);
+            await runner.run(['from-git', '--input', d.path]);
             expect(messages.last, '0.2.0');
           });
         });
@@ -212,7 +212,7 @@ void main() {
             final runner = CommandRunner<void>('test', 'test');
             runner.addCommand(FromGit(log: messages.add));
             await runner.run(
-              ['from-git', '--directory', d.path, '--head-only'],
+              ['from-git', '--input', d.path, '--head-only'],
             );
             expect(messages, ['No version tag found in head.']);
           });

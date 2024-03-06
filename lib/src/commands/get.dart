@@ -33,10 +33,10 @@ class Get extends GgGitBase {
     await super.run();
 
     final version = await consistantVersion(
-      directory: directory,
+      directory: inputDir,
       processWrapper: processWrapper,
       log: log,
-      dirName: directoryName,
+      dirName: inputDirName,
     );
 
     log(version.toString());
