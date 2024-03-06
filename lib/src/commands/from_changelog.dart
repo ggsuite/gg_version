@@ -6,25 +6,23 @@
 
 import 'dart:io';
 
-import 'package:checked_yaml/checked_yaml.dart';
 import 'package:gg_git/gg_git.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:pubspec_parse/pubspec_parse.dart';
 
 // #############################################################################
 /// Provides "ggGit current-version-tag <dir>" command
-class VersionFromPubspec extends GgDirBase {
+class FromChangelog extends GgDirBase {
   /// Constructor
-  VersionFromPubspec({
+  FromChangelog({
     required super.log,
   });
 
   // ...........................................................................
   @override
-  final name = 'version-from-pubspec';
+  final name = 'from-changelog';
   @override
-  final description = 'Returns the version found in pubspec.yaml';
+  final description = 'Returns the version found in CHANGELOG.md';
 
   // ...........................................................................
   @override
@@ -42,11 +40,11 @@ class VersionFromPubspec extends GgDirBase {
   /// Returns true if everything in the directory is pushed.
   static Future<Version> fromDirectory({required String directory}) async {
     await GgDirBase.checkDir(directory: directory);
-    final pubspec = File('$directory/pubspec.yaml');
+    final pubspec = File('$directory/CHANGELOG.md');
     final dirName = basename(canonicalize(directory));
 
     if (!pubspec.existsSync()) {
-      throw Exception('File "$dirName/pubspec.yaml" does not exist.');
+      throw Exception('File "$dirName/CHANGELOG.md" does not exist.');
     }
 
     return fromString(content: pubspec.readAsStringSync());
@@ -57,18 +55,20 @@ class VersionFromPubspec extends GgDirBase {
   static Version fromString({
     required String content,
   }) {
-    late Pubspec pubspec;
-
-    try {
-      pubspec = Pubspec.parse(content);
-    } on ParsedYamlException catch (e) {
-      throw Exception(e.message);
+    final lines = content.split('\n');
+    for (final line in lines) {
+      if (line.startsWith('## ')) {
+        final version = line.split(' ')[1].trim();
+        try {
+          return Version.parse(version);
+        } catch (e) {
+          throw Exception(
+            'Version "$version" has invalid format.',
+          );
+        }
+      }
     }
 
-    if (pubspec.version == null) {
-      throw Exception('Could not find version in "pubspec.yaml".');
-    }
-
-    return pubspec.version!;
+    throw Exception('Could not find version in "CHANGELOG.md".');
   }
 }

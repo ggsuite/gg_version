@@ -10,9 +10,9 @@ import 'package:pub_semver/pub_semver.dart';
 
 // #############################################################################
 /// Provides "ggGit current-version-tag <dir>" command
-class VersionFromGit extends GgGitBase {
+class FromGit extends GgGitBase {
   /// Constructor
-  VersionFromGit({
+  FromGit({
     required super.log,
     super.processWrapper,
   }) {
@@ -21,7 +21,7 @@ class VersionFromGit extends GgGitBase {
 
   // ...........................................................................
   @override
-  final name = 'version-from-git';
+  final name = 'from-git';
   @override
   final description =
       'Returns the version tag of the latest state or nothing if not tagged';

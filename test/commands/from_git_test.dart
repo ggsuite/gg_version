@@ -19,7 +19,7 @@ void main() {
   final messages = <String>[];
 
   // ...........................................................................
-  Future<Version?> getHeadVersionTag() => VersionFromGit.fromHead(
+  Future<Version?> getHeadVersionTag() => FromGit.fromHead(
         directory: d.path,
         processWrapper: const GgProcessWrapper(),
         log: (m) => messages.add(m),
@@ -32,7 +32,7 @@ void main() {
   });
 
   // ...........................................................................
-  group('VersionFromGit', () {
+  group('VersionFrom', () {
     group('fromHead(...)', () {
       group('should throw', () {
         test('if directory is not a git repo', () async {
@@ -97,7 +97,7 @@ void main() {
             addAndCommitSampleFile(d);
             await addTags(d, ['X', 'ABC']); // No version tags
             expect(
-              VersionFromGit.latest(
+              FromGit.latest(
                 directory: d.path,
                 processWrapper: const GgProcessWrapper(),
                 log: messages.add,
@@ -116,7 +116,7 @@ void main() {
                 await updateAndCommitSampleFile(d);
                 await addTags(d, ['0.2.0']); // Head revision
                 expect(
-                  VersionFromGit.latest(
+                  FromGit.latest(
                     directory: d.path,
                     processWrapper: const GgProcessWrapper(),
                     log: messages.add,
@@ -134,7 +134,7 @@ void main() {
                 await updateAndCommitSampleFile(d);
                 await addTags(d, ['1.0.0']); // Head revision, no version tag
                 expect(
-                  VersionFromGit.latest(
+                  FromGit.latest(
                     directory: d.path,
                     processWrapper: const GgProcessWrapper(),
                     log: messages.add,
@@ -150,7 +150,7 @@ void main() {
                 await updateAndCommitSampleFile(d);
                 await addTags(d, ['2.0.0']); // New version is lower then head
                 expect(
-                  VersionFromGit.latest(
+                  FromGit.latest(
                     directory: d.path,
                     processWrapper: const GgProcessWrapper(),
                     log: messages.add,
@@ -173,9 +173,9 @@ void main() {
             await addTags(d, ['0.1.0']);
 
             final runner = CommandRunner<void>('test', 'test');
-            runner.addCommand(VersionFromGit(log: messages.add));
+            runner.addCommand(FromGit(log: messages.add));
             await runner.run(
-              ['version-from-git', '--directory', d.path, '--head-only'],
+              ['from-git', '--directory', d.path, '--head-only'],
             );
             expect(messages.last, '0.1.0');
           });
@@ -189,16 +189,16 @@ void main() {
             await updateAndCommitSampleFile(d);
 
             final runner = CommandRunner<void>('test', 'test');
-            runner.addCommand(VersionFromGit(log: messages.add));
+            runner.addCommand(FromGit(log: messages.add));
 
             // No version tag in head. With '--head-only' nothing is returned
             await runner.run(
-              ['version-from-git', '--directory', d.path, '--head-only'],
+              ['from-git', '--directory', d.path, '--head-only'],
             );
             expect(messages.last, 'No version tag found in head.');
 
             // Without --head-only, the previous verion is returned
-            await runner.run(['version-from-git', '--directory', d.path]);
+            await runner.run(['from-git', '--directory', d.path]);
             expect(messages.last, '0.2.0');
           });
         });
@@ -210,9 +210,9 @@ void main() {
             await addTags(d, ['X', 'ABC']); // No version tags
 
             final runner = CommandRunner<void>('test', 'test');
-            runner.addCommand(VersionFromGit(log: messages.add));
+            runner.addCommand(FromGit(log: messages.add));
             await runner.run(
-              ['version-from-git', '--directory', d.path, '--head-only'],
+              ['from-git', '--directory', d.path, '--head-only'],
             );
             expect(messages, ['No version tag found in head.']);
           });

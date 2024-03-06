@@ -273,7 +273,7 @@ void main() {
 
             // The git head should have tag "4.5.6"
             expect(
-              await VersionFromGit.fromHead(
+              await FromGit.fromHead(
                 directory: d.path,
                 processWrapper: const GgProcessWrapper(),
                 log: messages.add,
@@ -326,7 +326,7 @@ void main() {
 
           // The git head should have tag "4.5.6"
           expect(
-            await VersionFromGit.fromHead(
+            await FromGit.fromHead(
               directory: d.path,
               processWrapper: const GgProcessWrapper(),
               log: messages.add,

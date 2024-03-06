@@ -22,17 +22,17 @@ void main() {
     messages.clear();
   });
 
-  group('ChangeLogVersion', () {
+  group('PubSpecVersion', () {
     group('fromDirectory(directory)', () {
       group('should throw', () {
-        test('if no CHANGELOG.md file is found in directory', () async {
+        test('if no pubspec.yaml file is found in directory', () async {
           await expectLater(
-            () => VersionFromChangelog.fromDirectory(directory: d.path),
+            () => FromPubspec.fromDirectory(directory: d.path),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
                 'message',
-                'Exception: File "test/CHANGELOG.md" does not exist.',
+                'Exception: File "test/pubspec.yaml" does not exist.',
               ),
             ),
           );
@@ -40,10 +40,9 @@ void main() {
       });
 
       group('should return version', () {
-        test('when found in CHANGELOG.md', () async {
-          await setChangeLog(d, version: '0.0.1');
-          final version =
-              await VersionFromChangelog.fromDirectory(directory: d.path);
+        test('when found in pubspec.yaml', () async {
+          await setPubspec(d, version: '0.0.1');
+          final version = await FromPubspec.fromDirectory(directory: d.path);
           expect(version, Version.parse('0.00.001'));
         });
       });
@@ -52,33 +51,33 @@ void main() {
     group('fromString(content)', () {
       group('should throw', () {
         // .....................................................................
-        test('if CHANGELOG.md has no version tag', () {
+        test('if pubspec.yaml has no version tag', () {
           const content = 'name: test';
 
           expect(
-            () => VersionFromChangelog.fromString(content: content),
+            () => FromPubspec.fromString(content: content),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
                 'message',
-                'Exception: Could not find version in "CHANGELOG.md".',
+                'Exception: Could not find version in "pubspec.yaml".',
               ),
             ),
           );
         });
 
         // .....................................................................
-        test('if CHANGELOG.md contains invalid version', () {
-          const content = '# Change Log\n\n## 0.x.7\n\n- test';
+        test('if pubspec.yaml contains invalid version', () {
+          const content = 'name: test\nversion: 0.x.7';
 
           expect(
-            () => VersionFromChangelog.fromString(content: content),
+            () => FromPubspec.fromString(content: content),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
                 'message',
                 contains(
-                  'Exception: Version "0.x.7" has invalid format.',
+                  'Unsupported value for "version". Could not parse "0.x.7".',
                 ),
               ),
             ),
@@ -87,9 +86,9 @@ void main() {
       });
 
       group('should succeed', () {
-        test('and return the version foun in CHANGELOG.md', () {
-          const content = '# Change Log\n\n## 1.2.3\n\n- test';
-          final version = VersionFromChangelog.fromString(content: content);
+        test('and return the version foun in pubspec.yaml', () {
+          const content = 'name: test\nversion: 1.2.3';
+          final version = FromPubspec.fromString(content: content);
           expect(version, Version.parse('01.02.003'));
         });
       });
@@ -97,12 +96,12 @@ void main() {
 
     group('run()', () {
       group('should return the version', () {
-        test('when found in CHANGELOG.md', () async {
-          await setChangeLog(d, version: '1.0.0');
+        test('when found in pubspec.yaml', () async {
+          await setPubspec(d, version: '1.0.0');
           final runner = CommandRunner<void>('test', 'test')
-            ..addCommand(VersionFromChangelog(log: messages.add));
+            ..addCommand(FromPubspec(log: messages.add));
 
-          await runner.run(['version-from-changelog', d.path]);
+          await runner.run(['from-pubspec', d.path]);
           expect(messages.last, '1.0.0');
         });
       });

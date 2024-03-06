@@ -12,16 +12,16 @@ import 'package:pub_semver/pub_semver.dart';
 
 // #############################################################################
 /// Provides "ggGit has-consistent-version <dir>" command
-class GetVersion extends GgGitBase {
+class Get extends GgGitBase {
   /// Constructor
-  GetVersion({
+  Get({
     required super.log,
     super.processWrapper,
   });
 
   // ...........................................................................
   @override
-  final name = 'get-version';
+  final name = 'get';
   @override
   final description = 'Returns version of the current head revision '
       'collected from pubspec.yaml, README.md as well git head tag. '
@@ -99,18 +99,17 @@ class GetVersion extends GgGitBase {
     }
 
     final d = directory;
-    final pubspecVersion = await VersionFromPubspec.fromDirectory(directory: d);
-    final changelogVersion =
-        await VersionFromChangelog.fromDirectory(directory: d);
+    final pubspecVersion = await FromPubspec.fromDirectory(directory: d);
+    final changelogVersion = await FromChangelog.fromDirectory(directory: d);
 
-    final gitHeadVersion = await VersionFromGit.fromHead(
+    final gitHeadVersion = await FromGit.fromHead(
       directory: directory,
       processWrapper: processWrapper,
       log: log,
     );
 
     final gitLatestVersion = gitHeadVersion ??
-        await VersionFromGit.latest(
+        await FromGit.latest(
           directory: directory,
           processWrapper: processWrapper,
           log: log,

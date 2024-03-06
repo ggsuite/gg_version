@@ -20,7 +20,7 @@ void main() {
       // Execute bin/gg_version.dart and check if it prints help
       final result = await Process.run(
         './bin/gg_version.dart',
-        ['version-from-git', '--head-only'],
+        ['from-git', '--head-only'],
         stdoutEncoding: utf8,
         stderrEncoding: utf8,
       );
@@ -46,7 +46,7 @@ void main() {
         await run(args: ['--param', '5'], log: messages.add);
 
         final expectedMessages = [
-          'version-from-git',
+          'from-git',
           'Returns the version tag of the latest state or nothing '
               'if not tagged',
         ];
