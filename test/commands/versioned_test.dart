@@ -11,7 +11,7 @@ import 'package:gg_version/gg_version.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
-import 'test_helpers.dart';
+import 'package:gg_git/gg_git_test_helpers.dart';
 
 void main() {
   final messages = <String>[];
@@ -19,7 +19,7 @@ void main() {
 
   // ...........................................................................
   Future<Version> getVersion() => Versioned.consistantVersion(
-        directory: d.path,
+        directory: d,
         log: (m) => messages.add(m),
       );
 
@@ -42,7 +42,7 @@ void main() {
           initUncommitedFile(d);
           await expectLater(
             () => Versioned.versions(
-              directory: d.path,
+              directory: d,
               log: (m) => messages.add(m),
             ),
             throwsA(
@@ -79,7 +79,7 @@ void main() {
               );
 
               final result = await Versioned.versions(
-                directory: d.path,
+                directory: d,
                 log: (m) => messages.add(m),
               );
 
@@ -100,7 +100,7 @@ void main() {
               );
 
               final result = await Versioned.versions(
-                directory: d.path,
+                directory: d,
                 log: (m) => messages.add(m),
               );
 
@@ -125,7 +125,7 @@ void main() {
 
               // Get versions
               final result = await Versioned.versions(
-                directory: d.path,
+                directory: d,
                 log: (m) => messages.add(m),
               );
 

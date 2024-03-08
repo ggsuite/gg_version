@@ -38,10 +38,10 @@ class FromChangelog extends GgDirCommand {
 
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
-  static Future<Version> fromDirectory({required String directory}) async {
+  static Future<Version> fromDirectory({required Directory directory}) async {
     await GgDirCommand.checkDir(directory: directory);
-    final pubspec = File('$directory/CHANGELOG.md');
-    final dirName = basename(canonicalize(directory));
+    final pubspec = File('${directory.path}/CHANGELOG.md');
+    final dirName = basename(canonicalize(directory.path));
 
     if (!pubspec.existsSync()) {
       throw Exception('File "$dirName/CHANGELOG.md" does not exist.');

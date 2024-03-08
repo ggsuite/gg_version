@@ -40,16 +40,16 @@ class FromPubspec extends GgDirCommand {
 
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
-  static Future<Version> fromDirectory({required String directory}) async {
+  static Future<Version> fromDirectory({required Directory directory}) async {
     await GgDirCommand.checkDir(directory: directory);
-    final pubspec = File('$directory/pubspec.yaml');
-    final dirName = basename(canonicalize(directory));
+    final pubspec = File('${directory.path}/pubspec.yaml');
+    final dirName = basename(canonicalize(directory.path));
 
     if (!pubspec.existsSync()) {
       throw Exception('File "$dirName/pubspec.yaml" does not exist.');
     }
 
-    return fromString(content: pubspec.readAsStringSync());
+    return fromString(content: await pubspec.readAsString());
   }
 
   // ...........................................................................

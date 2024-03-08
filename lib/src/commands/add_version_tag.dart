@@ -4,6 +4,8 @@
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
 
+import 'dart:io';
+
 import 'package:gg_git/gg_git.dart';
 import 'package:gg_process/gg_process.dart';
 import 'package:gg_version/gg_version.dart';
@@ -45,12 +47,12 @@ class AddVersionTag extends GgGitBase {
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
   static Future<bool> add({
-    required String directory,
+    required Directory directory,
     required GgProcessWrapper processWrapper,
     required void Function(String message) log,
   }) async {
     // Throw if not everything is commited
-    final isCommited = await IsCommited.isCommited(
+    final isCommited = await Commited.isCommited(
       directory: directory,
       processWrapper: processWrapper,
     );
@@ -101,7 +103,7 @@ class AddVersionTag extends GgGitBase {
     final result = await processWrapper.run(
       'git',
       ['tag', '-a', version, '-m', 'Version $version'],
-      workingDirectory: directory,
+      workingDirectory: directory.path,
     );
 
     if (result.exitCode == 0) {

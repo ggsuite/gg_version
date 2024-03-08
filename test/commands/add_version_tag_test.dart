@@ -11,8 +11,7 @@ import 'package:gg_version/gg_version.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
-
-import 'test_helpers.dart';
+import 'package:gg_git/gg_git_test_helpers.dart';
 
 // .............................................................................
 class GgProcessWrapperMock extends Mock implements GgProcessWrapper {}
@@ -49,7 +48,7 @@ void main() {
 
           await expectLater(
             AddVersionTag.add(
-              directory: d.path,
+              directory: d,
               processWrapper: const GgProcessWrapper(),
               log: messages.add,
             ),
@@ -79,7 +78,7 @@ void main() {
             // Call add(...) should tell us to fix different versions
             await expectLater(
               AddVersionTag.add(
-                directory: d.path,
+                directory: d,
                 processWrapper: const GgProcessWrapper(),
                 log: messages.add,
               ),
@@ -110,7 +109,7 @@ void main() {
           // Call add(...) should tell us to fix different versions
           await expectLater(
             AddVersionTag.add(
-              directory: d.path,
+              directory: d,
               processWrapper: const GgProcessWrapper(),
               log: messages.add,
             ),
@@ -146,7 +145,7 @@ void main() {
           // When adding the version tag, we should get an exception
           await expectLater(
             AddVersionTag.add(
-              directory: d.path,
+              directory: d,
               processWrapper: const GgProcessWrapper(),
               log: messages.add,
             ),
@@ -203,7 +202,7 @@ void main() {
           // When adding the version tag, we should get an exception
           await expectLater(
             AddVersionTag.add(
-              directory: d.path,
+              directory: d,
               processWrapper: processWrapper,
               log: messages.add,
             ),
@@ -235,7 +234,7 @@ void main() {
 
             // Call add(...) should tell us to fix different versions
             final result = await AddVersionTag.add(
-              directory: d.path,
+              directory: d,
               processWrapper: const GgProcessWrapper(),
               log: messages.add,
             );
@@ -263,7 +262,7 @@ void main() {
 
             // Add the tag
             final result = await AddVersionTag.add(
-              directory: d.path,
+              directory: d,
               processWrapper: const GgProcessWrapper(),
               log: messages.add,
             );
@@ -274,7 +273,7 @@ void main() {
             // The git head should have tag "4.5.6"
             expect(
               await FromGit.fromHead(
-                directory: d.path,
+                directory: d,
                 processWrapper: const GgProcessWrapper(),
                 log: messages.add,
               ),
@@ -327,7 +326,7 @@ void main() {
           // The git head should have tag "4.5.6"
           expect(
             await FromGit.fromHead(
-              directory: d.path,
+              directory: d,
               processWrapper: const GgProcessWrapper(),
               log: messages.add,
             ),

@@ -4,6 +4,8 @@
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
 
+import 'dart:io';
+
 import 'package:gg_git/gg_git.dart';
 import 'package:gg_process/gg_process.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -55,7 +57,7 @@ class FromGit extends GgGitBase {
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
   static Future<Version?> fromHead({
-    required String directory,
+    required Directory directory,
     required GgProcessWrapper processWrapper,
     required void Function(String message) log,
   }) async {
@@ -81,7 +83,7 @@ class FromGit extends GgGitBase {
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
   static Future<Version?> latest({
-    required String directory,
+    required Directory directory,
     required GgProcessWrapper processWrapper,
     required void Function(String message) log,
   }) async {

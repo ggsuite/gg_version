@@ -11,7 +11,7 @@ import 'package:gg_version/gg_version.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
-import 'test_helpers.dart';
+import 'package:gg_git/gg_git_test_helpers.dart';
 
 void main() {
   late Directory d;
@@ -27,7 +27,7 @@ void main() {
       group('should throw', () {
         test('if no pubspec.yaml file is found in directory', () async {
           await expectLater(
-            () => FromPubspec.fromDirectory(directory: d.path),
+            () => FromPubspec.fromDirectory(directory: d),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
@@ -42,7 +42,7 @@ void main() {
       group('should return version', () {
         test('when found in pubspec.yaml', () async {
           await setPubspec(d, version: '0.0.1');
-          final version = await FromPubspec.fromDirectory(directory: d.path);
+          final version = await FromPubspec.fromDirectory(directory: d);
           expect(version, Version.parse('0.00.001'));
         });
       });
@@ -97,12 +97,12 @@ void main() {
     group('run()', () {
       group('should return the version', () {
         test('when found in pubspec.yaml', () async {
-          await setPubspec(d, version: '1.0.0');
+          await setPubspec(d, version: '4.5.7');
           final runner = CommandRunner<void>('test', 'test')
             ..addCommand(FromPubspec(log: messages.add));
 
-          await runner.run(['from-pubspec', d.path]);
-          expect(messages.last, '1.0.0');
+          await runner.run(['from-pubspec', '--input', d.path]);
+          expect(messages.last, '4.5.7');
         });
       });
     });

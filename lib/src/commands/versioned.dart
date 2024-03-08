@@ -4,6 +4,8 @@
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
 
+import 'dart:io';
+
 import 'package:gg_git/gg_git.dart';
 import 'package:gg_process/gg_process.dart';
 import 'package:gg_version/gg_version.dart';
@@ -45,7 +47,7 @@ class Versioned extends GgGitBase {
   // ...........................................................................
   /// Returns the consistent version or null if not consistent.
   static Future<Version> consistantVersion({
-    required String directory,
+    required Directory directory,
     GgProcessWrapper processWrapper = const GgProcessWrapper(),
     required void Function(String message) log,
     String? dirName,
@@ -82,14 +84,14 @@ class Versioned extends GgGitBase {
         Version? gitHead,
         Version? gitLatest,
       })> versions({
-    required String directory,
+    required Directory directory,
     GgProcessWrapper processWrapper = const GgProcessWrapper(),
     required void Function(String message) log,
     String? dirName,
   }) async {
-    dirName ??= basename(canonicalize(directory));
+    dirName ??= basename(canonicalize(directory.path));
 
-    final isCommitted = await IsCommited.isCommited(
+    final isCommitted = await Commited.isCommited(
       directory: directory,
       processWrapper: processWrapper,
     );
