@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.3
+
+- Better command line output
+
 ## 1.0.2
 
 - Update dependencies
