@@ -59,7 +59,7 @@ class AddVersionTag extends GgGitBase {
       throw StateError('Not everything is commited.');
     }
 
-    final versions = await Get.versions(
+    final versions = await Versioned.versions(
       directory: directory,
       processWrapper: processWrapper,
       log: log,

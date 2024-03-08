@@ -8,7 +8,7 @@ library;
 
 export 'src/gg_version.dart';
 export 'src/commands/add_version_tag.dart';
-export 'src/commands/get.dart';
+export 'src/commands/versioned.dart';
 export 'src/commands/from_changelog.dart';
 export 'src/commands/from_git.dart';
 export 'src/commands/from_pubspec.dart';

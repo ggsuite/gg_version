@@ -18,7 +18,7 @@ void main() {
   late Directory d;
 
   // ...........................................................................
-  Future<Version> getVersion() => Get.consistantVersion(
+  Future<Version> getVersion() => Versioned.consistantVersion(
         directory: d.path,
         log: (m) => messages.add(m),
       );
@@ -41,7 +41,7 @@ void main() {
           await initGit(d);
           initUncommitedFile(d);
           await expectLater(
-            () => Get.versions(
+            () => Versioned.versions(
               directory: d.path,
               log: (m) => messages.add(m),
             ),
@@ -78,7 +78,7 @@ void main() {
                 gitHead: '8.8.9',
               );
 
-              final result = await Get.versions(
+              final result = await Versioned.versions(
                 directory: d.path,
                 log: (m) => messages.add(m),
               );
@@ -99,7 +99,7 @@ void main() {
                 gitHead: null,
               );
 
-              final result = await Get.versions(
+              final result = await Versioned.versions(
                 directory: d.path,
                 log: (m) => messages.add(m),
               );
@@ -124,7 +124,7 @@ void main() {
               await updateAndCommitSampleFile(d);
 
               // Get versions
-              final result = await Get.versions(
+              final result = await Versioned.versions(
                 directory: d.path,
                 log: (m) => messages.add(m),
               );
@@ -245,7 +245,7 @@ void main() {
     group('run()', () {
       test('should return the consistent version', () async {
         final runner = CommandRunner<void>('test', 'test')
-          ..addCommand(Get(log: messages.add));
+          ..addCommand(Versioned(log: messages.add));
 
         await initGit(d);
         await setupVersions(
@@ -255,7 +255,7 @@ void main() {
           gitHead: '1.2.3',
         );
 
-        await runner.run(['get', '--input', d.path]);
+        await runner.run(['versioned', '--input', d.path]);
         expect(messages, ['1.2.3']);
       });
     });

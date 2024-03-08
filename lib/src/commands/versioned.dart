@@ -12,16 +12,16 @@ import 'package:pub_semver/pub_semver.dart';
 
 // #############################################################################
 /// Provides "ggGit has-consistent-version <dir>" command
-class Get extends GgGitBase {
+class Versioned extends GgGitBase {
   /// Constructor
-  Get({
+  Versioned({
     required super.log,
     super.processWrapper,
   });
 
   // ...........................................................................
   @override
-  final name = 'get';
+  final name = 'versioned';
   @override
   final description = 'Returns version of the current head revision '
       'collected from pubspec.yaml, README.md as well git head tag. '
