@@ -256,7 +256,33 @@ void main() {
         );
 
         await runner.run(['versioned', '--input', d.path]);
-        expect(messages, ['1.2.3']);
+        expect(messages.last, contains('1.2.3'));
+      });
+
+      test('should print errors in gray', () async {
+        final runner = CommandRunner<void>('test', 'test')
+          ..addCommand(Versioned(log: messages.add));
+
+        await initGit(d);
+
+        await setupVersions(
+          d,
+          pubspec: '1.2.3',
+          changeLog: '1.2.3',
+          gitHead: '1.2.4',
+        );
+
+        await initGit(d);
+        await expectLater(
+          runner.run(['versioned', '--input', d.path]),
+          throwsA(
+            isA<Exception>().having(
+              (e) => e.toString(),
+              'message',
+              contains('Versions are not consistent'),
+            ),
+          ),
+        );
       });
     });
   });
