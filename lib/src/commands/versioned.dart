@@ -8,10 +8,10 @@ import 'dart:io';
 
 import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_git/gg_git.dart';
+import 'package:gg_is_github/gg_is_github.dart';
 import 'package:gg_process/gg_process.dart';
 import 'package:gg_status_printer/gg_status_printer.dart';
 import 'package:gg_version/gg_version.dart';
-import 'package:gg_version/src/tools/is_github.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 
