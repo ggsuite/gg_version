@@ -69,7 +69,7 @@ class AllVersions extends GgGitBase {
   }) async {
     dirName ??= basename(canonicalize(directory.path));
 
-    final isCommitted = await Commited.isCommited(
+    final isCommitted = await IsCommitted.get(
       directory: directory,
       processWrapper: processWrapper,
     );

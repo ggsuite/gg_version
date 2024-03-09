@@ -28,14 +28,14 @@ void main() {
   });
 
   // ...........................................................................
-  group('CheckVersions', () {
+  group('IsConsistent', () {
     group('run()', () {
       group('should throw', () {
         group('and print »❌ Versions are consistent«', () {
           group('when pubspec.yaml, CHANGELOG.md as well git tag', () {
             test('are not the same', () async {
               final runner = CommandRunner<void>('test', 'test')
-                ..addCommand(CheckVersions(log: messages.add));
+                ..addCommand(IsConsistent(log: messages.add));
 
               await initGit(d);
               await setupVersions(
@@ -46,7 +46,7 @@ void main() {
               );
 
               await expectLater(
-                runner.run(['check-versions', '--input', d.path]),
+                runner.run(['is-consistent', '--input', d.path]),
                 throwsA(
                   isA<Exception>().having(
                     (e) => e.toString(),
@@ -69,7 +69,7 @@ void main() {
               'when pubspec.yaml, CHANGELOG.md as well git tag '
               'have the same version', () async {
             final runner = CommandRunner<void>('test', 'test')
-              ..addCommand(CheckVersions(log: messages.add));
+              ..addCommand(IsConsistent(log: messages.add));
 
             await initGit(d);
             await setupVersions(
@@ -79,7 +79,7 @@ void main() {
               gitHead: '1.2.3',
             );
 
-            await runner.run(['check-versions', '--input', d.path]);
+            await runner.run(['is-consistent', '--input', d.path]);
             expect(messages[0], contains('⌛️ Versions are consistent'));
             expect(messages[1], contains('✅ Versions are consistent'));
           });
@@ -88,7 +88,7 @@ void main() {
 
       test('should print errors in gray', () async {
         final runner = CommandRunner<void>('test', 'test')
-          ..addCommand(CheckVersions(log: messages.add));
+          ..addCommand(IsConsistent(log: messages.add));
 
         await initGit(d);
 
@@ -101,7 +101,7 @@ void main() {
 
         await initGit(d);
         await expectLater(
-          runner.run(['check-versions', '--input', d.path]),
+          runner.run(['is-consistent', '--input', d.path]),
           throwsA(
             isA<Exception>().having(
               (e) => e.toString(),

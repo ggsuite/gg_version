@@ -12,16 +12,16 @@ import 'package:pub_semver/pub_semver.dart';
 
 // #############################################################################
 /// Provides "ggGit has-consistent-version <dir>" command
-class CheckVersions extends GgGitBase {
+class IsConsistent extends GgGitBase {
   /// Constructor
-  CheckVersions({
+  IsConsistent({
     required super.log,
     super.processWrapper,
   });
 
   // ...........................................................................
   @override
-  final name = 'check-versions';
+  final name = 'is-consistent';
   @override
   final description = 'Checks if pubspec.yaml, README.md as well git head tag '
       'have the same version. '

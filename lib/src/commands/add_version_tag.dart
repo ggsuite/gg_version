@@ -52,7 +52,7 @@ class AddVersionTag extends GgGitBase {
     required void Function(String message) log,
   }) async {
     // Throw if not everything is commited
-    final isCommited = await Commited.isCommited(
+    final isCommited = await IsCommitted.get(
       directory: directory,
       processWrapper: processWrapper,
     );

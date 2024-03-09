@@ -189,7 +189,7 @@ void main() {
             ..addCommand(AllVersions(log: messages.add));
 
           await initGit(d);
-          initUncommitedFile(d);
+          initUncommittedFile(d);
           await expectLater(
             runner.run(['all-versions', '--input', d.path]),
             throwsA(
