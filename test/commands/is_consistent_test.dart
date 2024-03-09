@@ -112,5 +112,53 @@ void main() {
         );
       });
     });
+
+    group('get(directory, processWrapper, dirName)', () {
+      group('should return true', () {
+        test('when pubspec.yaml, CHANGELOG.md and git have the same version',
+            () async {
+          await initGit(d);
+          await setupVersions(
+            d,
+            pubspec: '1.2.3',
+            changeLog: '1.2.3',
+            gitHead: '1.2.3',
+          );
+
+          final isConsistent = await IsConsistent.get(
+            directory: d,
+            log: messages.add,
+          );
+
+          expect(isConsistent, isTrue);
+          expect(messages[0], contains('1.2.3'));
+        });
+      });
+
+      group('should return false', () {
+        test('when pubspec.yaml, CHANGELOG.md and git have different versions',
+            () async {
+          await initGit(d);
+          await setupVersions(
+            d,
+            pubspec: '1.2.3',
+            changeLog: '1.2.3',
+            gitHead: '1.2.4',
+          );
+
+          final isConsistent = await IsConsistent.get(
+            directory: d,
+            log: messages.add,
+          );
+
+          expect(isConsistent, isFalse);
+          expect(
+            messages[0],
+            'Exception: Versions are not consistent: - pubspec: 1.2.3, '
+            '- changeLog: 1.2.3, - gitHead: 1.2.4',
+          );
+        });
+      });
+    });
   });
 }
