@@ -7,18 +7,18 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:gg_git/gg_git_test_helpers.dart';
 import 'package:gg_version/gg_version.dart';
+import 'package:gg_version/src/commands/consistent_version.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
-
-import 'package:gg_git/gg_git_test_helpers.dart';
 
 void main() {
   final messages = <String>[];
   late Directory d;
 
   // ...........................................................................
-  Future<Version> getVersion() => Versioned.consistantVersion(
+  Future<Version> getVersion() => ConsistentVersion.get(
         directory: d,
         log: (m) => messages.add(m),
       );
@@ -30,117 +30,12 @@ void main() {
   });
 
   // ...........................................................................
-  setUp(() {
-    messages.clear();
+  tearDown(() {
+    d.deleteSync(recursive: true);
   });
 
-  group('GetVersion', () {
-    group('versions(...)', () {
-      group('should throw', () {
-        test('if not everything is commited', () async {
-          await initGit(d);
-          initUncommitedFile(d);
-          await expectLater(
-            () => Versioned.versions(
-              directory: d,
-              log: (m) => messages.add(m),
-            ),
-            throwsA(
-              isA<Exception>().having(
-                (e) => e.toString(),
-                'message',
-                contains('Please commit everything in "test".'),
-              ),
-            ),
-          );
-        });
-      });
-
-      group('should return the versions', () {
-        group('found int pubspec, CHANGELOG and git tag', () {
-          group('if everything is commited ', () {
-            test('and head revision has version tag', () async {
-              await initGit(d);
-
-              // Set old revision
-              await setupVersions(
-                d,
-                pubspec: '1.2.3',
-                changeLog: '4.5.6',
-                gitHead: '7.8.9',
-              );
-
-              // Set head revision
-              await setupVersions(
-                d,
-                pubspec: '2.2.3',
-                changeLog: '5.5.6',
-                gitHead: '8.8.9',
-              );
-
-              final result = await Versioned.versions(
-                directory: d,
-                log: (m) => messages.add(m),
-              );
-
-              // Latest version should be returned
-              expect(result.pubspec, Version.parse('2.2.3'));
-              expect(result.changeLog, Version.parse('5.5.6'));
-              expect(result.gitHead, Version.parse('8.8.9'));
-              expect(result.gitLatest, Version.parse('8.8.9'));
-            });
-
-            test('and no revision has a version tag', () async {
-              await initGit(d);
-              await setupVersions(
-                d,
-                pubspec: '1.2.3',
-                changeLog: '1.2.3',
-                gitHead: null,
-              );
-
-              final result = await Versioned.versions(
-                directory: d,
-                log: (m) => messages.add(m),
-              );
-
-              expect(result.pubspec.toString(), '1.2.3');
-              expect(result.changeLog.toString(), '1.2.3');
-              expect(result.gitHead, null);
-              expect(result.gitLatest, null);
-            });
-
-            test('only previous revisions have a version tag', () async {
-              await initGit(d);
-              // Set old revision
-              await setupVersions(
-                d,
-                pubspec: '1.2.3',
-                changeLog: '4.5.6',
-                gitHead: '7.8.9',
-              );
-
-              // Add another commit
-              await updateAndCommitSampleFile(d);
-
-              // Get versions
-              final result = await Versioned.versions(
-                directory: d,
-                log: (m) => messages.add(m),
-              );
-
-              // Latest version should be returned
-              expect(result.pubspec, Version.parse('1.2.3'));
-              expect(result.changeLog, Version.parse('4.5.6'));
-              expect(result.gitHead, null); // Head has no version
-              expect(result.gitLatest, Version.parse('7.8.9'));
-            });
-          });
-        });
-      });
-    });
-
-    group('consistantVersion(...)', () {
+  group('ConsistentVersion', () {
+    group('get(directory, processWrapper, log)', () {
       group('should throw', () {
         test('if CHANGELOG version does not match the others', () async {
           await initGit(d);
@@ -245,7 +140,7 @@ void main() {
     group('run()', () {
       test('should return the consistent version', () async {
         final runner = CommandRunner<void>('test', 'test')
-          ..addCommand(Versioned(log: messages.add));
+          ..addCommand(ConsistentVersion(log: messages.add));
 
         await initGit(d);
         await setupVersions(
@@ -255,13 +150,13 @@ void main() {
           gitHead: '1.2.3',
         );
 
-        await runner.run(['versioned', '--input', d.path]);
+        await runner.run(['consistent-version', '--input', d.path]);
         expect(messages.last, contains('1.2.3'));
       });
 
       test('should print errors in gray', () async {
         final runner = CommandRunner<void>('test', 'test')
-          ..addCommand(Versioned(log: messages.add));
+          ..addCommand(ConsistentVersion(log: messages.add));
 
         await initGit(d);
 
@@ -274,7 +169,7 @@ void main() {
 
         await initGit(d);
         await expectLater(
-          runner.run(['versioned', '--input', d.path]),
+          runner.run(['consistent-version', '--input', d.path]),
           throwsA(
             isA<Exception>().having(
               (e) => e.toString(),

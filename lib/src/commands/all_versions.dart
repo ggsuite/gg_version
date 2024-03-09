@@ -9,27 +9,25 @@ import 'dart:io';
 import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_git/gg_git.dart';
 import 'package:gg_process/gg_process.dart';
-import 'package:gg_status_printer/gg_status_printer.dart';
 import 'package:gg_version/gg_version.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 // #############################################################################
 /// Provides "ggGit has-consistent-version <dir>" command
-class Versioned extends GgGitBase {
+class AllVersions extends GgGitBase {
   /// Constructor
-  Versioned({
+  AllVersions({
     required super.log,
     super.processWrapper,
   });
 
   // ...........................................................................
   @override
-  final name = 'versioned';
+  final name = 'all-versions';
   @override
-  final description = 'Returns version of the current head revision '
-      'collected from pubspec.yaml, README.md as well git head tag. '
-      'Reports when these versions are not consistent.';
+  final description =
+      'Returns the version of pubspec.yaml, README.md as well git head tag. ';
 
   // ...........................................................................
   @override
@@ -38,55 +36,20 @@ class Versioned extends GgGitBase {
 
     final messages = <String>[];
 
-    final printer = GgStatusPrinter<Version>(
-      message: 'Check versions.',
-      log: log,
-    );
-
     try {
-      final version = await printer.logTask(
-        task: () => consistantVersion(
-          directory: inputDir,
-          processWrapper: processWrapper,
-          log: messages.add,
-          dirName: inputDirName,
-        ),
-        success: (success) => true,
+      final v = await AllVersions.get(
+        directory: inputDir,
+        processWrapper: processWrapper,
+        log: messages.add,
+        dirName: inputDirName,
       );
-      log('$brightBlack${version.toString()}$reset');
+
+      log('pubspec: ${v.pubspec}');
+      log('changelog: ${v.changeLog}');
+      log('git head: ${v.gitHead ?? '-'}');
+      log('git latest: ${v.gitLatest ?? '-'}');
     } catch (e) {
-      throw Exception('$brightBlack$e$reset');
-    }
-  }
-
-  // ...........................................................................
-  /// Returns the consistent version or null if not consistent.
-  static Future<Version> consistantVersion({
-    required Directory directory,
-    GgProcessWrapper processWrapper = const GgProcessWrapper(),
-    required void Function(String message) log,
-    String? dirName,
-  }) async {
-    final result = await versions(
-      directory: directory,
-      processWrapper: processWrapper,
-      log: log,
-    );
-
-    if (result.gitHead == null) {
-      throw Exception('Current state has no git version tag.');
-    }
-
-    if (result.pubspec == result.changeLog &&
-        result.gitHead == result.changeLog) {
-      return result.pubspec;
-    } else {
-      var message = 'Versions are not consistent: ';
-      message += '- pubspec: ${result.pubspec}, ';
-      message += '- changeLog: ${result.changeLog}, ';
-      message += '- gitHead: ${result.gitHead}';
-
-      throw Exception(message);
+      throw Exception('$red$e$reset');
     }
   }
 
@@ -98,7 +61,7 @@ class Versioned extends GgGitBase {
         Version changeLog,
         Version? gitHead,
         Version? gitLatest,
-      })> versions({
+      })> get({
     required Directory directory,
     GgProcessWrapper processWrapper = const GgProcessWrapper(),
     required void Function(String message) log,
@@ -111,19 +74,17 @@ class Versioned extends GgGitBase {
       processWrapper: processWrapper,
     );
 
-    if (!isCommitted) {
-      throw Exception('Please commit everything in "$dirName".');
-    }
-
     final d = directory;
     final pubspecVersion = await FromPubspec.fromDirectory(directory: d);
     final changelogVersion = await FromChangelog.fromDirectory(directory: d);
 
-    final gitHeadVersion = await FromGit.fromHead(
-      directory: directory,
-      processWrapper: processWrapper,
-      log: log,
-    );
+    final gitHeadVersion = isCommitted
+        ? await FromGit.fromHead(
+            directory: directory,
+            processWrapper: processWrapper,
+            log: log,
+          )
+        : null;
 
     final gitLatestVersion = gitHeadVersion ??
         await FromGit.latest(
