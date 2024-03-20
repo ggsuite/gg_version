@@ -4,10 +4,7 @@
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
 
-import 'dart:io';
-
 import 'package:gg_git/gg_git.dart';
-import 'package:gg_process/gg_process.dart';
 import 'package:gg_version/gg_version.dart';
 
 // #############################################################################
@@ -17,6 +14,7 @@ class AddVersionTag extends GgGitBase {
   AddVersionTag({
     required super.log,
     super.processWrapper,
+    super.inputDir,
   });
 
   // ...........................................................................
@@ -33,8 +31,6 @@ class AddVersionTag extends GgGitBase {
     String? lastLog;
 
     await add(
-      directory: inputDir,
-      processWrapper: processWrapper,
       log: (msg) {
         lastLog = msg;
         log(msg);
@@ -46,24 +42,27 @@ class AddVersionTag extends GgGitBase {
 
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
-  static Future<bool> add({
-    required Directory directory,
-    required GgProcessWrapper processWrapper,
-    required void Function(String message) log,
+  Future<bool> add({
+    void Function(String)? log,
   }) async {
+    log ??= this.log; //coverage:ignore-line
+
     // Throw if not everything is commited
-    final isCommited = await IsCommitted.get(
-      directory: directory,
+    final isCommited = await IsCommitted(
+      log: log,
       processWrapper: processWrapper,
-    );
+      inputDir: inputDir,
+    ).get();
 
     if (!isCommited) {
       throw StateError('Not everything is commited.');
     }
 
-    final versions = await AllVersions.get(
-      directory: directory,
+    final versions = await AllVersions(
+      log: log,
       processWrapper: processWrapper,
+      inputDir: inputDir,
+    ).get(
       log: log,
     );
 
@@ -103,7 +102,7 @@ class AddVersionTag extends GgGitBase {
     final result = await processWrapper.run(
       'git',
       ['tag', '-a', version, '-m', 'Version $version'],
-      workingDirectory: directory.path,
+      workingDirectory: inputDir.path,
     );
 
     if (result.exitCode == 0) {

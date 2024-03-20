@@ -24,10 +24,14 @@ void main() {
   late Directory d;
 
   // ...........................................................................
-  void initCommand({GgProcessWrapper? processWrapper}) {
+  void initCommand({
+    GgProcessWrapper? processWrapper,
+    required Directory? inputDir,
+  }) {
     addVersionTag = AddVersionTag(
       log: messages.add,
       processWrapper: processWrapper ?? const GgProcessWrapper(),
+      inputDir: inputDir,
     );
     runner.addCommand(addVersionTag);
   }
@@ -43,13 +47,12 @@ void main() {
     group('add(...)', () {
       group('should throw', () {
         test('if there are uncommited changes', () async {
+          initCommand(inputDir: d);
           await initGit(d);
           await setPubspec(d, version: '0.0.1');
 
           await expectLater(
-            AddVersionTag.add(
-              directory: d,
-              processWrapper: const GgProcessWrapper(),
+            addVersionTag.add(
               log: messages.add,
             ),
             throwsA(
@@ -65,6 +68,7 @@ void main() {
         test(
           'when version in pubspec does not equal version in changeLog',
           () async {
+            initCommand(inputDir: d);
             await initGit(d);
 
             // Set pubspec and changeLog version to different values
@@ -77,9 +81,7 @@ void main() {
 
             // Call add(...) should tell us to fix different versions
             await expectLater(
-              AddVersionTag.add(
-                directory: d,
-                processWrapper: const GgProcessWrapper(),
+              addVersionTag.add(
                 log: messages.add,
               ),
               throwsA(
@@ -95,6 +97,7 @@ void main() {
         );
 
         test('if Head already has a version tag', () async {
+          initCommand(inputDir: d);
           await initGit(d);
 
           // Set pubspec and changeLog version to the same value
@@ -108,9 +111,7 @@ void main() {
 
           // Call add(...) should tell us to fix different versions
           await expectLater(
-            AddVersionTag.add(
-              directory: d,
-              processWrapper: const GgProcessWrapper(),
+            addVersionTag.add(
               log: messages.add,
             ),
             throwsA(
@@ -124,6 +125,7 @@ void main() {
         });
 
         test('if a higher version exists in a previous commit', () async {
+          initCommand(inputDir: d);
           await initGit(d);
 
           // A older commit does set a higher version
@@ -144,9 +146,7 @@ void main() {
 
           // When adding the version tag, we should get an exception
           await expectLater(
-            AddVersionTag.add(
-              directory: d,
-              processWrapper: const GgProcessWrapper(),
+            addVersionTag.add(
               log: messages.add,
             ),
             throwsA(
@@ -199,11 +199,11 @@ void main() {
             return ProcessResult(1, 0, '', '');
           });
 
+          initCommand(processWrapper: processWrapper, inputDir: d);
+
           // When adding the version tag, we should get an exception
           await expectLater(
-            AddVersionTag.add(
-              directory: d,
-              processWrapper: processWrapper,
+            addVersionTag.add(
               log: messages.add,
             ),
             throwsA(
@@ -222,6 +222,7 @@ void main() {
           test(
               'when pubspec, CHANGELOG.md and tag '
               'have already the same version', () async {
+            initCommand(inputDir: d);
             await initGit(d);
 
             // Set pubspec and changeLog version to the same value
@@ -233,9 +234,7 @@ void main() {
             );
 
             // Call add(...) should tell us to fix different versions
-            final result = await AddVersionTag.add(
-              directory: d,
-              processWrapper: const GgProcessWrapper(),
+            final result = await addVersionTag.add(
               log: messages.add,
             );
 
@@ -249,6 +248,7 @@ void main() {
 
         group('and write the pubspec version to git tag', () {
           test('when the version is not set yet', () async {
+            initCommand(inputDir: d);
             await initGit(d);
 
             // CHANGELOG.md and pubspec.yaml have the same version
@@ -261,9 +261,7 @@ void main() {
             );
 
             // Add the tag
-            final result = await AddVersionTag.add(
-              directory: d,
-              processWrapper: const GgProcessWrapper(),
+            final result = await addVersionTag.add(
               log: messages.add,
             );
 
@@ -271,10 +269,9 @@ void main() {
             expect(result, isTrue);
 
             // The git head should have tag "4.5.6"
+            final fromGit = FromGit(log: messages.add, inputDir: d);
             expect(
-              await FromGit.fromHead(
-                directory: d,
-                processWrapper: const GgProcessWrapper(),
+              await fromGit.fromHead(
                 log: messages.add,
               ),
               Version(4, 5, 6),
@@ -289,10 +286,9 @@ void main() {
     group('run()', () {
       group('should throw', () {
         test('if there are uncommited changes', () async {
+          initCommand(inputDir: null);
           await initGit(d);
           await setPubspec(d, version: '0.0.1');
-
-          initCommand();
           await expectLater(
             () => runner.run(['add-version-tag', '--input', d.path]),
             throwsA(
@@ -318,16 +314,15 @@ void main() {
             gitHead: null,
           );
 
-          initCommand();
+          initCommand(inputDir: null);
 
           // Run add-version-tag
           await runner.run(['add-version-tag', '--input', d.path]);
 
           // The git head should have tag "4.5.6"
+          final fromGit = FromGit(log: messages.add, inputDir: d);
           expect(
-            await FromGit.fromHead(
-              directory: d,
-              processWrapper: const GgProcessWrapper(),
+            await fromGit.fromHead(
               log: messages.add,
             ),
             Version(4, 5, 6),

@@ -16,16 +16,15 @@ import 'package:test/test.dart';
 void main() {
   final messages = <String>[];
   late Directory d;
+  late ConsistentVersion consistentVersion;
 
   // ...........................................................................
-  Future<Version> getVersion() => ConsistentVersion.get(
-        directory: d,
-        log: (m) => messages.add(m),
-      );
+  Future<Version> getVersion() => consistentVersion.get();
 
   // ...........................................................................
   setUp(() {
     d = initTestDir();
+    consistentVersion = ConsistentVersion(log: messages.add, inputDir: d);
     messages.clear();
   });
 

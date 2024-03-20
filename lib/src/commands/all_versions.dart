@@ -4,13 +4,9 @@
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
 
-import 'dart:io';
-
 import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_git/gg_git.dart';
-import 'package:gg_process/gg_process.dart';
 import 'package:gg_version/gg_version.dart';
-import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 // #############################################################################
@@ -20,6 +16,7 @@ class AllVersions extends GgGitBase {
   AllVersions({
     required super.log,
     super.processWrapper,
+    super.inputDir,
   });
 
   // ...........................................................................
@@ -37,11 +34,8 @@ class AllVersions extends GgGitBase {
     final messages = <String>[];
 
     try {
-      final v = await AllVersions.get(
-        directory: inputDir,
-        processWrapper: processWrapper,
+      final v = await get(
         log: messages.add,
-        dirName: inputDirName,
       );
 
       log('pubspec: ${v.pubspec}');
@@ -55,43 +49,48 @@ class AllVersions extends GgGitBase {
 
   // ...........................................................................
   /// Returns the consistent version or null if not consistent.
-  static Future<
+  Future<
       ({
         Version pubspec,
         Version changeLog,
         Version? gitHead,
         Version? gitLatest,
       })> get({
-    required Directory directory,
-    GgProcessWrapper processWrapper = const GgProcessWrapper(),
-    required void Function(String message) log,
-    String? dirName,
+    void Function(String message)? log,
   }) async {
-    dirName ??= basename(canonicalize(directory.path));
-
-    final isCommitted = await IsCommitted.get(
-      directory: directory,
+    log ??= this.log; //coverage:ignore-line
+    final isCommitted = await IsCommitted(
+      log: log,
       processWrapper: processWrapper,
+      inputDir: inputDir,
+    ).get(
+      log: log,
     );
 
-    final d = directory;
-    final pubspecVersion = await FromPubspec.fromDirectory(directory: d);
-    final changelogVersion = await FromChangelog.fromDirectory(directory: d);
+    final pubspecVersion = await FromPubspec(
+      log: log,
+      inputDir: inputDir,
+    ).fromDirectory();
+    final changelogVersion = await FromChangelog(
+      log: log,
+      inputDir: inputDir,
+    ).fromDirectory();
 
     final gitHeadVersion = isCommitted
-        ? await FromGit.fromHead(
-            directory: directory,
-            processWrapper: processWrapper,
+        ? await FromGit(
+            log: log,
+            inputDir: inputDir,
+          ).fromHead(
             log: log,
           )
         : null;
 
     final gitLatestVersion = gitHeadVersion ??
-        await FromGit.latest(
-          directory: directory,
+        await FromGit(
           processWrapper: processWrapper,
           log: log,
-        );
+          inputDir: inputDir,
+        ).latest();
 
     return (
       pubspec: pubspecVersion,

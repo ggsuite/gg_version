@@ -16,9 +16,11 @@ import 'package:gg_git/gg_git_test_helpers.dart';
 void main() {
   late Directory d;
   final messages = <String>[];
+  late FromChangelog fromChangelog;
 
   setUp(() {
     d = initTestDir();
+    fromChangelog = FromChangelog(log: messages.add, inputDir: d);
     messages.clear();
   });
 
@@ -27,7 +29,7 @@ void main() {
       group('should throw', () {
         test('if no CHANGELOG.md file is found in directory', () async {
           await expectLater(
-            () => FromChangelog.fromDirectory(directory: d),
+            () => fromChangelog.fromDirectory(),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
@@ -42,7 +44,7 @@ void main() {
       group('should return version', () {
         test('when found in CHANGELOG.md', () async {
           await setChangeLog(d, version: '0.0.1');
-          final version = await FromChangelog.fromDirectory(directory: d);
+          final version = await fromChangelog.fromDirectory();
           expect(version, Version.parse('0.00.001'));
         });
       });
@@ -55,7 +57,7 @@ void main() {
           const content = 'name: test';
 
           expect(
-            () => FromChangelog.fromString(content: content),
+            () => fromChangelog.fromString(content: content),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
@@ -71,7 +73,7 @@ void main() {
           const content = '# Change Log\n\n## 0.x.7\n\n- test';
 
           expect(
-            () => FromChangelog.fromString(content: content),
+            () => fromChangelog.fromString(content: content),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
@@ -88,7 +90,7 @@ void main() {
       group('should succeed', () {
         test('and return the version foun in CHANGELOG.md', () {
           const content = '# Change Log\n\n## 1.2.3\n\n- test';
-          final version = FromChangelog.fromString(content: content);
+          final version = fromChangelog.fromString(content: content);
           expect(version, Version.parse('01.02.003'));
         });
       });

@@ -8,7 +8,6 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:gg_git/gg_git_test_helpers.dart';
-import 'package:gg_process/gg_process.dart';
 import 'package:gg_version/gg_version.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
@@ -16,13 +15,20 @@ import 'package:test/test.dart';
 void main() {
   final messages = <String>[];
   late Directory d;
-  // .........................................................................
+  late AllVersions allVersions;
+
+  // ...........................................................................
+  void initAllVersions(Directory? inputDir) {
+    allVersions = AllVersions(log: messages.add, inputDir: inputDir);
+  }
+
+  // ...........................................................................
   setUp(() {
     d = initTestDir();
     messages.clear();
   });
 
-  // .........................................................................
+  // ...........................................................................
   tearDown(() {
     d.deleteSync(recursive: true);
   });
@@ -31,14 +37,12 @@ void main() {
     group('get(directory, log, dirName)', () {
       group('should throw', () {
         test('when something is wrong', () async {
+          initAllVersions(d);
           // Don't create a git repository.
           // Run command
           await expectLater(
-            AllVersions.get(
-              directory: d,
-              processWrapper: MockGgProcessWrapper(),
+            allVersions.get(
               log: messages.add,
-              dirName: 'test',
             ),
             throwsA(
               isA<ArgumentError>().having(
@@ -57,6 +61,7 @@ void main() {
         group('found int pubspec, CHANGELOG and git tag', () {
           group('if everything is commited ', () {
             test('and head revision has version tag', () async {
+              initAllVersions(d);
               await initGit(d);
 
               // Set old revision
@@ -75,8 +80,7 @@ void main() {
                 gitHead: '8.8.9',
               );
 
-              final result = await AllVersions.get(
-                directory: d,
+              final result = await allVersions.get(
                 log: (m) => messages.add(m),
               );
 
@@ -88,6 +92,7 @@ void main() {
             });
 
             test('and no revision has a version tag', () async {
+              initAllVersions(d);
               await initGit(d);
               await setupVersions(
                 d,
@@ -96,8 +101,7 @@ void main() {
                 gitHead: null,
               );
 
-              final result = await AllVersions.get(
-                directory: d,
+              final result = await allVersions.get(
                 log: (m) => messages.add(m),
               );
 
@@ -108,6 +112,7 @@ void main() {
             });
 
             test('only previous revisions have a version tag', () async {
+              initAllVersions(d);
               await initGit(d);
               // Set old revision
               await setupVersions(
@@ -121,8 +126,7 @@ void main() {
               await updateAndCommitSampleFile(d);
 
               // Get versions
-              final result = await AllVersions.get(
-                directory: d,
+              final result = await allVersions.get(
                 log: (m) => messages.add(m),
               );
 
@@ -141,8 +145,9 @@ void main() {
       group('should log the versions', () {
         group('found in pubspec.yaml, CHANGELOg.md, and git', () {
           test('when everything is commited', () async {
+            initAllVersions(null);
             final runner = CommandRunner<void>('test', 'test')
-              ..addCommand(AllVersions(log: messages.add));
+              ..addCommand(allVersions);
 
             await initGit(d);
             await setupVersions(
@@ -160,6 +165,7 @@ void main() {
           });
 
           test('when not everything is commited', () async {
+            initAllVersions(d);
             final runner = CommandRunner<void>('test', 'test')
               ..addCommand(AllVersions(log: messages.add));
 
@@ -185,6 +191,7 @@ void main() {
 
       group('should throw', () {
         test('if something wents wrong', () async {
+          initAllVersions(d);
           final runner = CommandRunner<void>('test', 'test')
             ..addCommand(AllVersions(log: messages.add));
 

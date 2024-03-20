@@ -15,10 +15,12 @@ import 'package:gg_git/gg_git_test_helpers.dart';
 void main() {
   final messages = <String>[];
   late Directory d;
+  late IsConsistent isConsistent;
 
   // ...........................................................................
   setUp(() {
     d = initTestDir();
+    isConsistent = IsConsistent(log: messages.add, inputDir: d);
     messages.clear();
   });
 
@@ -125,12 +127,11 @@ void main() {
             gitHead: '1.2.3',
           );
 
-          final isConsistent = await IsConsistent.get(
-            directory: d,
+          final result = await isConsistent.get(
             log: messages.add,
           );
 
-          expect(isConsistent, isTrue);
+          expect(result, isTrue);
           expect(messages[0], contains('1.2.3'));
         });
       });
@@ -146,12 +147,11 @@ void main() {
             gitHead: '1.2.4',
           );
 
-          final isConsistent = await IsConsistent.get(
-            directory: d,
+          final result = await isConsistent.get(
             log: messages.add,
           );
 
-          expect(isConsistent, isFalse);
+          expect(result, isFalse);
           expect(
             messages[0],
             'Exception: Versions are not consistent: - pubspec: 1.2.3, '

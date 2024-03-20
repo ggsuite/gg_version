@@ -4,11 +4,8 @@
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
 
-import 'dart:io';
-
 import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_git/gg_git.dart';
-import 'package:gg_process/gg_process.dart';
 import 'package:gg_status_printer/gg_status_printer.dart';
 import 'package:gg_version/gg_version.dart';
 
@@ -19,6 +16,7 @@ class IsConsistent extends GgGitBase {
   IsConsistent({
     required super.log,
     super.processWrapper,
+    super.inputDir,
   });
 
   // ...........................................................................
@@ -42,9 +40,11 @@ class IsConsistent extends GgGitBase {
     );
 
     final isConsistent = await printer.logTask(
-      task: () => IsConsistent.get(
-        directory: inputDir,
+      task: () => IsConsistent(
+        log: log,
         processWrapper: processWrapper,
+        inputDir: inputDir,
+      ).get(
         log: messages.add,
         dirName: inputDirName,
       ),
@@ -58,18 +58,17 @@ class IsConsistent extends GgGitBase {
 
   // ...........................................................................
   /// Returns true if pubspect.yaml, README.md as well git show the same version
-  static Future<bool> get({
-    required Directory directory,
-    GgProcessWrapper processWrapper = const GgProcessWrapper(),
+  Future<bool> get({
     String? dirName,
     required void Function(String) log,
   }) async {
     try {
-      final version = await ConsistentVersion.get(
-        directory: directory,
-        processWrapper: processWrapper,
+      final version = await ConsistentVersion(
         log: log,
-        dirName: dirName,
+        processWrapper: processWrapper,
+        inputDir: inputDir,
+      ).get(
+        log: log,
       );
       log(version.toString());
       return true;

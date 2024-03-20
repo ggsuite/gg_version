@@ -16,6 +16,7 @@ class FromChangelog extends GgDirCommand {
   /// Constructor
   FromChangelog({
     required super.log,
+    super.inputDir,
   });
 
   // ...........................................................................
@@ -29,19 +30,17 @@ class FromChangelog extends GgDirCommand {
   Future<void> run() async {
     await super.run();
 
-    final result = await fromDirectory(
-      directory: inputDir,
-    );
+    final result = await fromDirectory();
 
     log(result.toString());
   }
 
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
-  static Future<Version> fromDirectory({required Directory directory}) async {
-    await GgDirCommand.checkDir(directory: directory);
-    final pubspec = File('${directory.path}/CHANGELOG.md');
-    final dirName = basename(canonicalize(directory.path));
+  Future<Version> fromDirectory() async {
+    await GgDirCommand.checkDir(directory: inputDir);
+    final pubspec = File('${inputDir.path}/CHANGELOG.md');
+    final dirName = basename(canonicalize(inputDir.path));
 
     if (!pubspec.existsSync()) {
       throw Exception('File "$dirName/CHANGELOG.md" does not exist.');
@@ -52,7 +51,7 @@ class FromChangelog extends GgDirCommand {
 
   // ...........................................................................
   /// Parses version from pubspec.yaml
-  static Version fromString({
+  Version fromString({
     required String content,
   }) {
     final lines = content.split('\n');

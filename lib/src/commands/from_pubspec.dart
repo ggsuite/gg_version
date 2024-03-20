@@ -18,6 +18,7 @@ class FromPubspec extends GgDirCommand {
   /// Constructor
   FromPubspec({
     required super.log,
+    super.inputDir,
   });
 
   // ...........................................................................
@@ -31,19 +32,16 @@ class FromPubspec extends GgDirCommand {
   Future<void> run() async {
     await super.run();
 
-    final result = await fromDirectory(
-      directory: inputDir,
-    );
-
+    final result = await fromDirectory();
     log(result.toString());
   }
 
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
-  static Future<Version> fromDirectory({required Directory directory}) async {
-    await GgDirCommand.checkDir(directory: directory);
-    final pubspec = File('${directory.path}/pubspec.yaml');
-    final dirName = basename(canonicalize(directory.path));
+  Future<Version> fromDirectory() async {
+    await GgDirCommand.checkDir(directory: inputDir);
+    final pubspec = File('${inputDir.path}/pubspec.yaml');
+    final dirName = basename(canonicalize(inputDir.path));
 
     if (!pubspec.existsSync()) {
       throw Exception('File "$dirName/pubspec.yaml" does not exist.');
@@ -54,7 +52,7 @@ class FromPubspec extends GgDirCommand {
 
   // ...........................................................................
   /// Parses version from pubspec.yaml
-  static Version fromString({
+  Version fromString({
     required String content,
   }) {
     late Pubspec pubspec;

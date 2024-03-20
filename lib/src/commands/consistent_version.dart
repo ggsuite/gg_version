@@ -4,11 +4,8 @@
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
 
-import 'dart:io';
-
 import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_git/gg_git.dart';
-import 'package:gg_process/gg_process.dart';
 import 'package:gg_version/src/commands/all_versions.dart';
 import 'package:pub_semver/pub_semver.dart';
 
@@ -19,6 +16,7 @@ class ConsistentVersion extends GgGitBase {
   ConsistentVersion({
     required super.log,
     super.processWrapper,
+    super.inputDir,
   });
 
   // ...........................................................................
@@ -38,10 +36,7 @@ class ConsistentVersion extends GgGitBase {
 
     try {
       final version = await get(
-        directory: inputDir,
-        processWrapper: processWrapper,
         log: messages.add,
-        dirName: inputDirName,
       );
       log(version.toString());
     } catch (e) {
@@ -51,15 +46,14 @@ class ConsistentVersion extends GgGitBase {
 
   // ...........................................................................
   /// Returns the consistent version or null if not consistent.
-  static Future<Version> get({
-    required Directory directory,
-    GgProcessWrapper processWrapper = const GgProcessWrapper(),
-    required void Function(String message) log,
-    String? dirName,
+  Future<Version> get({
+    void Function(String message)? log,
   }) async {
-    final result = await AllVersions.get(
-      directory: directory,
+    final result = await AllVersions(
+      log: log ?? this.log,
       processWrapper: processWrapper,
+      inputDir: inputDir,
+    ).get(
       log: log,
     );
 

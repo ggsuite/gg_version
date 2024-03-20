@@ -16,9 +16,11 @@ import 'package:gg_git/gg_git_test_helpers.dart';
 void main() {
   late Directory d;
   final messages = <String>[];
+  late FromPubspec fromPubspec;
 
   setUp(() {
     d = initTestDir();
+    fromPubspec = FromPubspec(log: messages.add, inputDir: d);
     messages.clear();
   });
 
@@ -27,7 +29,7 @@ void main() {
       group('should throw', () {
         test('if no pubspec.yaml file is found in directory', () async {
           await expectLater(
-            () => FromPubspec.fromDirectory(directory: d),
+            () => fromPubspec.fromDirectory(),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
@@ -42,7 +44,7 @@ void main() {
       group('should return version', () {
         test('when found in pubspec.yaml', () async {
           await setPubspec(d, version: '0.0.1');
-          final version = await FromPubspec.fromDirectory(directory: d);
+          final version = await fromPubspec.fromDirectory();
           expect(version, Version.parse('0.00.001'));
         });
       });
@@ -55,7 +57,7 @@ void main() {
           const content = 'name: test';
 
           expect(
-            () => FromPubspec.fromString(content: content),
+            () => fromPubspec.fromString(content: content),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
@@ -71,7 +73,7 @@ void main() {
           const content = 'name: test\nversion: 0.x.7';
 
           expect(
-            () => FromPubspec.fromString(content: content),
+            () => fromPubspec.fromString(content: content),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
@@ -88,7 +90,7 @@ void main() {
       group('should succeed', () {
         test('and return the version foun in pubspec.yaml', () {
           const content = 'name: test\nversion: 1.2.3';
-          final version = FromPubspec.fromString(content: content);
+          final version = fromPubspec.fromString(content: content);
           expect(version, Version.parse('01.02.003'));
         });
       });

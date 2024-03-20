@@ -7,7 +7,6 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'package:gg_process/gg_process.dart';
 import 'package:gg_version/gg_version.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
@@ -17,17 +16,17 @@ import 'package:gg_git/gg_git_test_helpers.dart';
 void main() {
   late Directory d;
   final messages = <String>[];
+  late FromGit fromGit;
 
   // ...........................................................................
-  Future<Version?> getHeadVersionTag() => FromGit.fromHead(
-        directory: d,
-        processWrapper: const GgProcessWrapper(),
+  Future<Version?> getHeadVersionTag() => fromGit.fromHead(
         log: (m) => messages.add(m),
       );
 
   // ...........................................................................
   setUp(() {
     d = initTestDir();
+    fromGit = FromGit(log: messages.add, inputDir: d);
     messages.clear();
   });
 
@@ -97,9 +96,7 @@ void main() {
             addAndCommitSampleFile(d);
             await addTags(d, ['X', 'ABC']); // No version tags
             expect(
-              FromGit.latest(
-                directory: d,
-                processWrapper: const GgProcessWrapper(),
+              fromGit.latest(
                 log: messages.add,
               ),
               completion(isNull),
@@ -116,9 +113,7 @@ void main() {
                 await updateAndCommitSampleFile(d);
                 await addTags(d, ['0.2.0']); // Head revision
                 expect(
-                  FromGit.latest(
-                    directory: d,
-                    processWrapper: const GgProcessWrapper(),
+                  fromGit.latest(
                     log: messages.add,
                   ),
                   completion(equals(Version(0, 2, 0))),
@@ -134,9 +129,7 @@ void main() {
                 await updateAndCommitSampleFile(d);
                 await addTags(d, ['1.0.0']); // Head revision, no version tag
                 expect(
-                  FromGit.latest(
-                    directory: d,
-                    processWrapper: const GgProcessWrapper(),
+                  fromGit.latest(
                     log: messages.add,
                   ),
                   completion(equals(Version(2, 0, 0))),
@@ -150,9 +143,7 @@ void main() {
                 await updateAndCommitSampleFile(d);
                 await addTags(d, ['2.0.0']); // New version is lower then head
                 expect(
-                  FromGit.latest(
-                    directory: d,
-                    processWrapper: const GgProcessWrapper(),
+                  fromGit.latest(
                     log: messages.add,
                   ),
                   completion(equals(Version(2, 0, 0))), // New version

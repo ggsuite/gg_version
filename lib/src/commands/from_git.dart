@@ -4,10 +4,7 @@
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
 
-import 'dart:io';
-
 import 'package:gg_git/gg_git.dart';
-import 'package:gg_process/gg_process.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 // #############################################################################
@@ -17,6 +14,7 @@ class FromGit extends GgGitBase {
   FromGit({
     required super.log,
     super.processWrapper,
+    super.inputDir,
   }) {
     _addArgs();
   }
@@ -37,16 +35,12 @@ class FromGit extends GgGitBase {
 
     if (headOnly) {
       final result = await fromHead(
-        directory: inputDir,
-        processWrapper: processWrapper,
         log: super.log,
       );
 
       log(result?.toString() ?? 'No version tag found in head.');
     } else {
       final result = await latest(
-        directory: inputDir,
-        processWrapper: processWrapper,
         log: super.log,
       );
 
@@ -56,16 +50,18 @@ class FromGit extends GgGitBase {
 
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
-  static Future<Version?> fromHead({
-    required Directory directory,
-    required GgProcessWrapper processWrapper,
-    required void Function(String message) log,
+  Future<Version?> fromHead({
+    void Function(String message)? log,
   }) async {
-    await GgGitBase.checkDir(directory: directory);
+    log ??= this.log; //coverage:ignore-line
 
-    final headTags = await GetTags.fromHead(
-      directory: directory,
+    await checkDir(directory: inputDir);
+
+    final headTags = await GetTags(
+      log: log,
       processWrapper: processWrapper,
+      inputDir: inputDir,
+    ).fromHead(
       log: log,
     );
 
@@ -82,16 +78,18 @@ class FromGit extends GgGitBase {
 
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
-  static Future<Version?> latest({
-    required Directory directory,
-    required GgProcessWrapper processWrapper,
-    required void Function(String message) log,
+  Future<Version?> latest({
+    void Function(String message)? log,
   }) async {
-    await GgGitBase.checkDir(directory: directory);
+    log ??= this.log; //coverage:ignore-line
 
-    final tags = await GetTags.all(
-      directory: directory,
+    await checkDir(directory: inputDir);
+
+    final tags = await GetTags(
+      log: log,
+      inputDir: inputDir,
       processWrapper: processWrapper,
+    ).all(
       log: log,
     );
 
