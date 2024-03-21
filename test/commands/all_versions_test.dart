@@ -18,14 +18,10 @@ void main() {
   late AllVersions allVersions;
 
   // ...........................................................................
-  void initAllVersions(Directory? inputDir) {
-    allVersions = AllVersions(log: messages.add, inputDir: inputDir);
-  }
-
-  // ...........................................................................
   setUp(() {
     d = initTestDir();
     messages.clear();
+    allVersions = AllVersions(log: messages.add);
   });
 
   // ...........................................................................
@@ -37,12 +33,12 @@ void main() {
     group('get(directory, log, dirName)', () {
       group('should throw', () {
         test('when something is wrong', () async {
-          initAllVersions(d);
           // Don't create a git repository.
           // Run command
           await expectLater(
             allVersions.get(
               log: messages.add,
+              directory: d,
             ),
             throwsA(
               isA<ArgumentError>().having(
@@ -61,7 +57,6 @@ void main() {
         group('found int pubspec, CHANGELOG and git tag', () {
           group('if everything is commited ', () {
             test('and head revision has version tag', () async {
-              initAllVersions(d);
               await initGit(d);
 
               // Set old revision
@@ -82,6 +77,7 @@ void main() {
 
               final result = await allVersions.get(
                 log: (m) => messages.add(m),
+                directory: d,
               );
 
               // Latest version should be returned
@@ -92,7 +88,6 @@ void main() {
             });
 
             test('and no revision has a version tag', () async {
-              initAllVersions(d);
               await initGit(d);
               await setupVersions(
                 d,
@@ -103,6 +98,7 @@ void main() {
 
               final result = await allVersions.get(
                 log: (m) => messages.add(m),
+                directory: d,
               );
 
               expect(result.pubspec.toString(), '1.2.3');
@@ -112,7 +108,6 @@ void main() {
             });
 
             test('only previous revisions have a version tag', () async {
-              initAllVersions(d);
               await initGit(d);
               // Set old revision
               await setupVersions(
@@ -128,6 +123,7 @@ void main() {
               // Get versions
               final result = await allVersions.get(
                 log: (m) => messages.add(m),
+                directory: d,
               );
 
               // Latest version should be returned
@@ -145,7 +141,6 @@ void main() {
       group('should log the versions', () {
         group('found in pubspec.yaml, CHANGELOg.md, and git', () {
           test('when everything is commited', () async {
-            initAllVersions(null);
             final runner = CommandRunner<void>('test', 'test')
               ..addCommand(allVersions);
 
@@ -165,7 +160,6 @@ void main() {
           });
 
           test('when not everything is commited', () async {
-            initAllVersions(d);
             final runner = CommandRunner<void>('test', 'test')
               ..addCommand(AllVersions(log: messages.add));
 
@@ -191,7 +185,6 @@ void main() {
 
       group('should throw', () {
         test('if something wents wrong', () async {
-          initAllVersions(d);
           final runner = CommandRunner<void>('test', 'test')
             ..addCommand(AllVersions(log: messages.add));
 

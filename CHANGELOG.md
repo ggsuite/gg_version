@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.8
+
+- Rework directory handling
+
 ## 1.0.7
 
 - Rename `is_consistent` -> `is_versioned`

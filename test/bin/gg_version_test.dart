@@ -8,19 +8,33 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:gg_capture_print/gg_capture_print.dart';
+import 'package:gg_git/gg_git_test_helpers.dart';
 import 'package:test/test.dart';
 
 import '../../bin/gg_version.dart';
 
 void main() {
+  late Directory d;
+
+  setUp(() {
+    d = initTestDir();
+  });
+
   group('bin/gg_version.dart', () {
     // #########################################################################
 
     test('should be executable', () async {
+      await initGit(d);
+
       // Execute bin/gg_version.dart and check if it prints help
       final result = await Process.run(
         './bin/gg_version.dart',
-        ['from-git', '--head-only'],
+        [
+          'from-git',
+          '--head-only',
+          '--input',
+          d.path,
+        ],
         stdoutEncoding: utf8,
         stderrEncoding: utf8,
       );

@@ -4,33 +4,32 @@
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
 
+import 'dart:io';
+
 import 'package:gg_git/gg_git.dart';
 import 'package:gg_version/gg_version.dart';
 
 // #############################################################################
 /// Provides "ggGit has-version-tag <dir>" command
-class AddVersionTag extends GgGitBase {
+class AddVersionTag extends GgGitBase<void> {
   /// Constructor
   AddVersionTag({
     required super.log,
     super.processWrapper,
-    super.inputDir,
-  });
+  }) : super(
+          name: 'add-version-tag',
+          description: 'Reads version from pubspec.yaml and adds it as git tag',
+        );
 
   // ...........................................................................
   @override
-  final name = 'add-version-tag';
-  @override
-  final description = 'Reads version from pubspec.yaml and adds it as git tag';
-
-  // ...........................................................................
-  @override
-  Future<void> run() async {
-    await super.run();
+  Future<void> run({Directory? directory}) async {
+    final inputDir = dir(directory);
 
     String? lastLog;
 
     await add(
+      directory: inputDir,
       log: (msg) {
         lastLog = msg;
         log(msg);
@@ -44,6 +43,7 @@ class AddVersionTag extends GgGitBase {
   /// Returns true if everything in the directory is pushed.
   Future<bool> add({
     void Function(String)? log,
+    required Directory directory,
   }) async {
     log ??= this.log; //coverage:ignore-line
 
@@ -51,8 +51,7 @@ class AddVersionTag extends GgGitBase {
     final isCommited = await IsCommitted(
       log: log,
       processWrapper: processWrapper,
-      inputDir: inputDir,
-    ).get();
+    ).get(directory: directory, log: log);
 
     if (!isCommited) {
       throw StateError('Not everything is commited.');
@@ -61,9 +60,9 @@ class AddVersionTag extends GgGitBase {
     final versions = await AllVersions(
       log: log,
       processWrapper: processWrapper,
-      inputDir: inputDir,
     ).get(
       log: log,
+      directory: directory,
     );
 
     // If version is already set, do nothing
@@ -102,7 +101,7 @@ class AddVersionTag extends GgGitBase {
     final result = await processWrapper.run(
       'git',
       ['tag', '-a', version, '-m', 'Version $version'],
-      workingDirectory: inputDir.path,
+      workingDirectory: directory.path,
     );
 
     if (result.exitCode == 0) {

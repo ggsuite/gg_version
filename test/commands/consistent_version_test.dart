@@ -19,12 +19,12 @@ void main() {
   late ConsistentVersion consistentVersion;
 
   // ...........................................................................
-  Future<Version> getVersion() => consistentVersion.get();
+  Future<Version> getVersion() => consistentVersion.get(directory: d);
 
   // ...........................................................................
   setUp(() {
     d = initTestDir();
-    consistentVersion = ConsistentVersion(log: messages.add, inputDir: d);
+    consistentVersion = ConsistentVersion(log: messages.add);
     messages.clear();
   });
 

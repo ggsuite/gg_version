@@ -4,6 +4,8 @@
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
 
+import 'dart:io';
+
 import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_git/gg_git.dart';
 import 'package:gg_version/src/commands/all_versions.dart';
@@ -11,30 +13,28 @@ import 'package:pub_semver/pub_semver.dart';
 
 // #############################################################################
 /// Provides "ggGit has-consistent-version <dir>" command
-class ConsistentVersion extends GgGitBase {
+class ConsistentVersion extends GgGitBase<void> {
   /// Constructor
   ConsistentVersion({
     required super.log,
     super.processWrapper,
-    super.inputDir,
-  });
+  }) : super(
+          name: 'consistent-version',
+          description:
+              'Returns version of pubspec.yaml, README.md and git tag.',
+        );
 
   // ...........................................................................
   @override
-  final name = 'consistent-version';
-  @override
-  final description = 'Returns version of pubspec.yaml, README.md and git tag.';
-
-  // ...........................................................................
-  @override
-  Future<void> run() async {
-    await super.run();
+  Future<void> run({Directory? directory}) async {
+    final inputDir = dir(directory);
 
     final messages = <String>[];
 
     try {
       final version = await get(
         log: messages.add,
+        directory: inputDir,
       );
       log(version.toString());
     } catch (e) {
@@ -46,13 +46,14 @@ class ConsistentVersion extends GgGitBase {
   /// Returns the consistent version or null if not consistent.
   Future<Version> get({
     void Function(String message)? log,
+    required Directory directory,
   }) async {
     final result = await AllVersions(
       log: log ?? this.log,
       processWrapper: processWrapper,
-      inputDir: inputDir,
     ).get(
       log: log,
+      directory: directory,
     );
 
     if (result.gitHead == null) {

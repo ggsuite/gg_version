@@ -20,7 +20,7 @@ void main() {
 
   setUp(() {
     d = initTestDir();
-    fromPubspec = FromPubspec(log: messages.add, inputDir: d);
+    fromPubspec = FromPubspec(log: messages.add);
     messages.clear();
   });
 
@@ -29,7 +29,9 @@ void main() {
       group('should throw', () {
         test('if no pubspec.yaml file is found in directory', () async {
           await expectLater(
-            () => fromPubspec.fromDirectory(),
+            () => fromPubspec.fromDirectory(
+              directory: d,
+            ),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
@@ -44,7 +46,9 @@ void main() {
       group('should return version', () {
         test('when found in pubspec.yaml', () async {
           await setPubspec(d, version: '0.0.1');
-          final version = await fromPubspec.fromDirectory();
+          final version = await fromPubspec.fromDirectory(
+            directory: d,
+          );
           expect(version, Version.parse('0.00.001'));
         });
       });

@@ -20,7 +20,7 @@ void main() {
   // ...........................................................................
   setUp(() {
     d = initTestDir();
-    isConsistent = IsVersioned(log: messages.add, inputDir: d);
+    isConsistent = IsVersioned(log: messages.add);
     messages.clear();
   });
 
@@ -129,6 +129,7 @@ void main() {
 
           final result = await isConsistent.get(
             log: messages.add,
+            directory: d,
           );
 
           expect(result, isTrue);
@@ -149,6 +150,7 @@ void main() {
 
           final result = await isConsistent.get(
             log: messages.add,
+            directory: d,
           );
 
           expect(result, isFalse);

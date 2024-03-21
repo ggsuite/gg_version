@@ -20,7 +20,7 @@ void main() {
 
   setUp(() {
     d = initTestDir();
-    fromChangelog = FromChangelog(log: messages.add, inputDir: d);
+    fromChangelog = FromChangelog(log: messages.add);
     messages.clear();
   });
 
@@ -29,7 +29,7 @@ void main() {
       group('should throw', () {
         test('if no CHANGELOG.md file is found in directory', () async {
           await expectLater(
-            () => fromChangelog.fromDirectory(),
+            () => fromChangelog.fromDirectory(directory: d),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
@@ -44,7 +44,7 @@ void main() {
       group('should return version', () {
         test('when found in CHANGELOG.md', () async {
           await setChangeLog(d, version: '0.0.1');
-          final version = await fromChangelog.fromDirectory();
+          final version = await fromChangelog.fromDirectory(directory: d);
           expect(version, Version.parse('0.00.001'));
         });
       });

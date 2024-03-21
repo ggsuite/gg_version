@@ -19,14 +19,9 @@ void main() {
   late FromGit fromGit;
 
   // ...........................................................................
-  Future<Version?> getHeadVersionTag() => fromGit.fromHead(
-        log: (m) => messages.add(m),
-      );
-
-  // ...........................................................................
   setUp(() {
     d = initTestDir();
-    fromGit = FromGit(log: messages.add, inputDir: d);
+    fromGit = FromGit(log: messages.add);
     messages.clear();
   });
 
@@ -36,7 +31,7 @@ void main() {
       group('should throw', () {
         test('if directory is not a git repo', () async {
           await expectLater(
-            getHeadVersionTag(),
+            fromGit.fromHead(directory: d),
             throwsA(
               isA<ArgumentError>().having(
                 (e) => e.message,
@@ -53,7 +48,7 @@ void main() {
           addAndCommitSampleFile(d);
           await addTags(d, ['0.1.0', '0.2.0']);
           await expectLater(
-            getHeadVersionTag(),
+            fromGit.fromHead(directory: d),
             throwsA(
               isA<StateError>().having(
                 (e) => e.message,
@@ -73,7 +68,7 @@ void main() {
             await initGit(d);
             addAndCommitSampleFile(d);
             await addTags(d, ['X', 'ABC']); // No version tags
-            expect(getHeadVersionTag(), completion(isNull));
+            expect(fromGit.fromHead(directory: d), completion(isNull));
           });
         });
 
@@ -82,7 +77,12 @@ void main() {
             await initGit(d);
             addAndCommitSampleFile(d);
             await addTags(d, ['0.1.0']);
-            expect(getHeadVersionTag(), completion(equals(Version(0, 1, 0))));
+            expect(
+              fromGit.fromHead(directory: d),
+              completion(
+                equals(Version(0, 1, 0)),
+              ),
+            );
           });
         });
       });
@@ -98,6 +98,7 @@ void main() {
             expect(
               fromGit.latest(
                 log: messages.add,
+                directory: d,
               ),
               completion(isNull),
             );
@@ -115,6 +116,7 @@ void main() {
                 expect(
                   fromGit.latest(
                     log: messages.add,
+                    directory: d,
                   ),
                   completion(equals(Version(0, 2, 0))),
                 );
@@ -131,6 +133,7 @@ void main() {
                 expect(
                   fromGit.latest(
                     log: messages.add,
+                    directory: d,
                   ),
                   completion(equals(Version(2, 0, 0))),
                 );
@@ -145,6 +148,7 @@ void main() {
                 expect(
                   fromGit.latest(
                     log: messages.add,
+                    directory: d,
                   ),
                   completion(equals(Version(2, 0, 0))), // New version
                 );

@@ -14,34 +14,30 @@ import 'package:pubspec_parse/pubspec_parse.dart';
 
 // #############################################################################
 /// Provides "ggGit current-version-tag <dir>" command
-class FromPubspec extends GgDirCommand {
+class FromPubspec extends DirCommand<void> {
   /// Constructor
   FromPubspec({
     required super.log,
-    super.inputDir,
-  });
+  }) : super(
+          name: 'from-pubspec',
+          description: 'Returns the version found in pubspec.yaml',
+        );
 
   // ...........................................................................
   @override
-  final name = 'from-pubspec';
-  @override
-  final description = 'Returns the version found in pubspec.yaml';
+  Future<void> run({Directory? directory}) async {
+    final inputDir = dir(directory);
 
-  // ...........................................................................
-  @override
-  Future<void> run() async {
-    await super.run();
-
-    final result = await fromDirectory();
+    final result = await fromDirectory(directory: inputDir);
     log(result.toString());
   }
 
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
-  Future<Version> fromDirectory() async {
-    await GgDirCommand.checkDir(directory: inputDir);
-    final pubspec = File('${inputDir.path}/pubspec.yaml');
-    final dirName = basename(canonicalize(inputDir.path));
+  Future<Version> fromDirectory({required Directory directory}) async {
+    await check(directory: directory);
+    final pubspec = File('${directory.path}/pubspec.yaml');
+    final dirName = basename(canonicalize(directory.path));
 
     if (!pubspec.existsSync()) {
       throw Exception('File "$dirName/pubspec.yaml" does not exist.');

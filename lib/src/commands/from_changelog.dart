@@ -12,35 +12,31 @@ import 'package:pub_semver/pub_semver.dart';
 
 // #############################################################################
 /// Provides "ggGit current-version-tag <dir>" command
-class FromChangelog extends GgDirCommand {
+class FromChangelog extends DirCommand<void> {
   /// Constructor
   FromChangelog({
     required super.log,
-    super.inputDir,
-  });
+  }) : super(
+          name: 'from-changelog',
+          description: 'Returns the version found in CHANGELOG.md',
+        );
 
   // ...........................................................................
   @override
-  final name = 'from-changelog';
-  @override
-  final description = 'Returns the version found in CHANGELOG.md';
+  Future<void> run({Directory? directory}) async {
+    final inputDir = dir(directory);
 
-  // ...........................................................................
-  @override
-  Future<void> run() async {
-    await super.run();
-
-    final result = await fromDirectory();
+    final result = await fromDirectory(directory: inputDir);
 
     log(result.toString());
   }
 
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
-  Future<Version> fromDirectory() async {
-    await GgDirCommand.checkDir(directory: inputDir);
-    final pubspec = File('${inputDir.path}/CHANGELOG.md');
-    final dirName = basename(canonicalize(inputDir.path));
+  Future<Version> fromDirectory({required Directory directory}) async {
+    await check(directory: directory);
+    final pubspec = File('${directory.path}/CHANGELOG.md');
+    final dirName = basename(canonicalize(directory.path));
 
     if (!pubspec.existsSync()) {
       throw Exception('File "$dirName/CHANGELOG.md" does not exist.');

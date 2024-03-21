@@ -26,15 +26,26 @@ void main() {
   // ...........................................................................
   void initCommand({
     GgProcessWrapper? processWrapper,
-    required Directory? inputDir,
   }) {
     addVersionTag = AddVersionTag(
       log: messages.add,
       processWrapper: processWrapper ?? const GgProcessWrapper(),
-      inputDir: inputDir,
     );
     runner.addCommand(addVersionTag);
   }
+
+  // ...........................................................................
+  setUp(() {
+    runner = CommandRunner<void>('test', 'test');
+    d = initTestDir();
+    messages.clear();
+    initCommand();
+  });
+
+  // ...........................................................................
+  tearDown(() {
+    d.deleteSync(recursive: true);
+  });
 
   // ...........................................................................
   setUp(() {
@@ -47,13 +58,13 @@ void main() {
     group('add(...)', () {
       group('should throw', () {
         test('if there are uncommited changes', () async {
-          initCommand(inputDir: d);
           await initGit(d);
           await setPubspec(d, version: '0.0.1');
 
           await expectLater(
             addVersionTag.add(
               log: messages.add,
+              directory: d,
             ),
             throwsA(
               isA<StateError>().having(
@@ -68,7 +79,6 @@ void main() {
         test(
           'when version in pubspec does not equal version in changeLog',
           () async {
-            initCommand(inputDir: d);
             await initGit(d);
 
             // Set pubspec and changeLog version to different values
@@ -83,6 +93,7 @@ void main() {
             await expectLater(
               addVersionTag.add(
                 log: messages.add,
+                directory: d,
               ),
               throwsA(
                 isA<Exception>().having(
@@ -97,7 +108,6 @@ void main() {
         );
 
         test('if Head already has a version tag', () async {
-          initCommand(inputDir: d);
           await initGit(d);
 
           // Set pubspec and changeLog version to the same value
@@ -113,6 +123,7 @@ void main() {
           await expectLater(
             addVersionTag.add(
               log: messages.add,
+              directory: d,
             ),
             throwsA(
               isA<Exception>().having(
@@ -125,7 +136,6 @@ void main() {
         });
 
         test('if a higher version exists in a previous commit', () async {
-          initCommand(inputDir: d);
           await initGit(d);
 
           // A older commit does set a higher version
@@ -148,6 +158,7 @@ void main() {
           await expectLater(
             addVersionTag.add(
               log: messages.add,
+              directory: d,
             ),
             throwsA(
               isA<Exception>().having(
@@ -199,12 +210,13 @@ void main() {
             return ProcessResult(1, 0, '', '');
           });
 
-          initCommand(processWrapper: processWrapper, inputDir: d);
+          initCommand(processWrapper: processWrapper);
 
           // When adding the version tag, we should get an exception
           await expectLater(
             addVersionTag.add(
               log: messages.add,
+              directory: d,
             ),
             throwsA(
               isA<Exception>().having(
@@ -222,7 +234,6 @@ void main() {
           test(
               'when pubspec, CHANGELOG.md and tag '
               'have already the same version', () async {
-            initCommand(inputDir: d);
             await initGit(d);
 
             // Set pubspec and changeLog version to the same value
@@ -236,6 +247,7 @@ void main() {
             // Call add(...) should tell us to fix different versions
             final result = await addVersionTag.add(
               log: messages.add,
+              directory: d,
             );
 
             // Should return true
@@ -248,7 +260,6 @@ void main() {
 
         group('and write the pubspec version to git tag', () {
           test('when the version is not set yet', () async {
-            initCommand(inputDir: d);
             await initGit(d);
 
             // CHANGELOG.md and pubspec.yaml have the same version
@@ -263,16 +274,18 @@ void main() {
             // Add the tag
             final result = await addVersionTag.add(
               log: messages.add,
+              directory: d,
             );
 
             // Should return true to indicate success
             expect(result, isTrue);
 
             // The git head should have tag "4.5.6"
-            final fromGit = FromGit(log: messages.add, inputDir: d);
+            final fromGit = FromGit(log: messages.add);
             expect(
               await fromGit.fromHead(
                 log: messages.add,
+                directory: d,
               ),
               Version(4, 5, 6),
             );
@@ -286,7 +299,7 @@ void main() {
     group('run()', () {
       group('should throw', () {
         test('if there are uncommited changes', () async {
-          initCommand(inputDir: null);
+          initCommand();
           await initGit(d);
           await setPubspec(d, version: '0.0.1');
           await expectLater(
@@ -314,16 +327,17 @@ void main() {
             gitHead: null,
           );
 
-          initCommand(inputDir: null);
+          initCommand();
 
           // Run add-version-tag
           await runner.run(['add-version-tag', '--input', d.path]);
 
           // The git head should have tag "4.5.6"
-          final fromGit = FromGit(log: messages.add, inputDir: d);
+          final fromGit = FromGit(log: messages.add);
           expect(
             await fromGit.fromHead(
               log: messages.add,
+              directory: d,
             ),
             Version(4, 5, 6),
           );
