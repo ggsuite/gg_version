@@ -11,9 +11,9 @@ import 'package:gg_version/gg_version.dart';
 
 // #############################################################################
 /// Provides "ggGit has-consistent-version <dir>" command
-class IsConsistent extends GgGitBase {
+class IsVersioned extends GgGitBase {
   /// Constructor
-  IsConsistent({
+  IsVersioned({
     required super.log,
     super.processWrapper,
     super.inputDir,
@@ -21,11 +21,10 @@ class IsConsistent extends GgGitBase {
 
   // ...........................................................................
   @override
-  final name = 'is-consistent';
+  final name = 'is-versioned';
   @override
-  final description = 'Checks if pubspec.yaml, README.md as well git head tag '
-      'have the same version. '
-      'Reports an error when this version is not consistent.';
+  final description = 'Checks if pubspec.yaml, README.md and git head tag '
+      'have same version. ';
 
   // ...........................................................................
   @override
@@ -40,7 +39,7 @@ class IsConsistent extends GgGitBase {
     );
 
     final isConsistent = await printer.logTask(
-      task: () => IsConsistent(
+      task: () => IsVersioned(
         log: log,
         processWrapper: processWrapper,
         inputDir: inputDir,

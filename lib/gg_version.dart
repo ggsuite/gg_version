@@ -9,7 +9,7 @@ library;
 export 'src/gg_version.dart';
 
 export 'src/commands/add_version_tag.dart';
-export 'src/commands/is_consistent.dart';
+export 'src/commands/is_versioned.dart';
 export 'src/commands/from_changelog.dart';
 export 'src/commands/from_git.dart';
 export 'src/commands/from_pubspec.dart';

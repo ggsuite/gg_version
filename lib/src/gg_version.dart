@@ -13,7 +13,7 @@ class GgVersion extends Command<dynamic> {
   /// Constructor
   GgVersion({required this.log}) {
     addSubcommand(AddVersionTag(log: log));
-    addSubcommand(IsConsistent(log: log));
+    addSubcommand(IsVersioned(log: log));
     addSubcommand(FromGit(log: log));
     addSubcommand(FromPubspec(log: log));
     addSubcommand(FromChangelog(log: log));

@@ -23,9 +23,7 @@ class ConsistentVersion extends GgGitBase {
   @override
   final name = 'consistent-version';
   @override
-  final description = 'Returns version of the current head revision '
-      'collected from pubspec.yaml, README.md as well git head tag. '
-      'Reports an error when this version is not consistent.';
+  final description = 'Returns version of pubspec.yaml, README.md and git tag.';
 
   // ...........................................................................
   @override

@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.0.7
+
+- Rename `is_consistent` -> `is_versioned`
+- Shorten descriptions
+
 ## 1.0.6
 
 - Better command line output

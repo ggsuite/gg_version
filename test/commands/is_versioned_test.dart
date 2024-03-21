@@ -15,12 +15,12 @@ import 'package:gg_git/gg_git_test_helpers.dart';
 void main() {
   final messages = <String>[];
   late Directory d;
-  late IsConsistent isConsistent;
+  late IsVersioned isConsistent;
 
   // ...........................................................................
   setUp(() {
     d = initTestDir();
-    isConsistent = IsConsistent(log: messages.add, inputDir: d);
+    isConsistent = IsVersioned(log: messages.add, inputDir: d);
     messages.clear();
   });
 
@@ -37,7 +37,7 @@ void main() {
           group('when pubspec.yaml, CHANGELOG.md as well git tag', () {
             test('are not the same', () async {
               final runner = CommandRunner<void>('test', 'test')
-                ..addCommand(IsConsistent(log: messages.add));
+                ..addCommand(IsVersioned(log: messages.add));
 
               await initGit(d);
               await setupVersions(
@@ -48,7 +48,7 @@ void main() {
               );
 
               await expectLater(
-                runner.run(['is-consistent', '--input', d.path]),
+                runner.run(['is-versioned', '--input', d.path]),
                 throwsA(
                   isA<Exception>().having(
                     (e) => e.toString(),
@@ -71,7 +71,7 @@ void main() {
               'when pubspec.yaml, CHANGELOG.md as well git tag '
               'have the same version', () async {
             final runner = CommandRunner<void>('test', 'test')
-              ..addCommand(IsConsistent(log: messages.add));
+              ..addCommand(IsVersioned(log: messages.add));
 
             await initGit(d);
             await setupVersions(
@@ -81,7 +81,7 @@ void main() {
               gitHead: '1.2.3',
             );
 
-            await runner.run(['is-consistent', '--input', d.path]);
+            await runner.run(['is-versioned', '--input', d.path]);
             expect(messages[0], contains('⌛️ Versions are consistent'));
             expect(messages[1], contains('✅ Versions are consistent'));
           });
@@ -90,7 +90,7 @@ void main() {
 
       test('should print errors in gray', () async {
         final runner = CommandRunner<void>('test', 'test')
-          ..addCommand(IsConsistent(log: messages.add));
+          ..addCommand(IsVersioned(log: messages.add));
 
         await initGit(d);
 
@@ -103,7 +103,7 @@ void main() {
 
         await initGit(d);
         await expectLater(
-          runner.run(['is-consistent', '--input', d.path]),
+          runner.run(['is-versioned', '--input', d.path]),
           throwsA(
             isA<Exception>().having(
               (e) => e.toString(),
