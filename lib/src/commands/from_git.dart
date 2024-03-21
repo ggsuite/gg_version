@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:gg_git/gg_git.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:mocktail/mocktail.dart' as mocktail;
 
 // #############################################################################
 /// Provides "ggGit current-version-tag <dir>" command
@@ -123,3 +124,7 @@ class FromGit extends GgGitBase<void> {
     );
   }
 }
+
+// .............................................................................
+/// Mock class for FromGit
+class MockFromGit extends mocktail.Mock implements FromGit {}

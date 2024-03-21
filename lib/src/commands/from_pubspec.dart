@@ -11,6 +11,7 @@ import 'package:gg_args/gg_args.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
+import 'package:mocktail/mocktail.dart' as mocktail;
 
 // #############################################################################
 /// Provides "ggGit current-version-tag <dir>" command
@@ -66,3 +67,7 @@ class FromPubspec extends DirCommand<void> {
     return pubspec.version!;
   }
 }
+
+// .............................................................................
+/// Mock class for FromPubspec
+class MockFromPubspec extends mocktail.Mock implements FromPubspec {}

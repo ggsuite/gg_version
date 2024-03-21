@@ -10,6 +10,7 @@ import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_git/gg_git.dart';
 import 'package:gg_version/src/commands/all_versions.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:mocktail/mocktail.dart' as mocktail;
 
 // #############################################################################
 /// Provides "ggGit has-consistent-version <dir>" command
@@ -73,3 +74,8 @@ class ConsistentVersion extends GgGitBase<void> {
     }
   }
 }
+
+// .............................................................................
+/// Mock class for ConsistentVersion
+class MockConsistentVersion extends mocktail.Mock
+    implements ConsistentVersion {}

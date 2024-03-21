@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.9
+
+- Add mocktail mocks
+
 ## 1.0.8
 
 - Rework directory handling

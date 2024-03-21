@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:gg_args/gg_args.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:mocktail/mocktail.dart' as mocktail;
 
 // #############################################################################
 /// Provides "ggGit current-version-tag <dir>" command
@@ -67,3 +68,7 @@ class FromChangelog extends DirCommand<void> {
     throw Exception('Could not find version in "CHANGELOG.md".');
   }
 }
+
+// .............................................................................
+/// Mock class for FromChangelog
+class MockFromChangelog extends mocktail.Mock implements FromChangelog {}
