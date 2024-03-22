@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.0.10
+
+- Add ignoreVersion param to ignore one of the versions when executing
+  is_versionsed or consistent_version
+
 ## 1.0.9
 
 - Add mocktail mocks

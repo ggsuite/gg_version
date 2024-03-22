@@ -23,11 +23,14 @@ class IsVersioned extends GgGitBase<void> {
           name: 'is-versioned',
           description: 'Checks if pubspec.yaml, README.md and git head tag '
               'have same version. ',
-        );
+        ) {
+    _addArgs();
+  }
 
   // ...........................................................................
   @override
-  Future<void> run({Directory? directory}) async {
+  Future<void> run({Directory? directory, VersionType? ignoreVersion}) async {
+    ignoreVersion ??= _ignoreVersionFromArgs;
     final inputDir = dir(directory);
 
     final messages = <String>[];
@@ -38,12 +41,10 @@ class IsVersioned extends GgGitBase<void> {
     );
 
     final isConsistent = await printer.logTask(
-      task: () => IsVersioned(
-        log: log,
-        processWrapper: processWrapper,
-      ).get(
+      task: () => get(
         log: messages.add,
         directory: inputDir,
+        ignoreVersion: ignoreVersion,
       ),
       success: (success) => success,
     );
@@ -58,6 +59,7 @@ class IsVersioned extends GgGitBase<void> {
   Future<bool> get({
     required Directory directory,
     required void Function(String) log,
+    VersionType? ignoreVersion,
   }) async {
     try {
       final version = await ConsistentVersion(
@@ -66,6 +68,7 @@ class IsVersioned extends GgGitBase<void> {
       ).get(
         directory: directory,
         log: log,
+        ignoreVersion: ignoreVersion,
       );
       log(version.toString());
       return true;
@@ -73,6 +76,25 @@ class IsVersioned extends GgGitBase<void> {
       log(e.toString());
       return false;
     }
+  }
+
+  // ...........................................................................
+  VersionType? get _ignoreVersionFromArgs {
+    final ignoreVersionFromArgsStr = argResults?['ignore-version'] as String?;
+    return ignoreVersionFromArgsStr == null
+        ? null
+        : VersionType.values.byName(ignoreVersionFromArgsStr);
+  }
+
+  // ...........................................................................
+  void _addArgs() {
+    argParser.addOption(
+      'ignore-version',
+      abbr: 'g',
+      help: 'Ignore the specified version.',
+      allowed: VersionType.values.map((e) => e.name),
+      mandatory: false,
+    );
   }
 }
 

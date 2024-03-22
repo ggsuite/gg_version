@@ -8,7 +8,7 @@ import 'dart:io';
 
 import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_git/gg_git.dart';
-import 'package:gg_version/src/commands/all_versions.dart';
+import 'package:gg_version/gg_version.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:mocktail/mocktail.dart' as mocktail;
 
@@ -27,7 +27,7 @@ class ConsistentVersion extends GgGitBase<void> {
 
   // ...........................................................................
   @override
-  Future<void> run({Directory? directory}) async {
+  Future<void> run({Directory? directory, VersionType? ignoreVersion}) async {
     final inputDir = dir(directory);
 
     final messages = <String>[];
@@ -36,6 +36,7 @@ class ConsistentVersion extends GgGitBase<void> {
       final version = await get(
         log: messages.add,
         directory: inputDir,
+        ignoreVersion: ignoreVersion,
       );
       log(version.toString());
     } catch (e) {
@@ -48,6 +49,7 @@ class ConsistentVersion extends GgGitBase<void> {
   Future<Version> get({
     void Function(String message)? log,
     required Directory directory,
+    VersionType? ignoreVersion,
   }) async {
     final result = await AllVersions(
       log: log ?? this.log,
@@ -61,9 +63,20 @@ class ConsistentVersion extends GgGitBase<void> {
       throw Exception('Current state has no git version tag.');
     }
 
-    if (result.pubspec == result.changeLog &&
-        result.gitHead == result.changeLog) {
-      return result.pubspec;
+    final ignorePubspec = ignoreVersion == VersionType.pubspec;
+    final ignoreChangeLog = ignoreVersion == VersionType.changeLog;
+    final ignoreGitHead = ignoreVersion == VersionType.gitHead;
+
+    var versions = [
+      if (!ignorePubspec) result.pubspec,
+      if (!ignoreChangeLog) result.changeLog,
+      if (!ignoreGitHead) result.gitHead,
+    ];
+
+    bool allVersionsAreTheSame = versions.toSet().length == 1;
+
+    if (allVersionsAreTheSame) {
+      return versions.first!;
     } else {
       var message = 'Versions are not consistent: ';
       message += '- pubspec: ${result.pubspec}, ';

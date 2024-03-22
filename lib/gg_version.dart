@@ -15,3 +15,4 @@ export 'src/commands/from_git.dart';
 export 'src/commands/from_pubspec.dart';
 export 'src/commands/all_versions.dart';
 export 'src/commands/consistent_version.dart';
+export 'src/tools/version_type.dart';

@@ -9,7 +9,6 @@ import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:gg_git/gg_git_test_helpers.dart';
 import 'package:gg_version/gg_version.dart';
-import 'package:gg_version/src/commands/consistent_version.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
@@ -34,7 +33,7 @@ void main() {
   });
 
   group('ConsistentVersion', () {
-    group('get(directory, processWrapper, log)', () {
+    group('get(directory, ignoreVersion)', () {
       group('should throw', () {
         test('if CHANGELOG version does not match the others', () async {
           await initGit(d);
@@ -122,16 +121,77 @@ void main() {
       });
 
       group('should return the consistent version', () {
-        test('if all versions are consistent', () async {
-          await initGit(d);
-          await setupVersions(
-            d,
-            pubspec: '1.2.3',
-            changeLog: '1.2.3',
-            gitHead: '1.2.3',
-          );
-          final result = await getVersion();
-          expect(result.toString(), '1.2.3');
+        group('if all versions are consistent', () {
+          test('with ignoreVersion == null', () async {
+            await initGit(d);
+            await setupVersions(
+              d,
+              pubspec: '1.2.3',
+              changeLog: '1.2.3',
+              gitHead: '1.2.3',
+            );
+            final result = await getVersion();
+            expect(result.toString(), '1.2.3');
+          });
+
+          group('with ignore version ==', () {
+            test('VersionType.pubspec', () async {
+              await initGit(d);
+
+              // Pubspec version is different
+              await setupVersions(
+                d,
+                pubspec: '2.0.0',
+                changeLog: '1.2.3',
+                gitHead: '1.2.3',
+              );
+
+              // Get consistent version ignoring pubspec
+              final result = await consistentVersion.get(
+                directory: d,
+                ignoreVersion: VersionType.pubspec,
+              );
+              expect(result.toString(), '1.2.3');
+            });
+
+            test('VersionType.changeLog', () async {
+              await initGit(d);
+
+              // Changelog version is different
+              await setupVersions(
+                d,
+                pubspec: '1.2.3',
+                changeLog: '2.0.0',
+                gitHead: '1.2.3',
+              );
+
+              // Get consistent version ignoring pubspec
+              final result = await consistentVersion.get(
+                directory: d,
+                ignoreVersion: VersionType.changeLog,
+              );
+              expect(result.toString(), '1.2.3');
+            });
+
+            test('VersionType.gitHead', () async {
+              await initGit(d);
+
+              // Pubspec version is different
+              await setupVersions(
+                d,
+                pubspec: '1.2.3',
+                changeLog: '1.2.3',
+                gitHead: '2.0.0',
+              );
+
+              // Get consistent version ignoring gitHead
+              final result = await consistentVersion.get(
+                directory: d,
+                ignoreVersion: VersionType.gitHead,
+              );
+              expect(result.toString(), '1.2.3');
+            });
+          });
         });
       });
     });
