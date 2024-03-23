@@ -20,7 +20,7 @@ void main() {
 
   setUp(() {
     d = initTestDir();
-    fromChangelog = FromChangelog(log: messages.add);
+    fromChangelog = FromChangelog(ggLog: messages.add);
     messages.clear();
   });
 
@@ -101,7 +101,7 @@ void main() {
         test('when found in CHANGELOG.md', () async {
           await setChangeLog(d, version: '1.0.0');
           final runner = CommandRunner<void>('test', 'test')
-            ..addCommand(FromChangelog(log: messages.add));
+            ..addCommand(FromChangelog(ggLog: messages.add));
 
           await runner.run(['from-changelog', '--input', d.path]);
           expect(messages.last, '1.0.0');

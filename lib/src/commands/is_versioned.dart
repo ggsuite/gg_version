@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_git/gg_git.dart';
+import 'package:gg_log/gg_log.dart';
 import 'package:gg_status_printer/gg_status_printer.dart';
 import 'package:gg_version/gg_version.dart';
 import 'package:mocktail/mocktail.dart' as mocktail;
@@ -17,7 +18,7 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 class IsVersioned extends GgGitBase<void> {
   /// Constructor
   IsVersioned({
-    required super.log,
+    required super.ggLog,
     super.processWrapper,
   }) : super(
           name: 'is-versioned',
@@ -29,21 +30,24 @@ class IsVersioned extends GgGitBase<void> {
 
   // ...........................................................................
   @override
-  Future<void> run({Directory? directory, VersionType? ignoreVersion}) async {
+  Future<void> exec({
+    required Directory directory,
+    required GgLog ggLog,
+    VersionType? ignoreVersion,
+  }) async {
     ignoreVersion ??= _ignoreVersionFromArgs;
-    final inputDir = dir(directory);
 
     final messages = <String>[];
 
     final printer = GgStatusPrinter<bool>(
       message: 'Versions are consistent.',
-      log: log,
+      ggLog: ggLog,
     );
 
     final isConsistent = await printer.logTask(
       task: () => get(
-        log: messages.add,
-        directory: inputDir,
+        ggLog: messages.add,
+        directory: directory,
         ignoreVersion: ignoreVersion,
       ),
       success: (success) => success,
@@ -58,22 +62,22 @@ class IsVersioned extends GgGitBase<void> {
   /// Returns true if pubspect.yaml, README.md as well git show the same version
   Future<bool> get({
     required Directory directory,
-    required void Function(String) log,
+    required GgLog ggLog,
     VersionType? ignoreVersion,
   }) async {
     try {
       final version = await ConsistentVersion(
-        log: log,
+        ggLog: ggLog,
         processWrapper: processWrapper,
       ).get(
         directory: directory,
-        log: log,
+        ggLog: ggLog,
         ignoreVersion: ignoreVersion,
       );
-      log(version.toString());
+      ggLog(version.toString());
       return true;
     } catch (e) {
-      log(e.toString());
+      ggLog(e.toString());
       return false;
     }
   }

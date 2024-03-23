@@ -18,12 +18,15 @@ void main() {
   late ConsistentVersion consistentVersion;
 
   // ...........................................................................
-  Future<Version> getVersion() => consistentVersion.get(directory: d);
+  Future<Version> getVersion() => consistentVersion.get(
+        directory: d,
+        ggLog: messages.add,
+      );
 
   // ...........................................................................
   setUp(() {
     d = initTestDir();
-    consistentVersion = ConsistentVersion(log: messages.add);
+    consistentVersion = ConsistentVersion(ggLog: messages.add);
     messages.clear();
   });
 
@@ -149,6 +152,7 @@ void main() {
               // Get consistent version ignoring pubspec
               final result = await consistentVersion.get(
                 directory: d,
+                ggLog: messages.add,
                 ignoreVersion: VersionType.pubspec,
               );
               expect(result.toString(), '1.2.3');
@@ -168,6 +172,7 @@ void main() {
               // Get consistent version ignoring pubspec
               final result = await consistentVersion.get(
                 directory: d,
+                ggLog: messages.add,
                 ignoreVersion: VersionType.changeLog,
               );
               expect(result.toString(), '1.2.3');
@@ -187,6 +192,7 @@ void main() {
               // Get consistent version ignoring gitHead
               final result = await consistentVersion.get(
                 directory: d,
+                ggLog: messages.add,
                 ignoreVersion: VersionType.gitHead,
               );
               expect(result.toString(), '1.2.3');
@@ -199,7 +205,7 @@ void main() {
     group('run()', () {
       test('should return the consistent version', () async {
         final runner = CommandRunner<void>('test', 'test')
-          ..addCommand(ConsistentVersion(log: messages.add));
+          ..addCommand(ConsistentVersion(ggLog: messages.add));
 
         await initGit(d);
         await setupVersions(
@@ -215,7 +221,7 @@ void main() {
 
       test('should print errors in gray', () async {
         final runner = CommandRunner<void>('test', 'test')
-          ..addCommand(ConsistentVersion(log: messages.add));
+          ..addCommand(ConsistentVersion(ggLog: messages.add));
 
         await initGit(d);
 

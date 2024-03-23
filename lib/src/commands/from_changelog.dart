@@ -7,6 +7,7 @@
 import 'dart:io';
 
 import 'package:gg_args/gg_args.dart';
+import 'package:gg_log/gg_log.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:mocktail/mocktail.dart' as mocktail;
@@ -16,7 +17,7 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 class FromChangelog extends DirCommand<void> {
   /// Constructor
   FromChangelog({
-    required super.log,
+    required super.ggLog,
   }) : super(
           name: 'from-changelog',
           description: 'Returns the version found in CHANGELOG.md',
@@ -24,12 +25,13 @@ class FromChangelog extends DirCommand<void> {
 
   // ...........................................................................
   @override
-  Future<void> run({Directory? directory}) async {
-    final inputDir = dir(directory);
+  Future<void> exec({
+    required Directory directory,
+    required GgLog ggLog,
+  }) async {
+    final result = await fromDirectory(directory: directory);
 
-    final result = await fromDirectory(directory: inputDir);
-
-    log(result.toString());
+    ggLog(result.toString());
   }
 
   // ...........................................................................

@@ -23,7 +23,7 @@ void main() {
   group('GgVersion()', () {
     // #########################################################################
     group('GgVersion', () {
-      final ggGit = GgVersion(log: (msg) => messages.add(msg));
+      final ggGit = GgVersion(ggLog: (msg) => messages.add(msg));
 
       final CommandRunner<void> runner = CommandRunner<void>(
         'ggVersion',
@@ -49,7 +49,7 @@ void main() {
             .toList();
 
         await capturePrint(
-          log: messages.add,
+          ggLog: messages.add,
           code: () async => await runner.run(['ggVersion', '--help']),
         );
 
@@ -61,7 +61,7 @@ void main() {
             isTrue,
             reason: '\nMissing subcommand "$ggSubCommand"\n'
                 'Please open  "lib/src/gg_git.dart" and add\n'
-                '"addSubcommand($ggSubCommand(log: log));',
+                '"addSubcommand($ggSubCommand(ggLog: ggLog));',
           );
         }
       });

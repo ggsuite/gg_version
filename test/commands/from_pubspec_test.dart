@@ -20,7 +20,7 @@ void main() {
 
   setUp(() {
     d = initTestDir();
-    fromPubspec = FromPubspec(log: messages.add);
+    fromPubspec = FromPubspec(ggLog: messages.add);
     messages.clear();
   });
 
@@ -105,7 +105,7 @@ void main() {
         test('when found in pubspec.yaml', () async {
           await setPubspec(d, version: '4.5.7');
           final runner = CommandRunner<void>('test', 'test')
-            ..addCommand(FromPubspec(log: messages.add));
+            ..addCommand(FromPubspec(ggLog: messages.add));
 
           await runner.run(['from-pubspec', '--input', d.path]);
           expect(messages.last, '4.5.7');

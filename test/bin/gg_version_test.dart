@@ -57,7 +57,7 @@ void main() {
       test('should print "value"', () async {
         // Execute bin/gg_version.dart and check if it prints "value"
         final messages = <String>[];
-        await run(args: ['--param', '5'], log: messages.add);
+        await run(args: ['--param', '5'], ggLog: messages.add);
 
         final expectedMessages = [
           'from-git',

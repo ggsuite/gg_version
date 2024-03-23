@@ -6,23 +6,24 @@
 
 // #############################################################################
 import 'package:args/command_runner.dart';
+import 'package:gg_log/gg_log.dart';
 import 'package:gg_version/gg_version.dart';
 
 /// The command line interface for GgVersion
 class GgVersion extends Command<dynamic> {
   /// Constructor
-  GgVersion({required this.log}) {
-    addSubcommand(AddVersionTag(log: log));
-    addSubcommand(IsVersioned(log: log));
-    addSubcommand(FromGit(log: log));
-    addSubcommand(FromPubspec(log: log));
-    addSubcommand(FromChangelog(log: log));
-    addSubcommand(AllVersions(log: log));
-    addSubcommand(ConsistentVersion(log: log));
+  GgVersion({required this.ggLog}) {
+    addSubcommand(AddVersionTag(ggLog: ggLog));
+    addSubcommand(IsVersioned(ggLog: ggLog));
+    addSubcommand(FromGit(ggLog: ggLog));
+    addSubcommand(FromPubspec(ggLog: ggLog));
+    addSubcommand(FromChangelog(ggLog: ggLog));
+    addSubcommand(AllVersions(ggLog: ggLog));
+    addSubcommand(ConsistentVersion(ggLog: ggLog));
   }
 
   /// The log function
-  final void Function(String message) log;
+  final GgLog ggLog;
 
   // ...........................................................................
   @override

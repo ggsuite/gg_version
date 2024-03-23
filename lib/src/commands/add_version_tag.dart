@@ -7,6 +7,7 @@
 import 'dart:io';
 
 import 'package:gg_git/gg_git.dart';
+import 'package:gg_log/gg_log.dart';
 import 'package:gg_version/gg_version.dart';
 import 'package:mocktail/mocktail.dart' as mocktail;
 
@@ -15,7 +16,7 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 class AddVersionTag extends GgGitBase<void> {
   /// Constructor
   AddVersionTag({
-    required super.log,
+    required super.ggLog,
     super.processWrapper,
   }) : super(
           name: 'add-version-tag',
@@ -24,45 +25,44 @@ class AddVersionTag extends GgGitBase<void> {
 
   // ...........................................................................
   @override
-  Future<void> run({Directory? directory}) async {
-    final inputDir = dir(directory);
-
+  Future<void> exec({
+    required Directory directory,
+    required GgLog ggLog,
+  }) async {
     String? lastLog;
 
     await add(
-      directory: inputDir,
-      log: (msg) {
+      directory: directory,
+      ggLog: (msg) {
         lastLog = msg;
-        log(msg);
+        ggLog(msg);
       },
     );
 
-    log(lastLog ?? 'Version tag added.');
+    ggLog(lastLog ?? 'Version tag added.');
   }
 
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
   Future<bool> add({
-    void Function(String)? log,
+    required GgLog ggLog,
     required Directory directory,
   }) async {
-    log ??= this.log; //coverage:ignore-line
-
     // Throw if not everything is commited
     final isCommited = await IsCommitted(
-      log: log,
+      ggLog: ggLog,
       processWrapper: processWrapper,
-    ).get(directory: directory, log: log);
+    ).get(directory: directory, ggLog: ggLog);
 
     if (!isCommited) {
       throw StateError('Not everything is commited.');
     }
 
     final versions = await AllVersions(
-      log: log,
+      ggLog: ggLog,
       processWrapper: processWrapper,
     ).get(
-      log: log,
+      ggLog: ggLog,
       directory: directory,
     );
 
@@ -73,7 +73,7 @@ class AddVersionTag extends GgGitBase<void> {
     final latestVersion = versions.gitLatest;
 
     if (pubspecVersion == changeLogVersion && pubspecVersion == tagVersion) {
-      log('Version already set.');
+      ggLog('Version already set.');
       return true;
     }
 
@@ -106,7 +106,7 @@ class AddVersionTag extends GgGitBase<void> {
     );
 
     if (result.exitCode == 0) {
-      log('Tag $version added.');
+      ggLog('Tag $version added.');
       return true;
     } else {
       throw Exception('Could not add tag $version: ${result.stderr}');

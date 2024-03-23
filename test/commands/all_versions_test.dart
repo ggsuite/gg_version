@@ -21,7 +21,7 @@ void main() {
   setUp(() {
     d = initTestDir();
     messages.clear();
-    allVersions = AllVersions(log: messages.add);
+    allVersions = AllVersions(ggLog: messages.add);
   });
 
   // ...........................................................................
@@ -37,7 +37,7 @@ void main() {
           // Run command
           await expectLater(
             allVersions.get(
-              log: messages.add,
+              ggLog: messages.add,
               directory: d,
             ),
             throwsA(
@@ -76,7 +76,7 @@ void main() {
               );
 
               final result = await allVersions.get(
-                log: (m) => messages.add(m),
+                ggLog: (m) => messages.add(m),
                 directory: d,
               );
 
@@ -97,7 +97,7 @@ void main() {
               );
 
               final result = await allVersions.get(
-                log: (m) => messages.add(m),
+                ggLog: (m) => messages.add(m),
                 directory: d,
               );
 
@@ -122,7 +122,7 @@ void main() {
 
               // Get versions
               final result = await allVersions.get(
-                log: (m) => messages.add(m),
+                ggLog: (m) => messages.add(m),
                 directory: d,
               );
 
@@ -161,7 +161,7 @@ void main() {
 
           test('when not everything is commited', () async {
             final runner = CommandRunner<void>('test', 'test')
-              ..addCommand(AllVersions(log: messages.add));
+              ..addCommand(AllVersions(ggLog: messages.add));
 
             await initGit(d);
             await setupVersions(
@@ -186,7 +186,7 @@ void main() {
       group('should throw', () {
         test('if something wents wrong', () async {
           final runner = CommandRunner<void>('test', 'test')
-            ..addCommand(AllVersions(log: messages.add));
+            ..addCommand(AllVersions(ggLog: messages.add));
 
           await initGit(d);
           initUncommittedFile(d);

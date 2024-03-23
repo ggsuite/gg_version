@@ -28,7 +28,7 @@ void main() {
     GgProcessWrapper? processWrapper,
   }) {
     addVersionTag = AddVersionTag(
-      log: messages.add,
+      ggLog: messages.add,
       processWrapper: processWrapper ?? const GgProcessWrapper(),
     );
     runner.addCommand(addVersionTag);
@@ -63,7 +63,7 @@ void main() {
 
           await expectLater(
             addVersionTag.add(
-              log: messages.add,
+              ggLog: messages.add,
               directory: d,
             ),
             throwsA(
@@ -92,7 +92,7 @@ void main() {
             // Call add(...) should tell us to fix different versions
             await expectLater(
               addVersionTag.add(
-                log: messages.add,
+                ggLog: messages.add,
                 directory: d,
               ),
               throwsA(
@@ -122,7 +122,7 @@ void main() {
           // Call add(...) should tell us to fix different versions
           await expectLater(
             addVersionTag.add(
-              log: messages.add,
+              ggLog: messages.add,
               directory: d,
             ),
             throwsA(
@@ -157,7 +157,7 @@ void main() {
           // When adding the version tag, we should get an exception
           await expectLater(
             addVersionTag.add(
-              log: messages.add,
+              ggLog: messages.add,
               directory: d,
             ),
             throwsA(
@@ -215,7 +215,7 @@ void main() {
           // When adding the version tag, we should get an exception
           await expectLater(
             addVersionTag.add(
-              log: messages.add,
+              ggLog: messages.add,
               directory: d,
             ),
             throwsA(
@@ -246,7 +246,7 @@ void main() {
 
             // Call add(...) should tell us to fix different versions
             final result = await addVersionTag.add(
-              log: messages.add,
+              ggLog: messages.add,
               directory: d,
             );
 
@@ -273,7 +273,7 @@ void main() {
 
             // Add the tag
             final result = await addVersionTag.add(
-              log: messages.add,
+              ggLog: messages.add,
               directory: d,
             );
 
@@ -281,10 +281,10 @@ void main() {
             expect(result, isTrue);
 
             // The git head should have tag "4.5.6"
-            final fromGit = FromGit(log: messages.add);
+            final fromGit = FromGit(ggLog: messages.add);
             expect(
               await fromGit.fromHead(
-                log: messages.add,
+                ggLog: messages.add,
                 directory: d,
               ),
               Version(4, 5, 6),
@@ -333,10 +333,10 @@ void main() {
           await runner.run(['add-version-tag', '--input', d.path]);
 
           // The git head should have tag "4.5.6"
-          final fromGit = FromGit(log: messages.add);
+          final fromGit = FromGit(ggLog: messages.add);
           expect(
             await fromGit.fromHead(
-              log: messages.add,
+              ggLog: messages.add,
               directory: d,
             ),
             Version(4, 5, 6),

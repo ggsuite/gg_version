@@ -21,7 +21,7 @@ void main() {
   // ...........................................................................
   setUp(() {
     d = initTestDir();
-    fromGit = FromGit(log: messages.add);
+    fromGit = FromGit(ggLog: messages.add);
     messages.clear();
   });
 
@@ -31,7 +31,7 @@ void main() {
       group('should throw', () {
         test('if directory is not a git repo', () async {
           await expectLater(
-            fromGit.fromHead(directory: d),
+            fromGit.fromHead(directory: d, ggLog: messages.add),
             throwsA(
               isA<ArgumentError>().having(
                 (e) => e.message,
@@ -45,10 +45,13 @@ void main() {
         test('if there are multiple version tags for the latest revision',
             () async {
           await initGit(d);
-          addAndCommitSampleFile(d);
+          await addAndCommitSampleFile(d);
           await addTags(d, ['0.1.0', '0.2.0']);
           await expectLater(
-            fromGit.fromHead(directory: d),
+            fromGit.fromHead(
+              directory: d,
+              ggLog: messages.add,
+            ),
             throwsA(
               isA<StateError>().having(
                 (e) => e.message,
@@ -66,19 +69,28 @@ void main() {
         group('null,', () {
           test('when no version tag is added', () async {
             await initGit(d);
-            addAndCommitSampleFile(d);
+            await addAndCommitSampleFile(d);
             await addTags(d, ['X', 'ABC']); // No version tags
-            expect(fromGit.fromHead(directory: d), completion(isNull));
+            expect(
+              fromGit.fromHead(
+                directory: d,
+                ggLog: messages.add,
+              ),
+              completion(isNull),
+            );
           });
         });
 
         group('the version tag', () {
           test('when a version tag is added', () async {
             await initGit(d);
-            addAndCommitSampleFile(d);
+            await addAndCommitSampleFile(d);
             await addTags(d, ['0.1.0']);
             expect(
-              fromGit.fromHead(directory: d),
+              fromGit.fromHead(
+                directory: d,
+                ggLog: messages.add,
+              ),
               completion(
                 equals(Version(0, 1, 0)),
               ),
@@ -93,11 +105,11 @@ void main() {
         group('nothing', () {
           test('when no version tag is added', () async {
             await initGit(d);
-            addAndCommitSampleFile(d);
+            await addAndCommitSampleFile(d);
             await addTags(d, ['X', 'ABC']); // No version tags
             expect(
               fromGit.latest(
-                log: messages.add,
+                ggLog: messages.add,
                 directory: d,
               ),
               completion(isNull),
@@ -108,14 +120,14 @@ void main() {
             group('from head revision', () {
               test('when available', () async {
                 await initGit(d);
-                addAndCommitSampleFile(d);
+                await addAndCommitSampleFile(d);
                 await addTags(d, ['0.1.0']); // Old revision
 
                 await updateAndCommitSampleFile(d);
                 await addTags(d, ['0.2.0']); // Head revision
                 expect(
                   fromGit.latest(
-                    log: messages.add,
+                    ggLog: messages.add,
                     directory: d,
                   ),
                   completion(equals(Version(0, 2, 0))),
@@ -126,13 +138,13 @@ void main() {
             group('with the highest version number', () {
               test('if the latest version is lower previous one', () async {
                 await initGit(d);
-                addAndCommitSampleFile(d);
+                await addAndCommitSampleFile(d);
                 await addTags(d, ['2.0.0']); // Old revision
                 await updateAndCommitSampleFile(d);
                 await addTags(d, ['1.0.0']); // Head revision, no version tag
                 expect(
                   fromGit.latest(
-                    log: messages.add,
+                    ggLog: messages.add,
                     directory: d,
                   ),
                   completion(equals(Version(2, 0, 0))),
@@ -141,13 +153,13 @@ void main() {
 
               test('if the latest version is higher previous one', () async {
                 await initGit(d);
-                addAndCommitSampleFile(d);
+                await addAndCommitSampleFile(d);
                 await addTags(d, ['1.0.0']); // Old version is higher then head
                 await updateAndCommitSampleFile(d);
                 await addTags(d, ['2.0.0']); // New version is lower then head
                 expect(
                   fromGit.latest(
-                    log: messages.add,
+                    ggLog: messages.add,
                     directory: d,
                   ),
                   completion(equals(Version(2, 0, 0))), // New version
@@ -164,11 +176,11 @@ void main() {
         group('the head version tag', () {
           test('when called with "--head-only', () async {
             await initGit(d);
-            addAndCommitSampleFile(d);
+            await addAndCommitSampleFile(d);
             await addTags(d, ['0.1.0']);
 
             final runner = CommandRunner<void>('test', 'test');
-            runner.addCommand(FromGit(log: messages.add));
+            runner.addCommand(FromGit(ggLog: messages.add));
             await runner.run(
               ['from-git', '--input', d.path, '--head-only'],
             );
@@ -179,12 +191,12 @@ void main() {
         group('a previous version tag', () {
           test('when called without "--head-only', () async {
             await initGit(d);
-            addAndCommitSampleFile(d);
+            await addAndCommitSampleFile(d);
             await addTags(d, ['0.2.0']);
             await updateAndCommitSampleFile(d);
 
             final runner = CommandRunner<void>('test', 'test');
-            runner.addCommand(FromGit(log: messages.add));
+            runner.addCommand(FromGit(ggLog: messages.add));
 
             // No version tag in head. With '--head-only' nothing is returned
             await runner.run(
@@ -201,11 +213,11 @@ void main() {
         group('»No version tag found«', () {
           test('when no version tag is available', () async {
             await initGit(d);
-            addAndCommitSampleFile(d);
+            await addAndCommitSampleFile(d);
             await addTags(d, ['X', 'ABC']); // No version tags
 
             final runner = CommandRunner<void>('test', 'test');
-            runner.addCommand(FromGit(log: messages.add));
+            runner.addCommand(FromGit(ggLog: messages.add));
             await runner.run(
               ['from-git', '--input', d.path, '--head-only'],
             );

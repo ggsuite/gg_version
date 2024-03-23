@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_git/gg_git.dart';
+import 'package:gg_log/gg_log.dart';
 import 'package:gg_version/gg_version.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:mocktail/mocktail.dart' as mocktail;
@@ -17,7 +18,7 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 class ConsistentVersion extends GgGitBase<void> {
   /// Constructor
   ConsistentVersion({
-    required super.log,
+    required super.ggLog,
     super.processWrapper,
   }) : super(
           name: 'consistent-version',
@@ -27,18 +28,20 @@ class ConsistentVersion extends GgGitBase<void> {
 
   // ...........................................................................
   @override
-  Future<void> run({Directory? directory, VersionType? ignoreVersion}) async {
-    final inputDir = dir(directory);
-
+  Future<void> exec({
+    required Directory directory,
+    required GgLog ggLog,
+    VersionType? ignoreVersion,
+  }) async {
     final messages = <String>[];
 
     try {
       final version = await get(
-        log: messages.add,
-        directory: inputDir,
+        ggLog: messages.add,
+        directory: directory,
         ignoreVersion: ignoreVersion,
       );
-      log(version.toString());
+      ggLog(version.toString());
     } catch (e) {
       throw Exception('$red$e$reset');
     }
@@ -47,15 +50,15 @@ class ConsistentVersion extends GgGitBase<void> {
   // ...........................................................................
   /// Returns the consistent version or null if not consistent.
   Future<Version> get({
-    void Function(String message)? log,
+    required GgLog ggLog,
     required Directory directory,
     VersionType? ignoreVersion,
   }) async {
     final result = await AllVersions(
-      log: log ?? this.log,
+      ggLog: ggLog,
       processWrapper: processWrapper,
     ).get(
-      log: log,
+      ggLog: ggLog,
       directory: directory,
     );
 

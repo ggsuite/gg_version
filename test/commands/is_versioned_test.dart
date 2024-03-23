@@ -21,10 +21,10 @@ void main() {
   // ...........................................................................
   setUp(() {
     d = initTestDir();
-    isVersioned = IsVersioned(log: messages.add);
+    isVersioned = IsVersioned(ggLog: messages.add);
     messages.clear();
     runner = CommandRunner<void>('test', 'test')
-      ..addCommand(IsVersioned(log: messages.add));
+      ..addCommand(IsVersioned(ggLog: messages.add));
   });
 
   // ...........................................................................
@@ -93,7 +93,7 @@ void main() {
                 gitHead: '1.2.3',
               );
 
-              await isVersioned.run(directory: d);
+              await isVersioned.exec(directory: d, ggLog: messages.add);
               expect(messages[0], contains('⌛️ Versions are consistent'));
               expect(messages[1], contains('✅ Versions are consistent'));
             });
@@ -131,8 +131,9 @@ void main() {
                   gitHead: '1.2.3',
                 );
 
-                await isVersioned.run(
+                await isVersioned.exec(
                   directory: d,
+                  ggLog: messages.add,
                   ignoreVersion: VersionType.pubspec,
                 );
 
@@ -188,7 +189,7 @@ void main() {
 
       test('should print errors in gray', () async {
         final runner = CommandRunner<void>('test', 'test')
-          ..addCommand(IsVersioned(log: messages.add));
+          ..addCommand(IsVersioned(ggLog: messages.add));
 
         await initGit(d);
 
@@ -227,7 +228,7 @@ void main() {
             );
 
             final result = await isVersioned.get(
-              log: messages.add,
+              ggLog: messages.add,
               directory: d,
             );
 
@@ -249,7 +250,7 @@ void main() {
 
               // But pubspec is ignored
               final result = await isVersioned.get(
-                log: messages.add,
+                ggLog: messages.add,
                 directory: d,
                 ignoreVersion: VersionType.pubspec,
               );
@@ -272,7 +273,7 @@ void main() {
 
               // But changeLog is ignored
               final result = await isVersioned.get(
-                log: messages.add,
+                ggLog: messages.add,
                 directory: d,
                 ignoreVersion: VersionType.changeLog,
               );
@@ -295,7 +296,7 @@ void main() {
 
               // But gitHead is ignored
               final result = await isVersioned.get(
-                log: messages.add,
+                ggLog: messages.add,
                 directory: d,
                 ignoreVersion: VersionType.gitHead,
               );
@@ -320,7 +321,7 @@ void main() {
           );
 
           final result = await isVersioned.get(
-            log: messages.add,
+            ggLog: messages.add,
             directory: d,
           );
 

@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_git/gg_git.dart';
+import 'package:gg_log/gg_log.dart';
 import 'package:gg_version/gg_version.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:mocktail/mocktail.dart' as mocktail;
@@ -17,7 +18,7 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 class AllVersions extends GgGitBase<void> {
   /// Constructor
   AllVersions({
-    required super.log,
+    required super.ggLog,
     super.processWrapper,
   }) : super(
           name: 'all-versions',
@@ -27,21 +28,22 @@ class AllVersions extends GgGitBase<void> {
 
   // ...........................................................................
   @override
-  Future<void> run({Directory? directory}) async {
-    final inputDir = dir(directory);
-
+  Future<void> exec({
+    required Directory directory,
+    required GgLog ggLog,
+  }) async {
     final messages = <String>[];
 
     try {
       final v = await get(
-        log: messages.add,
-        directory: inputDir,
+        ggLog: messages.add,
+        directory: directory,
       );
 
-      log('pubspec: ${v.pubspec}');
-      log('changelog: ${v.changeLog}');
-      log('git head: ${v.gitHead ?? '-'}');
-      log('git latest: ${v.gitLatest ?? '-'}');
+      ggLog('pubspec: ${v.pubspec}');
+      ggLog('changelog: ${v.changeLog}');
+      ggLog('git head: ${v.gitHead ?? '-'}');
+      ggLog('git latest: ${v.gitLatest ?? '-'}');
     } catch (e) {
       throw Exception('$red$e$reset');
     }
@@ -56,34 +58,33 @@ class AllVersions extends GgGitBase<void> {
         Version? gitHead,
         Version? gitLatest,
       })> get({
-    void Function(String message)? log,
+    required GgLog ggLog,
     required Directory directory,
   }) async {
-    log ??= this.log; //coverage:ignore-line
     final isCommitted = await IsCommitted(
-      log: log,
+      ggLog: ggLog,
       processWrapper: processWrapper,
     ).get(
-      log: log,
+      ggLog: ggLog,
       directory: directory,
     );
 
     final pubspecVersion = await FromPubspec(
-      log: log,
+      ggLog: ggLog,
     ).fromDirectory(
       directory: directory,
     );
     final changelogVersion = await FromChangelog(
-      log: log,
+      ggLog: ggLog,
     ).fromDirectory(
       directory: directory,
     );
 
     final gitHeadVersion = isCommitted
         ? await FromGit(
-            log: log,
+            ggLog: ggLog,
           ).fromHead(
-            log: log,
+            ggLog: ggLog,
             directory: directory,
           )
         : null;
@@ -91,9 +92,10 @@ class AllVersions extends GgGitBase<void> {
     final gitLatestVersion = gitHeadVersion ??
         await FromGit(
           processWrapper: processWrapper,
-          log: log,
+          ggLog: ggLog,
         ).latest(
           directory: directory,
+          ggLog: ggLog,
         );
 
     return (

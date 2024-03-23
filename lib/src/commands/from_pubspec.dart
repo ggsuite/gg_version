@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:checked_yaml/checked_yaml.dart';
 import 'package:gg_args/gg_args.dart';
+import 'package:gg_log/gg_log.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
@@ -18,7 +19,7 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 class FromPubspec extends DirCommand<void> {
   /// Constructor
   FromPubspec({
-    required super.log,
+    required super.ggLog,
   }) : super(
           name: 'from-pubspec',
           description: 'Returns the version found in pubspec.yaml',
@@ -26,11 +27,12 @@ class FromPubspec extends DirCommand<void> {
 
   // ...........................................................................
   @override
-  Future<void> run({Directory? directory}) async {
-    final inputDir = dir(directory);
-
-    final result = await fromDirectory(directory: inputDir);
-    log(result.toString());
+  Future<void> exec({
+    required Directory directory,
+    required GgLog ggLog,
+  }) async {
+    final result = await fromDirectory(directory: directory);
+    ggLog(result.toString());
   }
 
   // ...........................................................................

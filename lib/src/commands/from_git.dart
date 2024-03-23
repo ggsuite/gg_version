@@ -7,6 +7,7 @@
 import 'dart:io';
 
 import 'package:gg_git/gg_git.dart';
+import 'package:gg_log/gg_log.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:mocktail/mocktail.dart' as mocktail;
 
@@ -15,7 +16,7 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 class FromGit extends GgGitBase<void> {
   /// Constructor
   FromGit({
-    required super.log,
+    required super.ggLog,
     super.processWrapper,
   }) : super(
           name: 'from-git',
@@ -27,43 +28,42 @@ class FromGit extends GgGitBase<void> {
 
   // ...........................................................................
   @override
-  Future<void> run({Directory? directory}) async {
-    final inputDir = dir(directory);
-
+  Future<void> exec({
+    required Directory directory,
+    required GgLog ggLog,
+  }) async {
     final headOnly = argResults!['head-only'] as bool;
 
     if (headOnly) {
       final result = await fromHead(
-        log: super.log,
-        directory: inputDir,
+        ggLog: super.ggLog,
+        directory: directory,
       );
 
-      log(result?.toString() ?? 'No version tag found in head.');
+      ggLog(result?.toString() ?? 'No version tag found in head.');
     } else {
       final result = await latest(
-        log: super.log,
-        directory: inputDir,
+        ggLog: super.ggLog,
+        directory: directory,
       );
 
-      log(result?.toString() ?? 'No version tag found.');
+      ggLog(result?.toString() ?? 'No version tag found.');
     }
   }
 
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
   Future<Version?> fromHead({
-    void Function(String message)? log,
+    required GgLog ggLog,
     required Directory directory,
   }) async {
-    log ??= this.log; //coverage:ignore-line
-
     await check(directory: directory);
 
     final headTags = await GetTags(
-      log: log,
+      ggLog: ggLog,
       processWrapper: processWrapper,
     ).fromHead(
-      log: log,
+      ggLog: ggLog,
       directory: directory,
     );
 
@@ -81,18 +81,16 @@ class FromGit extends GgGitBase<void> {
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
   Future<Version?> latest({
-    void Function(String message)? log,
+    required GgLog ggLog,
     required Directory directory,
   }) async {
-    log ??= this.log; //coverage:ignore-line
-
     await check(directory: directory);
 
     final tags = await GetTags(
-      log: log,
+      ggLog: ggLog,
       processWrapper: processWrapper,
     ).all(
-      log: log,
+      ggLog: ggLog,
       directory: directory,
     );
 

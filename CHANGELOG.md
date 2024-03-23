@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.11
+
+- Add GgLog
+
 ## 1.0.10
 
 - Add ignoreVersion param to ignore one of the versions when executing
