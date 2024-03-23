@@ -54,7 +54,7 @@ class IsVersioned extends GgGitBase<void> {
     );
 
     if (!isConsistent) {
-      throw Exception('$brightBlack${messages.join('\n')}$reset');
+      throw Exception(brightBlack(messages.join('\n')));
     }
   }
 

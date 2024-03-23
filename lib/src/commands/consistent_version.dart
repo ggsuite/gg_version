@@ -43,7 +43,7 @@ class ConsistentVersion extends GgGitBase<void> {
       );
       ggLog(version.toString());
     } catch (e) {
-      throw Exception('$red$e$reset');
+      throw Exception(red(e));
     }
   }
 

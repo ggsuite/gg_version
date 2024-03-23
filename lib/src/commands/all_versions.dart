@@ -45,7 +45,7 @@ class AllVersions extends GgGitBase<void> {
       ggLog('git head: ${v.gitHead ?? '-'}');
       ggLog('git latest: ${v.gitLatest ?? '-'}');
     } catch (e) {
-      throw Exception('$red$e$reset');
+      throw Exception(red(e.toString()));
     }
   }
 
