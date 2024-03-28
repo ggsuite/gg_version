@@ -20,6 +20,7 @@ class GgVersion extends Command<dynamic> {
     addSubcommand(FromChangelog(ggLog: ggLog));
     addSubcommand(AllVersions(ggLog: ggLog));
     addSubcommand(ConsistentVersion(ggLog: ggLog));
+    addSubcommand(IncreaseBuild(ggLog: ggLog));
   }
 
   /// The log function

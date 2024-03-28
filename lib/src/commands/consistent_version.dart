@@ -70,13 +70,13 @@ class ConsistentVersion extends GgGitBase<void> {
     final ignoreChangeLog = ignoreVersion == VersionType.changeLog;
     final ignoreGitHead = ignoreVersion == VersionType.gitHead;
 
-    var versions = [
+    final versions = [
       if (!ignorePubspec) result.pubspec,
       if (!ignoreChangeLog) result.changeLog,
       if (!ignoreGitHead) result.gitHead,
     ];
 
-    bool allVersionsAreTheSame = versions.toSet().length == 1;
+    final allVersionsAreTheSame = versions.toSet().length == 1;
 
     if (allVersionsAreTheSame) {
       return versions.first!;

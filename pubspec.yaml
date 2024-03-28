@@ -1,6 +1,6 @@
 name: gg_version
 description: A dart package offering methods for consistent versioning of dart packages..
-version: 1.0.12
+version: 1.1.0
 repository: https://github.com/inlavigo/gg_version.git
 
 environment:
@@ -20,6 +20,8 @@ dependencies:
   path: ^1.8.0
   pub_semver: ^2.1.4
   pubspec_parse: ^1.2.3
+  yaml: ^3.1.2
+  yaml_edit: ^2.2.0
 
 dev_dependencies:
   gg_capture_print: ^1.0.3

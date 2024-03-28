@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.1.0
+
+- Add `IncreaseBuild` command
+
 ## 1.0.12
 
 - Updage GgConsoleColors
