@@ -18,10 +18,12 @@ class GgProcessWrapperMock extends Mock implements GgProcessWrapper {}
 
 // .............................................................................
 void main() {
+  late Directory tmp;
+  late Directory d;
+
   final messages = <String>[];
   late CommandRunner<void> runner;
   late AddVersionTag addVersionTag;
-  late Directory d;
 
   // ...........................................................................
   void initCommand({
@@ -35,29 +37,24 @@ void main() {
   }
 
   // ...........................................................................
-  setUp(() {
+  setUp(() async {
     runner = CommandRunner<void>('test', 'test');
-    d = initTestDir();
+    tmp = await Directory.systemTemp.createTemp();
+    d = Directory('${tmp.path}/test');
+    await d.create();
     messages.clear();
-    initCommand();
   });
 
   // ...........................................................................
   tearDown(() {
-    d.deleteSync(recursive: true);
-  });
-
-  // ...........................................................................
-  setUp(() {
-    runner = CommandRunner<void>('test', 'test');
-    d = initTestDir();
-    messages.clear();
+    tmp.deleteSync(recursive: true);
   });
 
   group('GgAddVersionTag', () {
     group('add(...)', () {
       group('should throw', () {
         test('if there are uncommited changes', () async {
+          initCommand();
           await initGit(d);
           await setPubspec(d, version: '0.0.1');
 
@@ -79,6 +76,7 @@ void main() {
         test(
           'when version in pubspec does not equal version in changeLog',
           () async {
+            initCommand();
             await initGit(d);
 
             // Set pubspec and changeLog version to different values
@@ -108,6 +106,7 @@ void main() {
         );
 
         test('if Head already has a version tag', () async {
+          initCommand();
           await initGit(d);
 
           // Set pubspec and changeLog version to the same value
@@ -136,6 +135,7 @@ void main() {
         });
 
         test('if a higher version exists in a previous commit', () async {
+          initCommand();
           await initGit(d);
 
           // A older commit does set a higher version
@@ -260,6 +260,7 @@ void main() {
 
         group('and write the pubspec version to git tag', () {
           test('when the version is not set yet', () async {
+            initCommand();
             await initGit(d);
 
             // CHANGELOG.md and pubspec.yaml have the same version

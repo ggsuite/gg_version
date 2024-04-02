@@ -13,20 +13,23 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final messages = <String>[];
+  late Directory tmp;
   late Directory d;
+  final messages = <String>[];
   late AllVersions allVersions;
 
   // ...........................................................................
-  setUp(() {
-    d = initTestDir();
+  setUp(() async {
+    tmp = await Directory.systemTemp.createTemp();
+    d = Directory('${tmp.path}/test');
+    await d.create();
     messages.clear();
     allVersions = AllVersions(ggLog: messages.add);
   });
 
   // ...........................................................................
   tearDown(() {
-    d.deleteSync(recursive: true);
+    tmp.deleteSync(recursive: true);
   });
 
   group('AllVersions', () {
@@ -189,7 +192,7 @@ void main() {
             ..addCommand(AllVersions(ggLog: messages.add));
 
           await initGit(d);
-          initUncommittedFile(d);
+          await initUncommittedFile(d);
           await expectLater(
             runner.run(['all-versions', '--input', d.path]),
             throwsA(

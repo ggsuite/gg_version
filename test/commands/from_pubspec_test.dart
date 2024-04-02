@@ -14,14 +14,21 @@ import 'package:test/test.dart';
 import 'package:gg_git/gg_git_test_helpers.dart';
 
 void main() {
+  late Directory tmp;
   late Directory d;
   final messages = <String>[];
   late FromPubspec fromPubspec;
 
-  setUp(() {
-    d = initTestDir();
+  setUp(() async {
+    tmp = await Directory.systemTemp.createTemp();
+    d = Directory('${tmp.path}/test');
+    await d.create();
     fromPubspec = FromPubspec(ggLog: messages.add);
     messages.clear();
+  });
+
+  tearDown(() async {
+    await tmp.delete(recursive: true);
   });
 
   group('PubSpecVersion', () {

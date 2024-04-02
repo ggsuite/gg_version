@@ -13,14 +13,18 @@ import 'package:test/test.dart';
 import 'package:gg_git/gg_git_test_helpers.dart';
 
 void main() {
-  final messages = <String>[];
+  late Directory tmp;
   late Directory d;
+  final messages = <String>[];
+
   late IsVersioned isVersioned;
   late CommandRunner<void> runner;
 
   // ...........................................................................
-  setUp(() {
-    d = initTestDir();
+  setUp(() async {
+    tmp = await Directory.systemTemp.createTemp();
+    d = Directory('${tmp.path}/test');
+    await d.create();
     isVersioned = IsVersioned(ggLog: messages.add);
     messages.clear();
     runner = CommandRunner<void>('test', 'test')
@@ -29,7 +33,7 @@ void main() {
 
   // ...........................................................................
   tearDown(() {
-    d.deleteSync(recursive: true);
+    tmp.deleteSync(recursive: true);
   });
 
   // ...........................................................................

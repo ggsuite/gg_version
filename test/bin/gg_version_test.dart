@@ -14,10 +14,17 @@ import 'package:test/test.dart';
 import '../../bin/gg_version.dart';
 
 void main() {
+  late Directory tmp;
   late Directory d;
 
-  setUp(() {
-    d = initTestDir();
+  setUp(() async {
+    tmp = await Directory.systemTemp.createTemp();
+    d = Directory('${tmp.path}/test');
+    await d.create();
+  });
+
+  tearDown(() async {
+    await tmp.delete(recursive: true);
   });
 
   group('bin/gg_version.dart', () {

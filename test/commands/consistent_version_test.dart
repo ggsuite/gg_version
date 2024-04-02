@@ -13,8 +13,9 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final messages = <String>[];
+  late Directory tmp;
   late Directory d;
+  final messages = <String>[];
   late ConsistentVersion consistentVersion;
 
   // ...........................................................................
@@ -24,10 +25,16 @@ void main() {
       );
 
   // ...........................................................................
-  setUp(() {
-    d = initTestDir();
+  setUp(() async {
+    tmp = await Directory.systemTemp.createTemp();
+    d = Directory('${tmp.path}/test');
+    await d.create();
     consistentVersion = ConsistentVersion(ggLog: messages.add);
     messages.clear();
+  });
+
+  tearDown(() async {
+    await tmp.delete(recursive: true);
   });
 
   // ...........................................................................
