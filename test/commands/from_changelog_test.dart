@@ -50,7 +50,7 @@ void main() {
 
       group('should return version', () {
         test('when found in CHANGELOG.md', () async {
-          await setChangeLog(d, version: '0.0.1');
+          await addChangeLogWithoutCommitting(d, version: '0.0.1');
           final version = await fromChangelog.fromDirectory(directory: d);
           expect(version, Version.parse('0.00.001'));
         });
@@ -106,7 +106,7 @@ void main() {
     group('run()', () {
       group('should return the version', () {
         test('when found in CHANGELOG.md', () async {
-          await setChangeLog(d, version: '1.0.0');
+          await addChangeLogWithoutCommitting(d, version: '1.0.0');
           final runner = CommandRunner<void>('test', 'test')
             ..addCommand(FromChangelog(ggLog: messages.add));
 

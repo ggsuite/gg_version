@@ -56,7 +56,7 @@ void main() {
         test('if there are uncommited changes', () async {
           initCommand();
           await initGit(d);
-          await setPubspec(d, version: '0.0.1');
+          await addPubspecFileWithoutCommitting(d, version: '0.0.1');
 
           await expectLater(
             addVersionTag.add(
@@ -80,7 +80,7 @@ void main() {
             await initGit(d);
 
             // Set pubspec and changeLog version to different values
-            await setupVersions(
+            await addAndCommitVersions(
               d,
               changeLog: '0.0.2',
               pubspec: '0.0.3',
@@ -111,7 +111,7 @@ void main() {
 
           // Set pubspec and changeLog version to the same value
           // Git tag is also set, but to a different value
-          await setupVersions(
+          await addAndCommitVersions(
             d,
             changeLog: '0.0.1',
             pubspec: '0.0.1',
@@ -139,7 +139,7 @@ void main() {
           await initGit(d);
 
           // A older commit does set a higher version
-          await setupVersions(
+          await addAndCommitVersions(
             d,
             changeLog: '0.0.2',
             pubspec: '0.0.2',
@@ -147,7 +147,7 @@ void main() {
           );
 
           // A newer commit does set a lower version
-          await setupVersions(
+          await addAndCommitVersions(
             d,
             changeLog: '0.0.1',
             pubspec: '0.0.1',
@@ -173,7 +173,7 @@ void main() {
 
         test('if something wents wrong while calling git tag', () async {
           await initGit(d);
-          await setupVersions(
+          await addAndCommitVersions(
             d,
             changeLog: '0.0.1',
             pubspec: '0.0.1',
@@ -237,7 +237,7 @@ void main() {
             await initGit(d);
 
             // Set pubspec and changeLog version to the same value
-            await setupVersions(
+            await addAndCommitVersions(
               d,
               changeLog: '0.0.1',
               pubspec: '0.0.1',
@@ -265,7 +265,7 @@ void main() {
 
             // CHANGELOG.md and pubspec.yaml have the same version
             // but there is no git tag yet
-            await setupVersions(
+            await addAndCommitVersions(
               d,
               changeLog: '4.5.6',
               pubspec: '4.5.6',
@@ -302,7 +302,7 @@ void main() {
         test('if there are uncommited changes', () async {
           initCommand();
           await initGit(d);
-          await setPubspec(d, version: '0.0.1');
+          await addPubspecFileWithoutCommitting(d, version: '0.0.1');
           await expectLater(
             () => runner.run(['add-version-tag', '--input', d.path]),
             throwsA(
@@ -321,7 +321,7 @@ void main() {
 
           // CHANGELOG.md and pubspec.yaml have the same version
           // but there is no git tag yet
-          await setupVersions(
+          await addAndCommitVersions(
             d,
             changeLog: '4.5.6',
             pubspec: '4.5.6',

@@ -44,7 +44,7 @@ void main() {
           group('when pubspec.yaml, CHANGELOG.md as well git tag', () {
             test('are not the same', () async {
               await initGit(d);
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '1.2.4',
                 changeLog: '1.2.3',
@@ -76,7 +76,7 @@ void main() {
               'have the same version', () {
             test('using command runner', () async {
               await initGit(d);
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '1.2.3',
                 changeLog: '1.2.3',
@@ -90,7 +90,7 @@ void main() {
 
             test('using isVersioned.run()', () async {
               await initGit(d);
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '1.2.3',
                 changeLog: '1.2.3',
@@ -107,7 +107,7 @@ void main() {
             group('pubspec', () {
               test('with command runner', () async {
                 await initGit(d);
-                await setupVersions(
+                await addAndCommitVersions(
                   d,
                   pubspec: '2.0.0',
                   changeLog: '1.2.3',
@@ -128,7 +128,7 @@ void main() {
 
               test('with isVersioned.run()', () async {
                 await initGit(d);
-                await setupVersions(
+                await addAndCommitVersions(
                   d,
                   pubspec: '2.0.0',
                   changeLog: '1.2.3',
@@ -148,7 +148,7 @@ void main() {
 
             test('changeLog', () async {
               await initGit(d);
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '1.2.3',
                 changeLog: '2.0.0',
@@ -169,7 +169,7 @@ void main() {
 
             test('gitHead', () async {
               await initGit(d);
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '1.2.3',
                 changeLog: '1.2.3',
@@ -197,14 +197,13 @@ void main() {
 
         await initGit(d);
 
-        await setupVersions(
+        await addAndCommitVersions(
           d,
           pubspec: '1.2.3',
           changeLog: '1.2.3',
           gitHead: '1.2.4',
         );
 
-        await initGit(d);
         await expectLater(
           runner.run(['is-versioned', '--input', d.path]),
           throwsA(
@@ -224,7 +223,7 @@ void main() {
             () {
           test('with ignoreVersion == null', () async {
             await initGit(d);
-            await setupVersions(
+            await addAndCommitVersions(
               d,
               pubspec: '1.2.3',
               changeLog: '1.2.3',
@@ -245,7 +244,7 @@ void main() {
               await initGit(d);
 
               // Pubspec has a different version
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '2.0.0',
                 changeLog: '1.2.3',
@@ -268,7 +267,7 @@ void main() {
               await initGit(d);
 
               // ChangeLog has a different version
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '1.2.3',
                 changeLog: '2.0.0',
@@ -291,7 +290,7 @@ void main() {
               await initGit(d);
 
               // GitHead has a different version
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '1.2.3',
                 changeLog: '1.2.3',
@@ -317,7 +316,7 @@ void main() {
         test('when pubspec.yaml, CHANGELOG.md and git have different versions',
             () async {
           await initGit(d);
-          await setupVersions(
+          await addAndCommitVersions(
             d,
             pubspec: '1.2.3',
             changeLog: '1.2.3',

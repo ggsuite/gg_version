@@ -63,7 +63,7 @@ void main() {
               await initGit(d);
 
               // Set old revision
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '1.2.3',
                 changeLog: '4.5.6',
@@ -71,7 +71,7 @@ void main() {
               );
 
               // Set head revision
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '2.2.3',
                 changeLog: '5.5.6',
@@ -92,7 +92,7 @@ void main() {
 
             test('and no revision has a version tag', () async {
               await initGit(d);
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '1.2.3',
                 changeLog: '1.2.3',
@@ -113,7 +113,7 @@ void main() {
             test('only previous revisions have a version tag', () async {
               await initGit(d);
               // Set old revision
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '1.2.3',
                 changeLog: '4.5.6',
@@ -148,7 +148,7 @@ void main() {
               ..addCommand(allVersions);
 
             await initGit(d);
-            await setupVersions(
+            await addAndCommitVersions(
               d,
               pubspec: '1.2.3',
               changeLog: '1.2.3',
@@ -167,7 +167,7 @@ void main() {
               ..addCommand(AllVersions(ggLog: messages.add));
 
             await initGit(d);
-            await setupVersions(
+            await addAndCommitVersions(
               d,
               pubspec: '1.2.3',
               changeLog: '1.2.3',
@@ -175,7 +175,7 @@ void main() {
             );
 
             // Change the version of pubspec.yaml without committing
-            await setPubspec(d, version: '2.2.3');
+            await addPubspecFileWithoutCommitting(d, version: '2.2.3');
 
             await runner.run(['all-versions', '--input', d.path]);
             expect(messages[0], 'pubspec: 2.2.3');
@@ -192,7 +192,7 @@ void main() {
             ..addCommand(AllVersions(ggLog: messages.add));
 
           await initGit(d);
-          await initUncommittedFile(d);
+          await addFileWithoutCommitting(d);
           await expectLater(
             runner.run(['all-versions', '--input', d.path]),
             throwsA(

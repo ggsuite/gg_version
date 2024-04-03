@@ -47,7 +47,7 @@ void main() {
       group('should throw', () {
         test('if CHANGELOG version does not match the others', () async {
           await initGit(d);
-          await setupVersions(
+          await addAndCommitVersions(
             d,
             pubspec: '1.0.0',
             changeLog: '2.0.0',
@@ -68,7 +68,7 @@ void main() {
 
         test('if no git version tag exists', () async {
           await initGit(d);
-          await setupVersions(
+          await addAndCommitVersions(
             d,
             pubspec: '1.0.0',
             changeLog: '1.0.0',
@@ -89,7 +89,7 @@ void main() {
 
         test('if Pubspec version does not match the others', () async {
           await initGit(d);
-          await setupVersions(
+          await addAndCommitVersions(
             d,
             pubspec: '2.0.0',
             changeLog: '1.0.0',
@@ -110,7 +110,7 @@ void main() {
 
         test('if Git head version does not match the others', () async {
           await initGit(d);
-          await setupVersions(
+          await addAndCommitVersions(
             d,
             pubspec: '1.0.0',
             changeLog: '1.0.0',
@@ -134,7 +134,7 @@ void main() {
         group('if all versions are consistent', () {
           test('with ignoreVersion == null', () async {
             await initGit(d);
-            await setupVersions(
+            await addAndCommitVersions(
               d,
               pubspec: '1.2.3',
               changeLog: '1.2.3',
@@ -149,7 +149,7 @@ void main() {
               await initGit(d);
 
               // Pubspec version is different
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '2.0.0',
                 changeLog: '1.2.3',
@@ -169,7 +169,7 @@ void main() {
               await initGit(d);
 
               // Changelog version is different
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '1.2.3',
                 changeLog: '2.0.0',
@@ -189,7 +189,7 @@ void main() {
               await initGit(d);
 
               // Pubspec version is different
-              await setupVersions(
+              await addAndCommitVersions(
                 d,
                 pubspec: '1.2.3',
                 changeLog: '1.2.3',
@@ -215,7 +215,7 @@ void main() {
           ..addCommand(ConsistentVersion(ggLog: messages.add));
 
         await initGit(d);
-        await setupVersions(
+        await addAndCommitVersions(
           d,
           pubspec: '1.2.3',
           changeLog: '1.2.3',
@@ -232,14 +232,13 @@ void main() {
 
         await initGit(d);
 
-        await setupVersions(
+        await addAndCommitVersions(
           d,
           pubspec: '1.2.3',
           changeLog: '1.2.3',
           gitHead: '1.2.4',
         );
 
-        await initGit(d);
         await expectLater(
           runner.run(['consistent-version', '--input', d.path]),
           throwsA(

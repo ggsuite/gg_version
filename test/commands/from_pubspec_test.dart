@@ -52,7 +52,7 @@ void main() {
 
       group('should return version', () {
         test('when found in pubspec.yaml', () async {
-          await setPubspec(d, version: '0.0.1');
+          await addPubspecFileWithoutCommitting(d, version: '0.0.1');
           final version = await fromPubspec.fromDirectory(
             directory: d,
           );
@@ -110,7 +110,7 @@ void main() {
     group('run()', () {
       group('should return the version', () {
         test('when found in pubspec.yaml', () async {
-          await setPubspec(d, version: '4.5.7');
+          await addPubspecFileWithoutCommitting(d, version: '4.5.7');
           final runner = CommandRunner<void>('test', 'test')
             ..addCommand(FromPubspec(ggLog: messages.add));
 
