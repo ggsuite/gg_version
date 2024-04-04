@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:gg_args/gg_args.dart';
 import 'package:gg_log/gg_log.dart';
 import 'package:gg_status_printer/gg_status_printer.dart';
+import 'package:gg_version/gg_version.dart';
 import 'package:gg_version/src/commands/published_version.dart';
 import 'package:mocktail/mocktail.dart' as mocktail;
 import 'package:pub_semver/pub_semver.dart';
@@ -47,7 +48,7 @@ class PrepareNextVersion extends DirCommand<void> {
   Future<void> exec({
     required Directory directory,
     required GgLog ggLog,
-    VersionIncrement? versionIncrement,
+    VersionIncrement? increment,
   }) async {
     await GgStatusPrinter<void>(
       message: 'Increase version',
@@ -56,7 +57,7 @@ class PrepareNextVersion extends DirCommand<void> {
       task: () => apply(
         ggLog: ggLog,
         directory: directory,
-        versionIncrement: versionIncrement ?? _versionIncrementFromArgs,
+        increment: increment ?? _incrementFromArgs,
       ),
       success: (success) => true,
     );
@@ -67,23 +68,18 @@ class PrepareNextVersion extends DirCommand<void> {
   Future<void> apply({
     required Directory directory,
     required GgLog ggLog,
-    required VersionIncrement versionIncrement,
+    required VersionIncrement increment,
   }) async {
     // Checks
     await check(directory: directory);
     await _checkPubspec(directory: directory);
     await _checkChangeLog(directory: directory);
 
-    // Get the published version
-    final publishedVersion = await _publishedVersion.get(
+    // Estimate the next version
+    final next = await nextVersion(
       directory: directory,
       ggLog: ggLog,
-    );
-
-    // Calculate the next version based on the increment
-    final next = nextVersion(
-      publishedVersion: publishedVersion,
-      versionIncrement: versionIncrement,
+      increment: increment,
     );
 
     // Write the next version into pubspec.yaml
@@ -102,12 +98,34 @@ class PrepareNextVersion extends DirCommand<void> {
   }
 
   // ...........................................................................
+  /// Returns the next version for the given dart package
+  Future<Version> nextVersion({
+    required Directory directory,
+    required GgLog ggLog,
+    required VersionIncrement increment,
+  }) async {
+    // Get the published version
+    final publishedVersion = await _publishedVersion.get(
+      directory: directory,
+      ggLog: ggLog,
+    );
+
+    // Calculate the next version based on the increment
+    final next = calculateNextVersion(
+      publishedVersion: publishedVersion,
+      increment: increment,
+    );
+
+    return next;
+  }
+
+  // ...........................................................................
   /// Returns the next version based on the published version and the increment
-  Version nextVersion({
+  Version calculateNextVersion({
     required Version publishedVersion,
-    required VersionIncrement versionIncrement,
+    required VersionIncrement increment,
   }) {
-    switch (versionIncrement) {
+    switch (increment) {
       case VersionIncrement.patch:
         return publishedVersion.nextPatch;
       case VersionIncrement.minor:
@@ -146,10 +164,9 @@ class PrepareNextVersion extends DirCommand<void> {
   }
 
   // ...........................................................................
-  VersionIncrement get _versionIncrementFromArgs {
-    final versionIncrementFromArgsStr =
-        argResults?['version-increment'] as String;
-    return VersionIncrement.values.byName(versionIncrementFromArgsStr);
+  VersionIncrement get _incrementFromArgs {
+    final incrementFromArgsStr = argResults?['version-increment'] as String;
+    return VersionIncrement.values.byName(incrementFromArgsStr);
   }
 
   // ...........................................................................

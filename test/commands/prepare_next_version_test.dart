@@ -62,7 +62,7 @@ void main() async {
 
   // ...........................................................................
   group('PrepareNextVersion', () {
-    group('apply(directory, ggLog, versionIncrement)', () {
+    group('apply(directory, ggLog, increment)', () {
       group('should throw', () {
         group('if pubspec.yaml', () {
           test('is missing', () async {
@@ -76,7 +76,7 @@ void main() async {
               await prepareNextVersion.apply(
                 ggLog: ggLog,
                 directory: d,
-                versionIncrement: VersionIncrement.patch,
+                increment: VersionIncrement.patch,
               );
             } catch (e) {
               exception = e.toString();
@@ -100,7 +100,7 @@ void main() async {
               await prepareNextVersion.apply(
                 ggLog: ggLog,
                 directory: d,
-                versionIncrement: VersionIncrement.patch,
+                increment: VersionIncrement.patch,
               );
             } catch (e) {
               exception = e.toString();
@@ -125,7 +125,7 @@ void main() async {
             await prepareNextVersion.apply(
               ggLog: ggLog,
               directory: d,
-              versionIncrement: VersionIncrement.patch,
+              increment: VersionIncrement.patch,
             );
           } catch (e) {
             exception = e.toString();
@@ -147,7 +147,7 @@ void main() async {
           await prepareNextVersion.apply(
             ggLog: ggLog,
             directory: d,
-            versionIncrement: VersionIncrement.patch,
+            increment: VersionIncrement.patch,
           );
 
           // Check pubspec.yaml
@@ -166,7 +166,7 @@ void main() async {
             await prepareNextVersion.apply(
               ggLog: ggLog,
               directory: d,
-              versionIncrement: VersionIncrement.patch,
+              increment: VersionIncrement.patch,
             );
 
             // Check CHANGELOG.md
@@ -187,7 +187,7 @@ void main() async {
             await prepareNextVersion.apply(
               ggLog: ggLog,
               directory: d,
-              versionIncrement: VersionIncrement.patch,
+              increment: VersionIncrement.patch,
             );
 
             // Check CHANGELOG.md
@@ -201,7 +201,7 @@ void main() async {
       });
     });
 
-    group('exec(directory, ggLog, versionIncrement)', () {
+    group('exec(directory, ggLog, increment)', () {
       group('should allow to run the command from CLI', () {
         group('and throw', () {
           test('when no --version-increment option is specified', () async {
@@ -224,23 +224,24 @@ void main() async {
           });
         });
         group('and increase the version in pubspec.yaml and CHANGELOG.md', () {
-          for (final versionIncrement in VersionIncrement.values) {
-            test('with versionIncrement == ${versionIncrement.name}', () async {
+          for (final increment in VersionIncrement.values) {
+            test('with increment == ${increment.name}', () async {
               mockPublishedVersion();
 
               // Execute command
               await runner.run([
                 'prepare-next-version',
                 '--version-increment',
-                versionIncrement.name,
+                increment.name,
                 '-i',
                 d.path,
               ]);
 
               // Expected next version
-              final expectedNextVersion = prepareNextVersion.nextVersion(
+              final expectedNextVersion =
+                  prepareNextVersion.calculateNextVersion(
                 publishedVersion: Version(1, 2, 3),
-                versionIncrement: versionIncrement,
+                increment: increment,
               );
 
               // Check pubspec.yaml
@@ -264,38 +265,52 @@ void main() async {
       });
     });
 
-    group('nextVersion(publishedVersion, versionIncrement)', () {
-      group('with versionIncrement == VersionIncrement.major', () {
+    group('calculateNextVersion(publishedVersion, increment)', () {
+      group('with increment == VersionIncrement.major', () {
         test('should return the next major version', () {
-          final version = prepareNextVersion.nextVersion(
+          final version = prepareNextVersion.calculateNextVersion(
             publishedVersion: Version(1, 2, 3),
-            versionIncrement: VersionIncrement.major,
+            increment: VersionIncrement.major,
           );
 
           expect(version, Version(2, 0, 0));
         });
       });
 
-      group('with versionIncrement == VersionIncrement.minor', () {
+      group('with increment == VersionIncrement.minor', () {
         test('should return the next minor version', () {
-          final version = prepareNextVersion.nextVersion(
+          final version = prepareNextVersion.calculateNextVersion(
             publishedVersion: Version(1, 2, 3),
-            versionIncrement: VersionIncrement.minor,
+            increment: VersionIncrement.minor,
           );
 
           expect(version, Version(1, 3, 0));
         });
       });
 
-      group('with versionIncrement == VersionIncrement.patch', () {
+      group('with increment == VersionIncrement.patch', () {
         test('should return the next patch version', () {
-          final version = prepareNextVersion.nextVersion(
+          final version = prepareNextVersion.calculateNextVersion(
             publishedVersion: Version(1, 2, 3),
-            versionIncrement: VersionIncrement.patch,
+            increment: VersionIncrement.patch,
           );
 
           expect(version, Version(1, 2, 4));
         });
+      });
+    });
+
+    group('nextVersion(directory, ggLog, increment)', () {
+      test('should return the next version', () async {
+        mockPublishedVersion();
+
+        final nextVersion = await prepareNextVersion.nextVersion(
+          ggLog: ggLog,
+          directory: d,
+          increment: VersionIncrement.patch,
+        );
+
+        expect(nextVersion, Version(1, 2, 4));
       });
     });
 

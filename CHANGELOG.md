@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.3.0
+
+- Add `nextVersion()` and `calculateNextVersion()`
+
 ## 1.2.0
 
 - Add PrepareNextVersion, PublishedVersion, IsVersionPrepared
