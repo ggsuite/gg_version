@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.2.0
+
+- Add PrepareNextVersion, PublishedVersion, IsVersionPrepared
+
 ## 1.1.1
 
 - Update dependencies

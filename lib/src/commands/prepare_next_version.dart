@@ -1,0 +1,225 @@
+// @license
+// Copyright (c) 2019 - 2024 Dr. Gabriel Gatzsche. All Rights Reserved.
+//
+// Use of this source code is governed by terms that can be
+// found in the LICENSE file in the root of this package.
+
+import 'dart:io';
+
+import 'package:gg_args/gg_args.dart';
+import 'package:gg_log/gg_log.dart';
+import 'package:gg_status_printer/gg_status_printer.dart';
+import 'package:gg_version/src/commands/published_version.dart';
+import 'package:mocktail/mocktail.dart' as mocktail;
+import 'package:pub_semver/pub_semver.dart';
+
+// .............................................................................
+/// Version increments
+enum VersionIncrement {
+  /// Patch version increment
+  patch,
+
+  /// Minor version increment
+  minor,
+
+  /// Major version increment
+  major,
+}
+
+// .............................................................................
+/// Creates a new version and writes it into pubspec.yaml and CHANGELOG.md.
+class PrepareNextVersion extends DirCommand<void> {
+  /// Constructor
+  PrepareNextVersion({
+    required super.ggLog,
+    PublishedVersion? publishedVersion,
+  })  : _publishedVersion = publishedVersion ?? PublishedVersion(ggLog: ggLog),
+        super(
+          name: 'prepare-next-version',
+          description:
+              'Creates a new version in pubspec.yaml and CHANGELOG.md.',
+        ) {
+    _addArgs();
+  }
+
+  // ...........................................................................
+  @override
+  Future<void> exec({
+    required Directory directory,
+    required GgLog ggLog,
+    VersionIncrement? versionIncrement,
+  }) async {
+    await GgStatusPrinter<void>(
+      message: 'Increase version',
+      ggLog: ggLog,
+    ).logTask(
+      task: () => apply(
+        ggLog: ggLog,
+        directory: directory,
+        versionIncrement: versionIncrement ?? _versionIncrementFromArgs,
+      ),
+      success: (success) => true,
+    );
+  }
+
+  // ...........................................................................
+  /// Writes the next version into pubspec.yaml and CHANGELOG.md
+  Future<void> apply({
+    required Directory directory,
+    required GgLog ggLog,
+    required VersionIncrement versionIncrement,
+  }) async {
+    // Checks
+    await check(directory: directory);
+    await _checkPubspec(directory: directory);
+    await _checkChangeLog(directory: directory);
+
+    // Get the published version
+    final publishedVersion = await _publishedVersion.get(
+      directory: directory,
+      ggLog: ggLog,
+    );
+
+    // Calculate the next version based on the increment
+    final next = nextVersion(
+      publishedVersion: publishedVersion,
+      versionIncrement: versionIncrement,
+    );
+
+    // Write the next version into pubspec.yaml
+    await _writeVersionIntoPubspec(
+      directory: directory,
+      ggLog: ggLog,
+      next: next,
+    );
+
+    // Write the next version into CHANGELOG.md
+    await _writeVersionIntoChangeLog(
+      directory: directory,
+      ggLog: ggLog,
+      next: next,
+    );
+  }
+
+  // ...........................................................................
+  /// Returns the next version based on the published version and the increment
+  Version nextVersion({
+    required Version publishedVersion,
+    required VersionIncrement versionIncrement,
+  }) {
+    switch (versionIncrement) {
+      case VersionIncrement.patch:
+        return publishedVersion.nextPatch;
+      case VersionIncrement.minor:
+        return publishedVersion.nextMinor;
+      case VersionIncrement.major:
+        return publishedVersion.nextMajor;
+    }
+  }
+
+  // ######################
+  // Private
+  // ######################
+
+  // ...........................................................................
+  final PublishedVersion _publishedVersion;
+
+  // ...........................................................................
+  Future<void> _checkPubspec({required Directory directory}) async {
+    final pubspecFile = File('${directory.path}/pubspec.yaml');
+    if (!await pubspecFile.exists()) {
+      throw Exception('pubspec.yaml not found');
+    }
+
+    final content = await pubspecFile.readAsString();
+    if (!content.contains(RegExp(r'\nversion: '))) {
+      throw Exception('"version:" not found in pubspec.yaml');
+    }
+  }
+
+  // ...........................................................................
+  Future<void> _checkChangeLog({required Directory directory}) async {
+    final changeLogFile = File('${directory.path}/CHANGELOG.md');
+    if (!await changeLogFile.exists()) {
+      throw Exception('CHANGELOG.md not found');
+    }
+  }
+
+  // ...........................................................................
+  VersionIncrement get _versionIncrementFromArgs {
+    final versionIncrementFromArgsStr =
+        argResults?['version-increment'] as String;
+    return VersionIncrement.values.byName(versionIncrementFromArgsStr);
+  }
+
+  // ...........................................................................
+  void _addArgs() {
+    argParser.addOption(
+      'version-increment',
+      abbr: 'n',
+      help: 'The increment the next version is compared to the current one.',
+      allowed: VersionIncrement.values.map((e) => e.name),
+      mandatory: true,
+    );
+  }
+
+  // ...........................................................................
+  Future<void> _writeVersionIntoPubspec({
+    required Directory directory,
+    required GgLog ggLog,
+    required Version next,
+  }) async {
+    final pubspecFile = File('${directory.path}/pubspec.yaml');
+    final lines = await pubspecFile.readAsLines();
+    final newLines = <String>[];
+    for (final line in lines) {
+      if (line.startsWith('version: ')) {
+        newLines.add('version: $next');
+      } else {
+        newLines.add(line);
+      }
+    }
+    await pubspecFile.writeAsString(newLines.join('\n'));
+  }
+
+  // ...........................................................................
+  Future<void> _writeVersionIntoChangeLog({
+    required Directory directory,
+    required GgLog ggLog,
+    required Version next,
+  }) async {
+    // Read CHANGELOG.md
+    final changeLogFile = File('${directory.path}/CHANGELOG.md');
+    final changeLogContent = await changeLogFile.readAsString();
+    var newChangeLogContent = changeLogContent;
+
+    // Do nothing if the next version is already in the CHANGELOG.md
+    if (changeLogContent.contains('## Version $next')) {
+      return;
+    }
+
+    // Prepare next version text
+    final newVersionText = '## $next';
+
+    // Insert new version text before the first version text
+    if (changeLogContent.contains('##')) {
+      newChangeLogContent = changeLogContent.replaceFirst(
+        '##',
+        '$newVersionText\n\n##',
+      );
+    }
+
+    // If there is no version text, add it at the end
+    else {
+      newChangeLogContent = '$changeLogContent\n\n$newVersionText\n';
+    }
+
+    // Write the new content into CHANGELOG.md
+    await changeLogFile.writeAsString(newChangeLogContent);
+  }
+}
+
+// .............................................................................
+/// Mock class for PrepareNextVersion
+class MockPrepareNextVersion extends mocktail.Mock
+    implements PrepareNextVersion {}
