@@ -344,7 +344,8 @@ void main() {
           );
 
           // A log message should have been written
-          expect(messages.last, 'Tag 4.5.6 added.');
+          expect(messages.length, 1);
+          expect(messages[0], 'Tag 4.5.6 added.');
         });
       });
     });

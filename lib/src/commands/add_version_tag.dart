@@ -35,7 +35,6 @@ class AddVersionTag extends GgGitBase<void> {
       directory: directory,
       ggLog: (msg) {
         lastLog = msg;
-        ggLog(msg);
       },
     );
 

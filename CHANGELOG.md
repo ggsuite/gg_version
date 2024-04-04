@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.3.1
+
+- Fix: Success message was logged twice
+
 ## 1.3.0
 
 - Add `nextVersion()` and `calculateNextVersion()`
