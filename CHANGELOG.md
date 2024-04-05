@@ -9,6 +9,7 @@
 ### Removed
 
 - pubspec.lock
+- Add pubspec.lock to .gitignore
 
 ## 2.0.2 - 2024-01-01
 
