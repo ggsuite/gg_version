@@ -73,7 +73,6 @@ class PrepareNextVersion extends DirCommand<void> {
     // Checks
     await check(directory: directory);
     await _checkPubspec(directory: directory);
-    await _checkChangeLog(directory: directory);
 
     // Estimate the next version
     final next = await nextVersion(
@@ -84,13 +83,6 @@ class PrepareNextVersion extends DirCommand<void> {
 
     // Write the next version into pubspec.yaml
     await _writeVersionIntoPubspec(
-      directory: directory,
-      ggLog: ggLog,
-      next: next,
-    );
-
-    // Write the next version into CHANGELOG.md
-    await _writeVersionIntoChangeLog(
       directory: directory,
       ggLog: ggLog,
       next: next,
@@ -156,14 +148,6 @@ class PrepareNextVersion extends DirCommand<void> {
   }
 
   // ...........................................................................
-  Future<void> _checkChangeLog({required Directory directory}) async {
-    final changeLogFile = File('${directory.path}/CHANGELOG.md');
-    if (!await changeLogFile.exists()) {
-      throw Exception('CHANGELOG.md not found');
-    }
-  }
-
-  // ...........................................................................
   VersionIncrement get _incrementFromArgs {
     final incrementFromArgsStr = argResults?['version-increment'] as String;
     return VersionIncrement.values.byName(incrementFromArgsStr);
@@ -197,42 +181,6 @@ class PrepareNextVersion extends DirCommand<void> {
       }
     }
     await pubspecFile.writeAsString(newLines.join('\n'));
-  }
-
-  // ...........................................................................
-  Future<void> _writeVersionIntoChangeLog({
-    required Directory directory,
-    required GgLog ggLog,
-    required Version next,
-  }) async {
-    // Read CHANGELOG.md
-    final changeLogFile = File('${directory.path}/CHANGELOG.md');
-    final changeLogContent = await changeLogFile.readAsString();
-    var newChangeLogContent = changeLogContent;
-
-    // Do nothing if the next version is already in the CHANGELOG.md
-    if (changeLogContent.contains('## Version $next')) {
-      return;
-    }
-
-    // Prepare next version text
-    final newVersionText = '## $next';
-
-    // Insert new version text before the first version text
-    if (changeLogContent.contains('##')) {
-      newChangeLogContent = changeLogContent.replaceFirst(
-        '##',
-        '$newVersionText\n\n##',
-      );
-    }
-
-    // If there is no version text, add it at the end
-    else {
-      newChangeLogContent = '$changeLogContent\n\n$newVersionText\n';
-    }
-
-    // Write the new content into CHANGELOG.md
-    await changeLogFile.writeAsString(newChangeLogContent);
   }
 }
 

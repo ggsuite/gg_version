@@ -113,30 +113,6 @@ void main() async {
             );
           });
         });
-
-        test('if CHANGELOG.md is missing', () async {
-          // Delete CHANGELOG.md
-          await File('${d.path}/CHANGELOG.md').delete();
-
-          late String exception;
-
-          // Execute command
-          try {
-            await prepareNextVersion.apply(
-              ggLog: ggLog,
-              directory: d,
-              increment: VersionIncrement.patch,
-            );
-          } catch (e) {
-            exception = e.toString();
-          }
-
-          // Check exception
-          expect(
-            exception,
-            'Exception: CHANGELOG.md not found',
-          );
-        });
       });
 
       group('should write the next version', () {
@@ -156,47 +132,6 @@ void main() async {
             content,
             contains('version: 1.2.4'),
           );
-        });
-
-        group('into CHANGELOG.md', () {
-          test('when there is already a version in change log', () async {
-            mockPublishedVersion();
-
-            // Execute command
-            await prepareNextVersion.apply(
-              ggLog: ggLog,
-              directory: d,
-              increment: VersionIncrement.patch,
-            );
-
-            // Check CHANGELOG.md
-            final content = await File('${d.path}/CHANGELOG.md').readAsString();
-            expect(
-              content,
-              contains('\n\n## 1.2.4\n\n## 1.2.3\n\n'),
-            );
-          });
-
-          test('when there is no version in change log', () async {
-            mockPublishedVersion();
-
-            // Delete version from CHANGELOG.md
-            await File('${d.path}/CHANGELOG.md').writeAsString('# ChangeLog');
-
-            // Execute command
-            await prepareNextVersion.apply(
-              ggLog: ggLog,
-              directory: d,
-              increment: VersionIncrement.patch,
-            );
-
-            // Check CHANGELOG.md
-            final content = await File('${d.path}/CHANGELOG.md').readAsString();
-            expect(
-              content,
-              contains('\n\n## 1.2.4\n'),
-            );
-          });
         });
       });
     });
@@ -223,7 +158,7 @@ void main() async {
             );
           });
         });
-        group('and increase the version in pubspec.yaml and CHANGELOG.md', () {
+        group('and increase the version in pubspec.yaml', () {
           for (final increment in VersionIncrement.values) {
             test('with increment == ${increment.name}', () async {
               mockPublishedVersion();
@@ -250,14 +185,6 @@ void main() async {
               expect(
                 content,
                 contains('version: $expectedNextVersion'),
-              );
-
-              // Check CHANGELOG.md
-              final changeLogContent =
-                  await File('${d.path}/CHANGELOG.md').readAsString();
-              expect(
-                changeLogContent,
-                contains('\n\n## $expectedNextVersion\n\n## 1.2.3\n\n'),
               );
             });
           }

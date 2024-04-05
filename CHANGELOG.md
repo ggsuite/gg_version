@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.0.0
+
+- Fix: Version can now be read from cider formatted CHANGELOG.md
+- Breaking chang: PrepareNextVersion will not update CHANGELOG.md anymore.
+  CHANGELOG.md will be updated by cider in the future. Cider is reading
+  the version from pubspec.yaml.
+
 ## 1.3.1
 
 - Fix: Success message was logged twice
