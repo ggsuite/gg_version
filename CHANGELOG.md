@@ -1,5 +1,7 @@
 # Change Log
 
+## 2.0.1
+
 ## 2.0.0
 
 - Fix: Version can now be read from cider formatted CHANGELOG.md
