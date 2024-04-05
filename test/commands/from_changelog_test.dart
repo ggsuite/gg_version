@@ -77,7 +77,7 @@ void main() {
       });
 
       group('should succeed', () {
-        group('and return the version foun in CHANGELOG.md', () {
+        group('and return the version found in CHANGELOG.md', () {
           test('with cider format', () {
             const content = '# Change Log\n\n## [1.2.3] 2024-04-05\n\n- test';
             final version = fromChangelog.fromString(content: content);
@@ -86,6 +86,13 @@ void main() {
 
           test('with old gg format', () {
             const content = '# Change Log\n\n## 1.2.3\n\n- test';
+            final version = fromChangelog.fromString(content: content);
+            expect(version, Version.parse('01.02.003'));
+          });
+
+          test('with unreleased version at the beginning', () {
+            const content =
+                '# Change Log\n\n## [Unreleased]\n\n## 1.2.3\n\n- test';
             final version = fromChangelog.fromString(content: content);
             expect(version, Version.parse('01.02.003'));
           });

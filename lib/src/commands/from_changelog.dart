@@ -56,6 +56,10 @@ class FromChangelog extends DirCommand<void> {
     final lines = content.split('\n');
     for (final line in lines) {
       if (line.startsWith('## ')) {
+        if (line.contains('Unreleased')) {
+          continue;
+        }
+
         final regExp =
             RegExp(r'##\s+\[?(\d+\.\d+\.\d+)\]?', caseSensitive: true);
         final match = regExp.firstMatch(line);

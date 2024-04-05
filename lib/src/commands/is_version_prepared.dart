@@ -15,7 +15,7 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 import 'package:pub_semver/pub_semver.dart';
 
 // #############################################################################
-/// pubspec.yaml and CHANGELOG have same new version?
+/// Is the version in pubspec.yaml an increment of the version at pub.dev?
 class IsVersionPrepared extends DirCommand<void> {
   /// Constructor
   IsVersionPrepared({
@@ -59,14 +59,14 @@ class IsVersionPrepared extends DirCommand<void> {
   }
 
   /// The prefix appended to many messages
-  static final messagePrefix = 'Versions in ${blue('./pubspec.yaml')} and '
-      '${blue('./CHANGELOG.md')} ';
+  static final messagePrefix = 'Version in ${blue('./pubspec.yaml')}';
 
   // ...........................................................................
   /// Returns true if the current directory state is published to pub.dev
   Future<bool> get({
     required Directory directory,
     required GgLog ggLog,
+    bool treatUnpublishedAsOk = false,
   }) async {
     // Get all version
     final allVersions = await _allVersions.get(
@@ -74,7 +74,12 @@ class IsVersionPrepared extends DirCommand<void> {
       directory: directory,
     );
 
-    if (allVersions.pubspec != allVersions.changeLog) {
+    // Version in CHANGELOG.md must either be "Unreleased"
+    // or it must match the version in pubspect.yaml
+    final isUnpublished = await _isUnpublished(directory);
+    final changeLogIsOk = treatUnpublishedAsOk && isUnpublished;
+
+    if (!changeLogIsOk && allVersions.pubspec != allVersions.changeLog) {
       ggLog(
         darkGray('$messagePrefix must be the same.'),
       );
@@ -97,7 +102,7 @@ class IsVersionPrepared extends DirCommand<void> {
 
     if (l != nextPatch && l != nextMinor && l != nextMajor) {
       ggLog(
-        darkGray('$messagePrefix must one of the following:'
+        darkGray('$messagePrefix must be one of the following:'
             '\n- $nextPatch'
             '\n- $nextMinor'
             '\n- $nextMajor'),
@@ -114,6 +119,19 @@ class IsVersionPrepared extends DirCommand<void> {
 
   final PublishedVersion _publishedVersion;
   final AllVersions _allVersions;
+
+  // ...........................................................................
+  Future<bool> _isUnpublished(Directory directory) async {
+    final changeLog = File('${directory.path}/CHANGELOG.md');
+    final lines = await changeLog.readAsLines();
+    for (final line in lines) {
+      if (line.startsWith('## ')) {
+        return line.contains('Unreleased');
+      }
+    }
+
+    return false;
+  }
 }
 
 // .............................................................................

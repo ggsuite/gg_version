@@ -2,6 +2,9 @@
 
 ## 2.0.1
 
+- [Unreleased] section at the beginning of CHANGELOG.md will not affect `FromChangeLog`
+- Add option `treatUnpublishedAsOk` to `IsVersionPrepared.get()`
+
 ## 2.0.0
 
 - Fix: Version can now be read from cider formatted CHANGELOG.md
