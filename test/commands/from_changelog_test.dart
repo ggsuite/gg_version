@@ -74,31 +74,21 @@ void main() {
             ),
           );
         });
-
-        // .....................................................................
-        test('if CHANGELOG.md contains invalid version', () {
-          const content = '# Change Log\n\n## 0.x.7\n\n- test';
-
-          expect(
-            () => fromChangelog.fromString(content: content),
-            throwsA(
-              isA<Exception>().having(
-                (e) => e.toString(),
-                'message',
-                contains(
-                  'Exception: Version "0.x.7" has invalid format.',
-                ),
-              ),
-            ),
-          );
-        });
       });
 
       group('should succeed', () {
-        test('and return the version foun in CHANGELOG.md', () {
-          const content = '# Change Log\n\n## 1.2.3\n\n- test';
-          final version = fromChangelog.fromString(content: content);
-          expect(version, Version.parse('01.02.003'));
+        group('and return the version foun in CHANGELOG.md', () {
+          test('with cider format', () {
+            const content = '# Change Log\n\n## [1.2.3] 2024-04-05\n\n- test';
+            final version = fromChangelog.fromString(content: content);
+            expect(version, Version.parse('01.02.003'));
+          });
+
+          test('with old gg format', () {
+            const content = '# Change Log\n\n## 1.2.3\n\n- test';
+            final version = fromChangelog.fromString(content: content);
+            expect(version, Version.parse('01.02.003'));
+          });
         });
       });
     });

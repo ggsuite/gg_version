@@ -56,13 +56,12 @@ class FromChangelog extends DirCommand<void> {
     final lines = content.split('\n');
     for (final line in lines) {
       if (line.startsWith('## ')) {
-        final version = line.split(' ')[1].trim();
-        try {
+        final regExp =
+            RegExp(r'##\s+\[?(\d+\.\d+\.\d+)\]?', caseSensitive: true);
+        final match = regExp.firstMatch(line);
+        final version = match?.group(1);
+        if (version != null) {
           return Version.parse(version);
-        } catch (e) {
-          throw Exception(
-            'Version "$version" has invalid format.',
-          );
         }
       }
     }

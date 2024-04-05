@@ -28,7 +28,7 @@ enum VersionIncrement {
 }
 
 // .............................................................................
-/// Creates a new version and writes it into pubspec.yaml and CHANGELOG.md.
+/// Creates a new version and writes it into pubspec.yaml
 class PrepareNextVersion extends DirCommand<void> {
   /// Constructor
   PrepareNextVersion({
