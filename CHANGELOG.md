@@ -6,6 +6,10 @@
 
 - Rework changelog + repository URL in pubspec.yaml
 
+### Removed
+
+- pubspec.lock
+
 ## 2.0.2 - 2024-01-01
 
 - `IsVersionPrepared`: `treatUnpublishedAsOk` can be set using constructor
