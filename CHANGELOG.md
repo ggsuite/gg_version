@@ -2,6 +2,8 @@
 
 ## 2.0.2
 
+- `IsVersionPrepared`: `treatUnpublishedAsOk` can be set using constructor
+
 ## 2.0.1
 
 - [Unreleased] section at the beginning of CHANGELOG.md will not affect `FromChangeLog`

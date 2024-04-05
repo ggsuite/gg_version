@@ -22,7 +22,9 @@ class IsVersionPrepared extends DirCommand<void> {
     required super.ggLog,
     PublishedVersion? publishedVersion,
     AllVersions? allVersions,
-  })  : _publishedVersion = publishedVersion ??
+    bool? treatUnpublishedAsOk,
+  })  : _treatUnpublishedAsOk = treatUnpublishedAsOk,
+        _publishedVersion = publishedVersion ??
             PublishedVersion(
               ggLog: ggLog,
             ),
@@ -66,8 +68,10 @@ class IsVersionPrepared extends DirCommand<void> {
   Future<bool> get({
     required Directory directory,
     required GgLog ggLog,
-    bool treatUnpublishedAsOk = false,
+    bool? treatUnpublishedAsOk,
   }) async {
+    treatUnpublishedAsOk ??= _treatUnpublishedAsOk ?? false;
+
     // Get all version
     final allVersions = await _allVersions.get(
       ggLog: ggLog,
@@ -119,6 +123,7 @@ class IsVersionPrepared extends DirCommand<void> {
 
   final PublishedVersion _publishedVersion;
   final AllVersions _allVersions;
+  final bool? _treatUnpublishedAsOk;
 
   // ...........................................................................
   Future<bool> _isUnpublished(Directory directory) async {

@@ -130,33 +130,69 @@ void main() async {
         group('when CHANGELOg.md and pubspec.yaml have not the same version',
             () {
           group('but CHANGELOG.md has an ## "Unreleased" headline', () {
-            test('and treatUnpublishedAsOk is true', () async {
-              // Assume the published version is 2.0.0
-              when(() => publishedVersion.get(ggLog: ggLog, directory: d))
-                  .thenAnswer((_) async => Version(2, 0, 0));
+            group('and treatUnpublishedAsOk is true', () {
+              test('via function param', () async {
+                // Assume the published version is 2.0.0
+                when(() => publishedVersion.get(ggLog: ggLog, directory: d))
+                    .thenAnswer((_) async => Version(2, 0, 0));
 
-              // Assume the locally configured version is 3.0.0
-              await addAndCommitVersions(
-                d,
-                pubspec: '2.1.0',
-                changeLog: '2.0.0',
-                gitHead: '2.0.0',
-              );
+                // Assume the locally configured version is 3.0.0
+                await addAndCommitVersions(
+                  d,
+                  pubspec: '2.1.0',
+                  changeLog: '2.0.0',
+                  gitHead: '2.0.0',
+                );
 
-              // Prepare CHANGELOG.md
-              File(join(d.path, 'CHANGELOG.md')).writeAsStringSync(
-                '# Changelog\n\n'
-                '## Unreleased\n\n- Message 1\n\n'
-                '## 3.0.0\n\n- Message 2\n',
-              );
+                // Prepare CHANGELOG.md
+                File(join(d.path, 'CHANGELOG.md')).writeAsStringSync(
+                  '# Changelog\n\n'
+                  '## Unreleased\n\n- Message 1\n\n'
+                  '## 3.0.0\n\n- Message 2\n',
+                );
 
-              final result = await isVersionPrepared.get(
-                ggLog: ggLog,
-                directory: d,
-                treatUnpublishedAsOk: true,
-              );
-              expect(result, isTrue);
-              expect(messages.isEmpty, isTrue);
+                final result = await isVersionPrepared.get(
+                  ggLog: ggLog,
+                  directory: d,
+                  treatUnpublishedAsOk: true,
+                );
+                expect(result, isTrue);
+                expect(messages.isEmpty, isTrue);
+              });
+
+              test('via Constructor param', () async {
+                // Assume the published version is 2.0.0
+                when(() => publishedVersion.get(ggLog: ggLog, directory: d))
+                    .thenAnswer((_) async => Version(2, 0, 0));
+
+                // Assume the locally configured version is 3.0.0
+                await addAndCommitVersions(
+                  d,
+                  pubspec: '2.1.0',
+                  changeLog: '2.0.0',
+                  gitHead: '2.0.0',
+                );
+
+                // Prepare CHANGELOG.md
+                File(join(d.path, 'CHANGELOG.md')).writeAsStringSync(
+                  '# Changelog\n\n'
+                  '## Unreleased\n\n- Message 1\n\n'
+                  '## 3.0.0\n\n- Message 2\n',
+                );
+
+                isVersionPrepared = IsVersionPrepared(
+                  ggLog: ggLog,
+                  publishedVersion: publishedVersion,
+                  treatUnpublishedAsOk: true,
+                );
+
+                final result = await isVersionPrepared.get(
+                  ggLog: ggLog,
+                  directory: d,
+                );
+                expect(result, isTrue);
+                expect(messages.isEmpty, isTrue);
+              });
             });
           });
         });
