@@ -1,5 +1,7 @@
 # Change Log
 
+## 2.0.2
+
 ## 2.0.1
 
 - [Unreleased] section at the beginning of CHANGELOG.md will not affect `FromChangeLog`
