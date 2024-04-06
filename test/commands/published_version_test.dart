@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:gg_version/gg_version.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 import 'package:http/http.dart' as http;
@@ -42,8 +43,12 @@ void main() {
   });
 
   // ...........................................................................
-  tearDown(() {
+  tearDown(() async {
     tmp.deleteSync(recursive: true);
+    final lockFile = File(join('test', 'sample_package', 'pubspec.lock'));
+    if (await lockFile.exists()) {
+      lockFile.deleteSync();
+    }
   });
 
   // ...........................................................................

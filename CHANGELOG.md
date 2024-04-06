@@ -13,6 +13,7 @@
 - pubspec.lock
 - Add pubspec.lock to .gitignore
 - test/sample\_package/pubspec.lock
+- test/sample\_package/pubspec.lock after test execution
 
 ## 2.0.2 - 2024-01-01
 
