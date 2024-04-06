@@ -5,6 +5,7 @@
 ### Changed
 
 - Rework changelog + repository URL in pubspec.yaml
+- 'Github Actions Pipeline'
 
 ### Removed
 
