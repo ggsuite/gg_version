@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## \[Unreleased\]
 
 ### Changed
 
@@ -14,6 +14,9 @@
 - Add pubspec.lock to .gitignore
 - test/sample\_package/pubspec.lock
 - test/sample\_package/pubspec.lock after test execution
+- Breaking change: Move PrepareNextVersion, PublishedVersion, IsVersionPrepared to GgPublish library
+
+## [3.0.0] - 2024-04-08
 
 ## 2.0.2 - 2024-01-01
 
@@ -93,4 +96,4 @@ is\_versionsed or consistent\_version
 
 - Initial version.
 
-[Unreleased]: https://github.com/inlavigo/gg_version/compare/2.0.2...HEAD
+[3.0.0]: https://github.com/inlavigo/gg_version/compare/2.0.2...3.0.0
