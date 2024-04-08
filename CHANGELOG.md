@@ -1,6 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## [3.0.1] - 2024-04-08
+
+### Added
+
+- AllVersion.get() add option to ignore uncommitted changes
 
 ### Removed
 
@@ -100,5 +104,5 @@ is\_versionsed or consistent\_version
 
 - Initial version.
 
-[Unreleased]: https://github.com/inlavigo/gg_version/compare/3.0.0...HEAD
+[3.0.1]: https://github.com/inlavigo/gg_version/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/inlavigo/gg_version/compare/2.0.2...3.0.0
