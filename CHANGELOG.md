@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Removed
+
+- sample\_package used to test the functions moved to gg\_publish
+
 ## [3.0.0] - 2024-04-08
 
 ### Changed
@@ -12,8 +18,8 @@
 
 - pubspec.lock
 - Add pubspec.lock to .gitignore
-- test/sample_package/pubspec.lock
-- test/sample_package/pubspec.lock after test execution
+- test/sample\_package/pubspec.lock
+- test/sample\_package/pubspec.lock after test execution
 - Breaking change: Move PrepareNextVersion, PublishedVersion, IsVersionPrepared to GgPublish library
 
 ## 2.0.2 - 2024-01-01
@@ -29,8 +35,8 @@
 
 - Fix: Version can now be read from cider formatted CHANGELOG.md
 - Breaking chang: PrepareNextVersion will not update CHANGELOG.md anymore.
-  CHANGELOG.md will be updated by cider in the future. Cider is reading
-  the version from pubspec.yaml.
+CHANGELOG.md will be updated by cider in the future. Cider is reading
+the version from pubspec.yaml.
 
 ## 1.3.1 - 2024-01-01
 
@@ -63,7 +69,7 @@
 ## 1.0.10 - 2024-01-01
 
 - Add ignoreVersion param to ignore one of the versions when executing
-  is_versionsed or consistent_version
+is\_versionsed or consistent\_version
 
 ## 1.0.9 - 2024-01-01
 
@@ -94,4 +100,5 @@
 
 - Initial version.
 
+[Unreleased]: https://github.com/inlavigo/gg_version/compare/3.0.0...HEAD
 [3.0.0]: https://github.com/inlavigo/gg_version/compare/2.0.2...3.0.0
