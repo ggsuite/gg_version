@@ -60,14 +60,16 @@ class AllVersions extends GgGitBase<void> {
       })> get({
     required GgLog ggLog,
     required Directory directory,
+    bool ignoreUncommitted = false,
   }) async {
-    final isCommitted = await IsCommitted(
-      ggLog: ggLog,
-      processWrapper: processWrapper,
-    ).get(
-      ggLog: ggLog,
-      directory: directory,
-    );
+    final isCommitted = ignoreUncommitted ||
+        await IsCommitted(
+          ggLog: ggLog,
+          processWrapper: processWrapper,
+        ).get(
+          ggLog: ggLog,
+          directory: directory,
+        );
 
     final pubspecVersion = await FromPubspec(
       ggLog: ggLog,

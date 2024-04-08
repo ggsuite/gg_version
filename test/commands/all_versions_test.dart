@@ -58,7 +58,7 @@ void main() {
 
       group('should return the versions', () {
         group('found int pubspec, CHANGELOG and git tag', () {
-          group('if everything is commited ', () {
+          group('if everything is committed ', () {
             test('and head revision has version tag', () async {
               await initGit(d);
 
@@ -136,6 +136,45 @@ void main() {
               expect(result.gitLatest, Version.parse('7.8.9'));
             });
           });
+
+          group('if not everything is committed', () {
+            test('but "ignoreUncommitted" is true', () async {
+              await initGit(d);
+
+              // Set old revision
+              await addAndCommitVersions(
+                d,
+                pubspec: '1.2.3',
+                changeLog: '4.5.6',
+                gitHead: '7.8.9',
+              );
+
+              // Set head revision
+              await addAndCommitVersions(
+                d,
+                pubspec: '2.2.3',
+                changeLog: '5.5.6',
+                gitHead: '8.8.9',
+              );
+
+              // Make an uncommittted change
+              await addFileWithoutCommitting(d);
+
+              // Get the versions with "ignoreUncommitted: false"
+
+              final result = await allVersions.get(
+                ggLog: (m) => messages.add(m),
+                directory: d,
+                ignoreUncommitted: true,
+              );
+
+              // Latest version should be returned
+              expect(result.pubspec, Version.parse('2.2.3'));
+              expect(result.changeLog, Version.parse('5.5.6'));
+              expect(result.gitHead, Version.parse('8.8.9'));
+              expect(result.gitLatest, Version.parse('8.8.9'));
+            });
+          });
         });
       });
     });
@@ -143,7 +182,7 @@ void main() {
     group('run()', () {
       group('should log the versions', () {
         group('found in pubspec.yaml, CHANGELOg.md, and git', () {
-          test('when everything is commited', () async {
+          test('when everything is committed', () async {
             final runner = CommandRunner<void>('test', 'test')
               ..addCommand(allVersions);
 
@@ -162,7 +201,7 @@ void main() {
             expect(messages[3], 'git latest: 1.2.3');
           });
 
-          test('when not everything is commited', () async {
+          test('when not everything is committed', () async {
             final runner = CommandRunner<void>('test', 'test')
               ..addCommand(AllVersions(ggLog: messages.add));
 
