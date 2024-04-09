@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Removed
+
+- 'Pipline: Disable cache'
+
 ## [4.0.0] - 2024-04-09
 
 ### Changed
@@ -110,6 +116,7 @@ is\_versionsed or consistent\_version
 
 - Initial version.
 
+[Unreleased]: https://github.com/inlavigo/gg_version/compare/4.0.0...HEAD
 [4.0.0]: https://github.com/inlavigo/gg_version/compare/3.0.1...4.0.0
 [3.0.1]: https://github.com/inlavigo/gg_version/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/inlavigo/gg_version/compare/2.0.2...3.0.0
