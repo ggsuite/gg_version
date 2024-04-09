@@ -54,7 +54,7 @@ class AllVersions extends GgGitBase<void> {
   Future<
       ({
         Version pubspec,
-        Version changeLog,
+        Version? changeLog,
         Version? gitHead,
         Version? gitLatest,
       })> get({

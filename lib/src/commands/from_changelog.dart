@@ -35,22 +35,22 @@ class FromChangelog extends DirCommand<void> {
   }
 
   // ...........................................................................
-  /// Returns true if everything in the directory is pushed.
-  Future<Version> fromDirectory({required Directory directory}) async {
+  /// Returns version found in CHANGELOG.md and null when no version is found
+  Future<Version?> fromDirectory({required Directory directory}) async {
     await check(directory: directory);
-    final pubspec = File('${directory.path}/CHANGELOG.md');
+    final changelog = File('${directory.path}/CHANGELOG.md');
     final dirName = basename(canonicalize(directory.path));
 
-    if (!pubspec.existsSync()) {
+    if (!changelog.existsSync()) {
       throw Exception('File "$dirName/CHANGELOG.md" does not exist.');
     }
 
-    return fromString(content: pubspec.readAsStringSync());
+    return fromString(content: changelog.readAsStringSync());
   }
 
   // ...........................................................................
-  /// Parses version from pubspec.yaml
-  Version fromString({
+  /// Parses version from CHANGELOG.md
+  Version? fromString({
     required String content,
   }) {
     final lines = content.split('\n');
@@ -70,7 +70,7 @@ class FromChangelog extends DirCommand<void> {
       }
     }
 
-    throw Exception('Could not find version in "CHANGELOG.md".');
+    return null;
   }
 }
 

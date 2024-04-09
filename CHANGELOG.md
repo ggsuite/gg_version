@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.0.0] - 2024-04-09
+
+### Changed
+
+- BREAKING CHANGE: FromChangelog returns null when no version is contained
+
 ## [3.0.1] - 2024-04-08
 
 ### Added
@@ -104,5 +110,6 @@ is\_versionsed or consistent\_version
 
 - Initial version.
 
+[4.0.0]: https://github.com/inlavigo/gg_version/compare/3.0.1...4.0.0
 [3.0.1]: https://github.com/inlavigo/gg_version/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/inlavigo/gg_version/compare/2.0.2...3.0.0

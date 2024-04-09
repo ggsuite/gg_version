@@ -54,25 +54,22 @@ void main() {
           final version = await fromChangelog.fromDirectory(directory: d);
           expect(version, Version.parse('0.00.001'));
         });
+
+        group('should return null', () {
+          test('when no version is found in CHANGELOG.md', () async {
+            await addFileWithoutCommitting(d, fileName: 'CHANGELOG.md');
+            expect(await fromChangelog.fromDirectory(directory: d), isNull);
+          });
+        });
       });
     });
 
     group('fromString(content)', () {
-      group('should throw', () {
+      group('should return null', () {
         // .....................................................................
         test('if CHANGELOG.md has no version tag', () {
           const content = 'name: test';
-
-          expect(
-            () => fromChangelog.fromString(content: content),
-            throwsA(
-              isA<Exception>().having(
-                (e) => e.toString(),
-                'message',
-                'Exception: Could not find version in "CHANGELOG.md".',
-              ),
-            ),
-          );
+          expect(fromChangelog.fromString(content: content), isNull);
         });
       });
 
