@@ -25,7 +25,7 @@ class AddVersionTag extends GgGitBase<void> {
 
   // ...........................................................................
   @override
-  Future<void> exec({
+  Future<void> get({
     required Directory directory,
     required GgLog ggLog,
   }) async {

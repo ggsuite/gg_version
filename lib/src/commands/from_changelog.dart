@@ -14,7 +14,7 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 
 // #############################################################################
 /// Provides "ggGit current-version-tag <dir>" command
-class FromChangelog extends DirCommand<void> {
+class FromChangelog extends DirCommand<Version?> {
   /// Constructor
   FromChangelog({
     required super.ggLog,
@@ -25,13 +25,14 @@ class FromChangelog extends DirCommand<void> {
 
   // ...........................................................................
   @override
-  Future<void> exec({
+  Future<Version?> get({
     required Directory directory,
     required GgLog ggLog,
   }) async {
     final result = await fromDirectory(directory: directory);
 
     ggLog(result.toString());
+    return result;
   }
 
   // ...........................................................................

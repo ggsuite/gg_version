@@ -13,7 +13,7 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 
 // #############################################################################
 /// Provides "ggGit current-version-tag <dir>" command
-class FromGit extends GgGitBase<void> {
+class FromGit extends GgGitBase<Version?> {
   /// Constructor
   FromGit({
     required super.ggLog,
@@ -28,27 +28,30 @@ class FromGit extends GgGitBase<void> {
 
   // ...........................................................................
   @override
-  Future<void> exec({
+  Future<Version?> get({
     required Directory directory,
     required GgLog ggLog,
   }) async {
     final headOnly = argResults!['head-only'] as bool;
 
+    Version? result;
+
     if (headOnly) {
-      final result = await fromHead(
+      result = await fromHead(
         ggLog: super.ggLog,
         directory: directory,
       );
 
       ggLog(result?.toString() ?? 'No version tag found in head.');
     } else {
-      final result = await latest(
+      result = await latest(
         ggLog: super.ggLog,
         directory: directory,
       );
 
       ggLog(result?.toString() ?? 'No version tag found.');
     }
+    return result;
   }
 
   // ...........................................................................

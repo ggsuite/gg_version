@@ -15,7 +15,13 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 
 // #############################################################################
 /// Provides "ggGit has-consistent-version <dir>" command
-class AllVersions extends GgGitBase<void> {
+class AllVersions extends GgGitBase<
+    ({
+      Version pubspec,
+      Version? changeLog,
+      Version? gitHead,
+      Version? gitLatest,
+    })> {
   /// Constructor
   AllVersions({
     required super.ggLog,
@@ -28,7 +34,13 @@ class AllVersions extends GgGitBase<void> {
 
   // ...........................................................................
   @override
-  Future<void> exec({
+  Future<
+      ({
+        Version pubspec,
+        Version? changeLog,
+        Version? gitHead,
+        Version? gitLatest,
+      })> exec({
     required Directory directory,
     required GgLog ggLog,
   }) async {
@@ -44,6 +56,8 @@ class AllVersions extends GgGitBase<void> {
       ggLog('changelog: ${v.changeLog}');
       ggLog('git head: ${v.gitHead ?? '-'}');
       ggLog('git latest: ${v.gitLatest ?? '-'}');
+
+      return v;
     } catch (e) {
       throw Exception(red(e.toString()));
     }
@@ -51,6 +65,7 @@ class AllVersions extends GgGitBase<void> {
 
   // ...........................................................................
   /// Returns the consistent version or null if not consistent.
+  @override
   Future<
       ({
         Version pubspec,

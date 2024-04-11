@@ -49,6 +49,7 @@ class ConsistentVersion extends GgGitBase<void> {
 
   // ...........................................................................
   /// Returns the consistent version or null if not consistent.
+  @override
   Future<Version> get({
     required GgLog ggLog,
     required Directory directory,

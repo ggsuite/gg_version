@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.0.2] - 2024-04-11
+
+### Changed
+
+- Upgrade dependencies
+
 ## [4.0.1] - 2024-04-09
 
 ### Removed
@@ -116,6 +122,7 @@ is\_versionsed or consistent\_version
 
 - Initial version.
 
+[4.0.2]: https://github.com/inlavigo/gg_version/compare/4.0.1...4.0.2
 [4.0.1]: https://github.com/inlavigo/gg_version/compare/4.0.0...4.0.1
 [4.0.0]: https://github.com/inlavigo/gg_version/compare/3.0.1...4.0.0
 [3.0.1]: https://github.com/inlavigo/gg_version/compare/3.0.0...3.0.1

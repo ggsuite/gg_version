@@ -60,6 +60,7 @@ class IsVersioned extends GgGitBase<void> {
 
   // ...........................................................................
   /// Returns true if pubspect.yaml, README.md as well git show the same version
+  @override
   Future<bool> get({
     required Directory directory,
     required GgLog ggLog,
