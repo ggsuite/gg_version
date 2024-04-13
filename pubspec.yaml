@@ -1,6 +1,6 @@
 name: gg_version
 description: A dart package offering methods for consistent versioning of dart packages..
-version: 4.0.3
+version: 4.0.4
 repository: https://github.com/inlavigo/gg_version.git
 
 environment:
