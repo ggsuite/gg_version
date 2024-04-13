@@ -1,10 +1,11 @@
 # Changelog
 
-## [Unreleased]
+## [4.0.3] - 2024-04-13
 
 ### Removed
 
 - dependency to gg\_install\_gg, remove ./check script
+- dependency pana
 
 ## [4.0.2] - 2024-04-11
 
@@ -128,7 +129,7 @@ is\_versionsed or consistent\_version
 
 - Initial version.
 
-[Unreleased]: https://github.com/inlavigo/gg_version/compare/4.0.2...HEAD
+[4.0.3]: https://github.com/inlavigo/gg_version/compare/4.0.2...4.0.3
 [4.0.2]: https://github.com/inlavigo/gg_version/compare/4.0.1...4.0.2
 [4.0.1]: https://github.com/inlavigo/gg_version/compare/4.0.0...4.0.1
 [4.0.0]: https://github.com/inlavigo/gg_version/compare/3.0.1...4.0.0
