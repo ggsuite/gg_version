@@ -36,19 +36,12 @@ void main() {
       // Execute bin/gg_version.dart and check if it prints help
       final result = await Process.run(
         './bin/gg_version.dart',
-        [
-          'from-git',
-          '--head-only',
-          '--input',
-          d.path,
-        ],
+        ['from-git', '--head-only', '--input', d.path],
         stdoutEncoding: utf8,
         stderrEncoding: utf8,
       );
 
-      final expectedMessages = [
-        'No version tag found in head.',
-      ];
+      final expectedMessages = ['No version tag found in head.'];
 
       final stdout = result.stdout as String;
 

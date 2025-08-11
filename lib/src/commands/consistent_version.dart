@@ -17,14 +17,11 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 /// Provides "ggGit has-consistent-version dir" command
 class ConsistentVersion extends GgGitBase<void> {
   /// Constructor
-  ConsistentVersion({
-    required super.ggLog,
-    super.processWrapper,
-  }) : super(
-          name: 'consistent-version',
-          description:
-              'Returns version of pubspec.yaml, README.md and git tag.',
-        );
+  ConsistentVersion({required super.ggLog, super.processWrapper})
+    : super(
+        name: 'consistent-version',
+        description: 'Returns version of pubspec.yaml, README.md and git tag.',
+      );
 
   // ...........................................................................
   @override
@@ -58,10 +55,7 @@ class ConsistentVersion extends GgGitBase<void> {
     final result = await AllVersions(
       ggLog: ggLog,
       processWrapper: processWrapper,
-    ).get(
-      ggLog: ggLog,
-      directory: directory,
-    );
+    ).get(ggLog: ggLog, directory: directory);
 
     if (result.gitHead == null) {
       throw Exception('Current state has no git version tag.');

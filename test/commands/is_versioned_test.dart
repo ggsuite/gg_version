@@ -71,8 +71,7 @@ void main() {
 
       group('should print', () {
         group(' »✅ Versions are consistent«', () {
-          group(
-              'when pubspec.yaml, CHANGELOG.md as well git tag '
+          group('when pubspec.yaml, CHANGELOG.md as well git tag '
               'have the same version', () {
             test('using command runner', () async {
               await initGit(d);
@@ -219,15 +218,111 @@ void main() {
 
     group('get(directory, VersionType? ignoreVersion)', () {
       group('should return true', () {
-        group('when pubspec.yaml, CHANGELOG.md and git have the same version',
-            () {
-          test('with ignoreVersion == null', () async {
+        group(
+          'when pubspec.yaml, CHANGELOG.md and git have the same version',
+          () {
+            test('with ignoreVersion == null', () async {
+              await initGit(d);
+              await addAndCommitVersions(
+                d,
+                pubspec: '1.2.3',
+                changeLog: '1.2.3',
+                gitHead: '1.2.3',
+              );
+
+              final result = await isVersioned.get(
+                ggLog: messages.add,
+                directory: d,
+              );
+
+              expect(result, isTrue);
+              expect(messages[0], contains('1.2.3'));
+            });
+
+            group('with ignoreVersion ==', () {
+              test('pubspec', () async {
+                await initGit(d);
+
+                // Pubspec has a different version
+                await addAndCommitVersions(
+                  d,
+                  pubspec: '2.0.0',
+                  changeLog: '1.2.3',
+                  gitHead: '1.2.3',
+                );
+
+                // But pubspec is ignored
+                final result = await isVersioned.get(
+                  ggLog: messages.add,
+                  directory: d,
+                  ignoreVersion: VersionType.pubspec,
+                );
+
+                // Therefore result is true though
+                expect(result, isTrue);
+                expect(messages[0], contains('1.2.3'));
+              });
+
+              test('changeLog', () async {
+                await initGit(d);
+
+                // ChangeLog has a different version
+                await addAndCommitVersions(
+                  d,
+                  pubspec: '1.2.3',
+                  changeLog: '2.0.0',
+                  gitHead: '1.2.3',
+                );
+
+                // But changeLog is ignored
+                final result = await isVersioned.get(
+                  ggLog: messages.add,
+                  directory: d,
+                  ignoreVersion: VersionType.changeLog,
+                );
+
+                // Therefore result is true though
+                expect(result, isTrue);
+                expect(messages[0], contains('1.2.3'));
+              });
+
+              test('gitHead', () async {
+                await initGit(d);
+
+                // GitHead has a different version
+                await addAndCommitVersions(
+                  d,
+                  pubspec: '1.2.3',
+                  changeLog: '1.2.3',
+                  gitHead: '2.0.0',
+                );
+
+                // But gitHead is ignored
+                final result = await isVersioned.get(
+                  ggLog: messages.add,
+                  directory: d,
+                  ignoreVersion: VersionType.gitHead,
+                );
+
+                // Therefore result is true though
+                expect(result, isTrue);
+                expect(messages[0], contains('1.2.3'));
+              });
+            });
+          },
+        );
+      });
+
+      group('should return false', () {
+        test(
+          'when pubspec.yaml, CHANGELOG.md and git have different versions',
+          () async {
             await initGit(d);
             await addAndCommitVersions(
               d,
               pubspec: '1.2.3',
               changeLog: '1.2.3',
-              gitHead: '1.2.3',
+              gitHead: '1.2.4',
             );
 
             final result = await isVersioned.get(
@@ -235,106 +330,14 @@ void main() {
               directory: d,
             );
 
-            expect(result, isTrue);
-            expect(messages[0], contains('1.2.3'));
-          });
-
-          group('with ignoreVersion ==', () {
-            test('pubspec', () async {
-              await initGit(d);
-
-              // Pubspec has a different version
-              await addAndCommitVersions(
-                d,
-                pubspec: '2.0.0',
-                changeLog: '1.2.3',
-                gitHead: '1.2.3',
-              );
-
-              // But pubspec is ignored
-              final result = await isVersioned.get(
-                ggLog: messages.add,
-                directory: d,
-                ignoreVersion: VersionType.pubspec,
-              );
-
-              // Therefore result is true though
-              expect(result, isTrue);
-              expect(messages[0], contains('1.2.3'));
-            });
-
-            test('changeLog', () async {
-              await initGit(d);
-
-              // ChangeLog has a different version
-              await addAndCommitVersions(
-                d,
-                pubspec: '1.2.3',
-                changeLog: '2.0.0',
-                gitHead: '1.2.3',
-              );
-
-              // But changeLog is ignored
-              final result = await isVersioned.get(
-                ggLog: messages.add,
-                directory: d,
-                ignoreVersion: VersionType.changeLog,
-              );
-
-              // Therefore result is true though
-              expect(result, isTrue);
-              expect(messages[0], contains('1.2.3'));
-            });
-
-            test('gitHead', () async {
-              await initGit(d);
-
-              // GitHead has a different version
-              await addAndCommitVersions(
-                d,
-                pubspec: '1.2.3',
-                changeLog: '1.2.3',
-                gitHead: '2.0.0',
-              );
-
-              // But gitHead is ignored
-              final result = await isVersioned.get(
-                ggLog: messages.add,
-                directory: d,
-                ignoreVersion: VersionType.gitHead,
-              );
-
-              // Therefore result is true though
-              expect(result, isTrue);
-              expect(messages[0], contains('1.2.3'));
-            });
-          });
-        });
-      });
-
-      group('should return false', () {
-        test('when pubspec.yaml, CHANGELOG.md and git have different versions',
-            () async {
-          await initGit(d);
-          await addAndCommitVersions(
-            d,
-            pubspec: '1.2.3',
-            changeLog: '1.2.3',
-            gitHead: '1.2.4',
-          );
-
-          final result = await isVersioned.get(
-            ggLog: messages.add,
-            directory: d,
-          );
-
-          expect(result, isFalse);
-          expect(
-            messages[0],
-            'Exception: Versions are not consistent: - pubspec: 1.2.3, '
-            '- changeLog: 1.2.3, - gitHead: 1.2.4',
-          );
-        });
+            expect(result, isFalse);
+            expect(
+              messages[0],
+              'Exception: Versions are not consistent: - pubspec: 1.2.3, '
+              '- changeLog: 1.2.3, - gitHead: 1.2.4',
+            );
+          },
+        );
       });
     });
   });

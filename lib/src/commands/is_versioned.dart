@@ -17,14 +17,13 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 /// Provides "ggGit has-consistent-version dir" command
 class IsVersioned extends GgGitBase<void> {
   /// Constructor
-  IsVersioned({
-    required super.ggLog,
-    super.processWrapper,
-  }) : super(
-          name: 'is-versioned',
-          description: 'Checks if pubspec.yaml, README.md and git head tag '
-              'have same version. ',
-        ) {
+  IsVersioned({required super.ggLog, super.processWrapper})
+    : super(
+        name: 'is-versioned',
+        description:
+            'Checks if pubspec.yaml, README.md and git head tag '
+            'have same version. ',
+      ) {
     _addArgs();
   }
 
@@ -70,11 +69,7 @@ class IsVersioned extends GgGitBase<void> {
       final version = await ConsistentVersion(
         ggLog: ggLog,
         processWrapper: processWrapper,
-      ).get(
-        directory: directory,
-        ggLog: ggLog,
-        ignoreVersion: ignoreVersion,
-      );
+      ).get(directory: directory, ggLog: ggLog, ignoreVersion: ignoreVersion);
       ggLog(version.toString());
       return true;
     } catch (e) {

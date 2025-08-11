@@ -39,10 +39,7 @@ void main() {
           // Don't create a git repository.
           // Run command
           await expectLater(
-            allVersions.get(
-              ggLog: messages.add,
-              directory: d,
-            ),
+            allVersions.get(ggLog: messages.add, directory: d),
             throwsA(
               isA<ArgumentError>().having(
                 (e) => e.toString(),

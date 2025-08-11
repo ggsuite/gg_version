@@ -19,10 +19,8 @@ void main() {
   late ConsistentVersion consistentVersion;
 
   // ...........................................................................
-  Future<Version> getVersion() => consistentVersion.get(
-        directory: d,
-        ggLog: messages.add,
-      );
+  Future<Version> getVersion() =>
+      consistentVersion.get(directory: d, ggLog: messages.add);
 
   // ...........................................................................
   setUp(() async {

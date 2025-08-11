@@ -15,42 +15,40 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 
 // #############################################################################
 /// Provides "ggGit has-consistent-version dir" command
-class AllVersions extends GgGitBase<
+class AllVersions
+    extends
+        GgGitBase<
+          ({
+            Version pubspec,
+            Version? changeLog,
+            Version? gitHead,
+            Version? gitLatest,
+          })
+        > {
+  /// Constructor
+  AllVersions({required super.ggLog, super.processWrapper})
+    : super(
+        name: 'all-versions',
+        description:
+            'Returns the version of pubspec.yaml, README.md '
+            'and git head tag. ',
+      );
+
+  // ...........................................................................
+  @override
+  Future<
     ({
       Version pubspec,
       Version? changeLog,
       Version? gitHead,
       Version? gitLatest,
-    })> {
-  /// Constructor
-  AllVersions({
-    required super.ggLog,
-    super.processWrapper,
-  }) : super(
-          name: 'all-versions',
-          description: 'Returns the version of pubspec.yaml, README.md '
-              'and git head tag. ',
-        );
-
-  // ...........................................................................
-  @override
-  Future<
-      ({
-        Version pubspec,
-        Version? changeLog,
-        Version? gitHead,
-        Version? gitLatest,
-      })> exec({
-    required Directory directory,
-    required GgLog ggLog,
-  }) async {
+    })
+  >
+  exec({required Directory directory, required GgLog ggLog}) async {
     final messages = <String>[];
 
     try {
-      final v = await get(
-        ggLog: messages.add,
-        directory: directory,
-      );
+      final v = await get(ggLog: messages.add, directory: directory);
 
       ggLog('pubspec: ${v.pubspec}');
       ggLog('changelog: ${v.changeLog}');
@@ -67,53 +65,44 @@ class AllVersions extends GgGitBase<
   /// Returns the consistent version or null if not consistent.
   @override
   Future<
-      ({
-        Version pubspec,
-        Version? changeLog,
-        Version? gitHead,
-        Version? gitLatest,
-      })> get({
+    ({
+      Version pubspec,
+      Version? changeLog,
+      Version? gitHead,
+      Version? gitLatest,
+    })
+  >
+  get({
     required GgLog ggLog,
     required Directory directory,
     bool ignoreUncommitted = false,
   }) async {
-    final isCommitted = ignoreUncommitted ||
+    final isCommitted =
+        ignoreUncommitted ||
         await IsCommitted(
           ggLog: ggLog,
           processWrapper: processWrapper,
-        ).get(
-          ggLog: ggLog,
-          directory: directory,
-        );
+        ).get(ggLog: ggLog, directory: directory);
 
     final pubspecVersion = await FromPubspec(
       ggLog: ggLog,
-    ).fromDirectory(
-      directory: directory,
-    );
+    ).fromDirectory(directory: directory);
     final changelogVersion = await FromChangelog(
       ggLog: ggLog,
-    ).fromDirectory(
-      directory: directory,
-    );
+    ).fromDirectory(directory: directory);
 
     final gitHeadVersion = isCommitted
         ? await FromGit(
             ggLog: ggLog,
-          ).fromHead(
-            ggLog: ggLog,
-            directory: directory,
-          )
+          ).fromHead(ggLog: ggLog, directory: directory)
         : null;
 
-    final gitLatestVersion = gitHeadVersion ??
+    final gitLatestVersion =
+        gitHeadVersion ??
         await FromGit(
           processWrapper: processWrapper,
           ggLog: ggLog,
-        ).latest(
-          directory: directory,
-          ggLog: ggLog,
-        );
+        ).latest(directory: directory, ggLog: ggLog);
 
     return (
       pubspec: pubspecVersion,

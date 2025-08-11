@@ -15,14 +15,13 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 /// Provides "ggGit current-version-tag dir" command
 class FromGit extends GgGitBase<Version?> {
   /// Constructor
-  FromGit({
-    required super.ggLog,
-    super.processWrapper,
-  }) : super(
-          name: 'from-git',
-          description: 'Returns the version tag of the latest state '
-              'or nothing if not tagged',
-        ) {
+  FromGit({required super.ggLog, super.processWrapper})
+    : super(
+        name: 'from-git',
+        description:
+            'Returns the version tag of the latest state '
+            'or nothing if not tagged',
+      ) {
     _addArgs();
   }
 
@@ -37,17 +36,11 @@ class FromGit extends GgGitBase<Version?> {
     Version? result;
 
     if (headOnly) {
-      result = await fromHead(
-        ggLog: super.ggLog,
-        directory: directory,
-      );
+      result = await fromHead(ggLog: super.ggLog, directory: directory);
 
       ggLog(result?.toString() ?? 'No version tag found in head.');
     } else {
-      result = await latest(
-        ggLog: super.ggLog,
-        directory: directory,
-      );
+      result = await latest(ggLog: super.ggLog, directory: directory);
 
       ggLog(result?.toString() ?? 'No version tag found.');
     }
@@ -65,10 +58,7 @@ class FromGit extends GgGitBase<Version?> {
     final headTags = await GetTags(
       ggLog: ggLog,
       processWrapper: processWrapper,
-    ).fromHead(
-      ggLog: ggLog,
-      directory: directory,
-    );
+    ).fromHead(ggLog: ggLog, directory: directory);
 
     final versions = _getVersions(headTags);
     if (versions.length > 1) {
@@ -92,10 +82,7 @@ class FromGit extends GgGitBase<Version?> {
     final tags = await GetTags(
       ggLog: ggLog,
       processWrapper: processWrapper,
-    ).all(
-      ggLog: ggLog,
-      directory: directory,
-    );
+    ).all(ggLog: ggLog, directory: directory);
 
     final versions = _getVersions(tags);
     return versions.firstOrNull;

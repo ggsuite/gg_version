@@ -23,10 +23,7 @@ class IncreaseBuild extends DirCommand<void> {
   });
 
   @override
-  Future<void> get({
-    required Directory directory,
-    required GgLog ggLog,
-  }) async {
+  Future<void> get({required Directory directory, required GgLog ggLog}) async {
     final file = File(join(directory.path, 'pubspec.yaml'));
 
     if (!await file.exists()) {

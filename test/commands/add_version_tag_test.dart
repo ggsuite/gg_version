@@ -26,9 +26,7 @@ void main() {
   late AddVersionTag addVersionTag;
 
   // ...........................................................................
-  void initCommand({
-    GgProcessWrapper? processWrapper,
-  }) {
+  void initCommand({GgProcessWrapper? processWrapper}) {
     addVersionTag = AddVersionTag(
       ggLog: messages.add,
       processWrapper: processWrapper ?? const GgProcessWrapper(),
@@ -59,10 +57,7 @@ void main() {
           await addPubspecFileWithoutCommitting(d, version: '0.0.1');
 
           await expectLater(
-            addVersionTag.add(
-              ggLog: messages.add,
-              directory: d,
-            ),
+            addVersionTag.add(ggLog: messages.add, directory: d),
             throwsA(
               isA<StateError>().having(
                 (e) => e.message,
@@ -89,10 +84,7 @@ void main() {
 
             // Call add(...) should tell us to fix different versions
             await expectLater(
-              addVersionTag.add(
-                ggLog: messages.add,
-                directory: d,
-              ),
+              addVersionTag.add(ggLog: messages.add, directory: d),
               throwsA(
                 isA<Exception>().having(
                   (e) => e.toString(),
@@ -120,10 +112,7 @@ void main() {
 
           // Call add(...) should tell us to fix different versions
           await expectLater(
-            addVersionTag.add(
-              ggLog: messages.add,
-              directory: d,
-            ),
+            addVersionTag.add(ggLog: messages.add, directory: d),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
@@ -156,10 +145,7 @@ void main() {
 
           // When adding the version tag, we should get an exception
           await expectLater(
-            addVersionTag.add(
-              ggLog: messages.add,
-              directory: d,
-            ),
+            addVersionTag.add(ggLog: messages.add, directory: d),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
@@ -214,10 +200,7 @@ void main() {
 
           // When adding the version tag, we should get an exception
           await expectLater(
-            addVersionTag.add(
-              ggLog: messages.add,
-              directory: d,
-            ),
+            addVersionTag.add(ggLog: messages.add, directory: d),
             throwsA(
               isA<Exception>().having(
                 (e) => e.toString(),
@@ -231,8 +214,7 @@ void main() {
 
       group('should return true', () {
         group('and add no tag', () {
-          test(
-              'when pubspec, CHANGELOG.md and tag '
+          test('when pubspec, CHANGELOG.md and tag '
               'have already the same version', () async {
             await initGit(d);
 
@@ -284,10 +266,7 @@ void main() {
             // The git head should have tag "4.5.6"
             final fromGit = FromGit(ggLog: messages.add);
             expect(
-              await fromGit.fromHead(
-                ggLog: messages.add,
-                directory: d,
-              ),
+              await fromGit.fromHead(ggLog: messages.add, directory: d),
               Version(4, 5, 6),
             );
 
@@ -336,10 +315,7 @@ void main() {
           // The git head should have tag "4.5.6"
           final fromGit = FromGit(ggLog: messages.add);
           expect(
-            await fromGit.fromHead(
-              ggLog: messages.add,
-              directory: d,
-            ),
+            await fromGit.fromHead(ggLog: messages.add, directory: d),
             Version(4, 5, 6),
           );
 

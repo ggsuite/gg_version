@@ -49,27 +49,26 @@ void main() {
           );
         });
 
-        test('if there are multiple version tags for the latest revision',
-            () async {
-          await initGit(d);
-          await addAndCommitSampleFile(d);
-          await addTags(d, ['0.1.0', '0.2.0']);
-          await expectLater(
-            fromGit.fromHead(
-              directory: d,
-              ggLog: messages.add,
-            ),
-            throwsA(
-              isA<StateError>().having(
-                (e) => e.message,
-                'message',
-                contains(
-                  'There are multiple version tags for the latest revision.',
+        test(
+          'if there are multiple version tags for the latest revision',
+          () async {
+            await initGit(d);
+            await addAndCommitSampleFile(d);
+            await addTags(d, ['0.1.0', '0.2.0']);
+            await expectLater(
+              fromGit.fromHead(directory: d, ggLog: messages.add),
+              throwsA(
+                isA<StateError>().having(
+                  (e) => e.message,
+                  'message',
+                  contains(
+                    'There are multiple version tags for the latest revision.',
+                  ),
                 ),
               ),
-            ),
-          );
-        });
+            );
+          },
+        );
       });
 
       group('should return', () {
@@ -79,10 +78,7 @@ void main() {
             await addAndCommitSampleFile(d);
             await addTags(d, ['X', 'ABC']); // No version tags
             expect(
-              fromGit.fromHead(
-                directory: d,
-                ggLog: messages.add,
-              ),
+              fromGit.fromHead(directory: d, ggLog: messages.add),
               completion(isNull),
             );
           });
@@ -94,13 +90,8 @@ void main() {
             await addAndCommitSampleFile(d);
             await addTags(d, ['0.1.0']);
             expect(
-              fromGit.fromHead(
-                directory: d,
-                ggLog: messages.add,
-              ),
-              completion(
-                equals(Version(0, 1, 0)),
-              ),
+              fromGit.fromHead(directory: d, ggLog: messages.add),
+              completion(equals(Version(0, 1, 0))),
             );
           });
         });
@@ -115,10 +106,7 @@ void main() {
             await addAndCommitSampleFile(d);
             await addTags(d, ['X', 'ABC']); // No version tags
             expect(
-              fromGit.latest(
-                ggLog: messages.add,
-                directory: d,
-              ),
+              fromGit.latest(ggLog: messages.add, directory: d),
               completion(isNull),
             );
           });
@@ -133,10 +121,7 @@ void main() {
                 await updateAndCommitSampleFile(d);
                 await addTags(d, ['0.2.0']); // Head revision
                 expect(
-                  fromGit.latest(
-                    ggLog: messages.add,
-                    directory: d,
-                  ),
+                  fromGit.latest(ggLog: messages.add, directory: d),
                   completion(equals(Version(0, 2, 0))),
                 );
               });
@@ -150,10 +135,7 @@ void main() {
                 await updateAndCommitSampleFile(d);
                 await addTags(d, ['1.0.0']); // Head revision, no version tag
                 expect(
-                  fromGit.latest(
-                    ggLog: messages.add,
-                    directory: d,
-                  ),
+                  fromGit.latest(ggLog: messages.add, directory: d),
                   completion(equals(Version(2, 0, 0))),
                 );
               });
@@ -165,10 +147,7 @@ void main() {
                 await updateAndCommitSampleFile(d);
                 await addTags(d, ['2.0.0']); // New version is lower then head
                 expect(
-                  fromGit.latest(
-                    ggLog: messages.add,
-                    directory: d,
-                  ),
+                  fromGit.latest(ggLog: messages.add, directory: d),
                   completion(equals(Version(2, 0, 0))), // New version
                 );
               });
@@ -188,9 +167,7 @@ void main() {
 
             final runner = CommandRunner<void>('test', 'test');
             runner.addCommand(FromGit(ggLog: messages.add));
-            await runner.run(
-              ['from-git', '--input', d.path, '--head-only'],
-            );
+            await runner.run(['from-git', '--input', d.path, '--head-only']);
             expect(messages.last, '0.1.0');
           });
         });
@@ -206,9 +183,7 @@ void main() {
             runner.addCommand(FromGit(ggLog: messages.add));
 
             // No version tag in head. With '--head-only' nothing is returned
-            await runner.run(
-              ['from-git', '--input', d.path, '--head-only'],
-            );
+            await runner.run(['from-git', '--input', d.path, '--head-only']);
             expect(messages.last, 'No version tag found in head.');
 
             // Without --head-only, the previous verion is returned
@@ -225,9 +200,7 @@ void main() {
 
             final runner = CommandRunner<void>('test', 'test');
             runner.addCommand(FromGit(ggLog: messages.add));
-            await runner.run(
-              ['from-git', '--input', d.path, '--head-only'],
-            );
+            await runner.run(['from-git', '--input', d.path, '--head-only']);
             expect(messages, ['No version tag found in head.']);
           });
         });

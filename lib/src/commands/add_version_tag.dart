@@ -15,20 +15,15 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 /// Provides "ggGit has-version-tag dir" command
 class AddVersionTag extends GgGitBase<void> {
   /// Constructor
-  AddVersionTag({
-    required super.ggLog,
-    super.processWrapper,
-  }) : super(
-          name: 'add-version-tag',
-          description: 'Reads version from pubspec.yaml and adds it as git tag',
-        );
+  AddVersionTag({required super.ggLog, super.processWrapper})
+    : super(
+        name: 'add-version-tag',
+        description: 'Reads version from pubspec.yaml and adds it as git tag',
+      );
 
   // ...........................................................................
   @override
-  Future<void> get({
-    required Directory directory,
-    required GgLog ggLog,
-  }) async {
+  Future<void> get({required Directory directory, required GgLog ggLog}) async {
     String? lastLog;
 
     await add(
@@ -43,10 +38,7 @@ class AddVersionTag extends GgGitBase<void> {
 
   // ...........................................................................
   /// Returns true if everything in the directory is pushed.
-  Future<bool> add({
-    required GgLog ggLog,
-    required Directory directory,
-  }) async {
+  Future<bool> add({required GgLog ggLog, required Directory directory}) async {
     // Throw if not everything is commited
     final isCommited = await IsCommitted(
       ggLog: ggLog,
@@ -60,10 +52,7 @@ class AddVersionTag extends GgGitBase<void> {
     final versions = await AllVersions(
       ggLog: ggLog,
       processWrapper: processWrapper,
-    ).get(
-      ggLog: ggLog,
-      directory: directory,
-    );
+    ).get(ggLog: ggLog, directory: directory);
 
     // If version is already set, do nothing
     final pubspecVersion = versions.pubspec;
@@ -98,11 +87,13 @@ class AddVersionTag extends GgGitBase<void> {
 
     // Create a tag and push it
     final version = pubspecVersion.toString();
-    final result = await processWrapper.run(
-      'git',
-      ['tag', '-a', version, '-m', 'Version $version'],
-      workingDirectory: directory.path,
-    );
+    final result = await processWrapper.run('git', [
+      'tag',
+      '-a',
+      version,
+      '-m',
+      'Version $version',
+    ], workingDirectory: directory.path);
 
     if (result.exitCode == 0) {
       ggLog('Tag $version added.');

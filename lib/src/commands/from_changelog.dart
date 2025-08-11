@@ -16,12 +16,11 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 /// Provides "ggGit current-version-tag dir" command
 class FromChangelog extends DirCommand<Version?> {
   /// Constructor
-  FromChangelog({
-    required super.ggLog,
-  }) : super(
-          name: 'from-changelog',
-          description: 'Returns the version found in CHANGELOG.md',
-        );
+  FromChangelog({required super.ggLog})
+    : super(
+        name: 'from-changelog',
+        description: 'Returns the version found in CHANGELOG.md',
+      );
 
   // ...........................................................................
   @override
@@ -51,9 +50,7 @@ class FromChangelog extends DirCommand<Version?> {
 
   // ...........................................................................
   /// Parses version from CHANGELOG.md
-  Version? fromString({
-    required String content,
-  }) {
+  Version? fromString({required String content}) {
     final lines = content.split('\n');
     for (final line in lines) {
       if (line.startsWith('## ')) {
@@ -61,8 +58,10 @@ class FromChangelog extends DirCommand<Version?> {
           continue;
         }
 
-        final regExp =
-            RegExp(r'##\s+\[?(\d+\.\d+\.\d+)\]?', caseSensitive: true);
+        final regExp = RegExp(
+          r'##\s+\[?(\d+\.\d+\.\d+)\]?',
+          caseSensitive: true,
+        );
         final match = regExp.firstMatch(line);
         final version = match?.group(1);
         if (version != null) {

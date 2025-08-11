@@ -18,12 +18,11 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 /// Provides "ggGit current-version-tag dir" command
 class FromPubspec extends DirCommand<Version> {
   /// Constructor
-  FromPubspec({
-    required super.ggLog,
-  }) : super(
-          name: 'from-pubspec',
-          description: 'Returns the version found in pubspec.yaml',
-        );
+  FromPubspec({required super.ggLog})
+    : super(
+        name: 'from-pubspec',
+        description: 'Returns the version found in pubspec.yaml',
+      );
 
   // ...........................................................................
   @override
@@ -52,9 +51,7 @@ class FromPubspec extends DirCommand<Version> {
 
   // ...........................................................................
   /// Parses version from pubspec.yaml
-  Version fromString({
-    required String content,
-  }) {
+  Version fromString({required String content}) {
     late Pubspec pubspec;
 
     try {
