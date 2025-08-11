@@ -11,6 +11,7 @@
 
 - Enable pipelines with caching
 - Update CHANGELOG.md
+- Recalc hashes
 
 ### Fixed
 
