@@ -5,10 +5,12 @@
 ### Added
 
 - Add .gitattributes file, configuring the EOL as LF
+- Enable caching in pipelines
 
 ### Changed
 
 - Enable pipelines with caching
+- Update CHANGELOG.md
 
 ## [4.0.4] - 2025-08-11
 
