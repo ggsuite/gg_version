@@ -12,7 +12,7 @@ import 'package:gg_version/gg_version.dart';
 import 'package:mocktail/mocktail.dart' as mocktail;
 
 // #############################################################################
-/// Provides "ggGit has-version-tag <dir>" command
+/// Provides "ggGit has-version-tag dir" command
 class AddVersionTag extends GgGitBase<void> {
   /// Constructor
   AddVersionTag({

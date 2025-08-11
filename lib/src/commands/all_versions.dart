@@ -14,7 +14,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:mocktail/mocktail.dart' as mocktail;
 
 // #############################################################################
-/// Provides "ggGit has-consistent-version <dir>" command
+/// Provides "ggGit has-consistent-version dir" command
 class AllVersions extends GgGitBase<
     ({
       Version pubspec,

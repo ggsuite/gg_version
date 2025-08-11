@@ -14,7 +14,7 @@ import 'package:gg_version/gg_version.dart';
 import 'package:mocktail/mocktail.dart' as mocktail;
 
 // #############################################################################
-/// Provides "ggGit has-consistent-version <dir>" command
+/// Provides "ggGit has-consistent-version dir" command
 class IsVersioned extends GgGitBase<void> {
   /// Constructor
   IsVersioned({

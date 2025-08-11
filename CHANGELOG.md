@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.0.4] - 2025-08-11
+
+### Changed
+
+- Update to gg\_git 3.0.0
+
 ## [4.0.3] - 2024-04-13
 
 ### Removed
@@ -129,6 +135,7 @@ is\_versionsed or consistent\_version
 
 - Initial version.
 
+[4.0.4]: https://github.com/inlavigo/gg_version/compare/4.0.3...4.0.4
 [4.0.3]: https://github.com/inlavigo/gg_version/compare/4.0.2...4.0.3
 [4.0.2]: https://github.com/inlavigo/gg_version/compare/4.0.1...4.0.2
 [4.0.1]: https://github.com/inlavigo/gg_version/compare/4.0.0...4.0.1

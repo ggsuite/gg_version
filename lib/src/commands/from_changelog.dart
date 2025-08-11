@@ -13,7 +13,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:mocktail/mocktail.dart' as mocktail;
 
 // #############################################################################
-/// Provides "ggGit current-version-tag <dir>" command
+/// Provides "ggGit current-version-tag dir" command
 class FromChangelog extends DirCommand<Version?> {
   /// Constructor
   FromChangelog({

@@ -15,7 +15,7 @@ import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:mocktail/mocktail.dart' as mocktail;
 
 // #############################################################################
-/// Provides "ggGit current-version-tag <dir>" command
+/// Provides "ggGit current-version-tag dir" command
 class FromPubspec extends DirCommand<Version> {
   /// Constructor
   FromPubspec({

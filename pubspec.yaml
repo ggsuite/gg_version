@@ -11,7 +11,7 @@ dependencies:
   checked_yaml: ^2.0.3
   gg_args: ^2.0.1
   gg_console_colors: ^2.0.0
-  gg_git: ^2.0.0
+  gg_git: ^3.0.0
   gg_log: ^1.0.0
   gg_process: ^1.1.0
   gg_status_printer: ^1.0.5
@@ -25,6 +25,6 @@ dependencies:
 
 dev_dependencies:
   gg_capture_print: ^1.0.3
-  lints: ^3.0.0
+  lints: ^6.0.0
   test: ^1.24.0
   recase: any
