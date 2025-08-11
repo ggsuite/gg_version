@@ -12,6 +12,10 @@
 - Enable pipelines with caching
 - Update CHANGELOG.md
 
+### Fixed
+
+- Fix pipeline
+
 ## [4.0.4] - 2025-08-11
 
 ### Changed
