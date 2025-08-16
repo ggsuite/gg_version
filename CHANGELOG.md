@@ -12,6 +12,7 @@
 - Enable pipelines with caching
 - Update CHANGELOG.md
 - Recalc hashes
+- kidney: changed references to git
 
 ### Fixed
 
