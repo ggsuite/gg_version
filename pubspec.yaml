@@ -11,15 +11,23 @@ dependencies:
   args: ^2.4.2
   checked_yaml: ^2.0.3
   gg_args:
-    path: ../gg_args # ^2.0.1
+    git:
+      url: git@github.com:ggsuite/gg_args.git
+      ref: ticket-test
   gg_console_colors: ^2.0.0
   gg_git:
-    path: ../gg_git # ^3.0.0
+    git:
+      url: git@github.com:ggsuite/gg_git.git
+      ref: ticket-test
   gg_log:
-    path: ../gg_log # ^1.0.0
+    git:
+      url: git@github.com:ggsuite/gg_log.git
+      ref: ticket-test
   gg_process: ^1.1.0
   gg_status_printer:
-    path: ../gg_status_printer # ^1.0.5
+    git:
+      url: git@github.com:ggsuite/gg_status_printer.git
+      ref: ticket-test
   meta: ^1.12.0
   mocktail: ^1.0.3
   path: ^1.8.0

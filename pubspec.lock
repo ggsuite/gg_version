@@ -116,9 +116,11 @@ packages:
   gg_args:
     dependency: "direct main"
     description:
-      path: "../gg_args"
-      relative: true
-    source: path
+      path: "."
+      ref: ticket-test
+      resolved-ref: aa47f62aa2cb46a362e2602c2974690feb3b4c9b
+      url: "git@github.com:ggsuite/gg_args.git"
+    source: git
     version: "2.0.5"
   gg_capture_print:
     dependency: "direct dev"
@@ -139,9 +141,11 @@ packages:
   gg_git:
     dependency: "direct main"
     description:
-      path: "../gg_git"
-      relative: true
-    source: path
+      path: "."
+      ref: ticket-test
+      resolved-ref: "6aec6fe0ab099956708714cf0c0f339f051a90b6"
+      url: "git@github.com:ggsuite/gg_git.git"
+    source: git
     version: "3.0.6"
   gg_hash:
     dependency: transitive
@@ -162,9 +166,11 @@ packages:
   gg_log:
     dependency: "direct main"
     description:
-      path: "../gg_log"
-      relative: true
-    source: path
+      path: "."
+      ref: ticket-test
+      resolved-ref: "97c7e4379c5f7658704d97709dc1a90c6e3b15a8"
+      url: "git@github.com:ggsuite/gg_log.git"
+    source: git
     version: "1.0.7"
   gg_process:
     dependency: "direct main"
@@ -177,9 +183,11 @@ packages:
   gg_status_printer:
     dependency: "direct main"
     description:
-      path: "../gg_status_printer"
-      relative: true
-    source: path
+      path: "."
+      ref: ticket-test
+      resolved-ref: cede209be89d9064b2832478ca94bba2389246a5
+      url: "git@github.com:ggsuite/gg_status_printer.git"
+    source: git
     version: "1.1.5"
   glob:
     dependency: transitive

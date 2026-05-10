@@ -12,6 +12,7 @@
 - Enable pipelines with caching
 - Update CHANGELOG.md
 - Recalc hashes
+- gg\_multi: changed references to git
 
 ### Fixed
 
