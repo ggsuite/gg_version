@@ -12,6 +12,7 @@
 - Enable pipelines with caching
 - Update CHANGELOG.md
 - Recalc hashes
+- feat: read package version via gg\_lang Manifest (Dart pubspec + TypeScript package.json)
 
 ### Fixed
 

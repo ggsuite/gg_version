@@ -54,6 +54,15 @@ void main() {
           final version = await fromPubspec.fromDirectory(directory: d);
           expect(version, Version.parse('0.00.001'));
         });
+
+        test('when found in package.json (TypeScript)', () async {
+          File(
+            '${d.path}/package.json',
+          ).writeAsStringSync('{"name": "ts_pkg", "version": "1.4.2"}');
+          File('${d.path}/tsconfig.json').writeAsStringSync('{}');
+          final version = await fromPubspec.fromDirectory(directory: d);
+          expect(version, Version.parse('1.4.2'));
+        });
       });
     });
 

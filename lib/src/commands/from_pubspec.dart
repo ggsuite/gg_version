@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:checked_yaml/checked_yaml.dart';
 import 'package:gg_args/gg_args.dart';
+import 'package:gg_lang/gg_lang.dart';
 import 'package:gg_log/gg_log.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -18,11 +19,18 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 /// Provides "ggGit current-version-tag dir" command
 class FromPubspec extends DirCommand<Version> {
   /// Constructor
-  FromPubspec({required super.ggLog})
-    : super(
+  FromPubspec({required super.ggLog, LanguageCatalog? catalog})
+    : _catalog = catalog,
+      super(
         name: 'from-pubspec',
-        description: 'Returns the version found in pubspec.yaml',
+        description:
+            'Returns the version found in the package manifest '
+            '(pubspec.yaml / package.json)',
       );
+
+  /// The language catalog used to detect the manifest. Defaults to the bundled
+  /// gg_lang catalog when null.
+  final LanguageCatalog? _catalog;
 
   // ...........................................................................
   @override
@@ -36,17 +44,25 @@ class FromPubspec extends DirCommand<Version> {
   }
 
   // ...........................................................................
-  /// Returns true if everything in the directory is pushed.
+  /// Returns the version found in the package manifest of [directory].
+  ///
+  /// Works for Dart/Flutter (`pubspec.yaml`) and TypeScript (`package.json`).
   Future<Version> fromDirectory({required Directory directory}) async {
     await check(directory: directory);
-    final pubspec = File('${directory.path}/pubspec.yaml');
     final dirName = basename(canonicalize(directory.path));
 
-    if (!pubspec.existsSync()) {
+    final catalog = _catalog ?? await LanguageCatalog.load();
+
+    // `detectProjectType` (inside `Manifest.detect`) already guarantees the
+    // manifest file exists; a missing manifest surfaces as a thrown exception.
+    final Manifest manifest;
+    try {
+      manifest = Manifest.detect(directory, catalog);
+    } catch (_) {
       throw Exception('File "$dirName/pubspec.yaml" does not exist.');
     }
 
-    return fromString(content: await pubspec.readAsString());
+    return manifest.readVersion();
   }
 
   // ...........................................................................
