@@ -17,6 +17,7 @@
 - gg\_multi: changed references to git
 - gg\_multi: changed references to git
 - gg\_multi: changed references to git
+- Gg Multi: changed references to pub.dev
 
 ### Fixed
 
