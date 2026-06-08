@@ -16,6 +16,7 @@
 - feat(do add): auto-clone transitive deps into master before graph build & P:\programs\flutter/bin/internal/exit\_with\_errorlevel.bat
 - gg\_multi: changed references to git
 - gg\_multi: changed references to git
+- gg\_multi: changed references to git
 
 ### Fixed
 
