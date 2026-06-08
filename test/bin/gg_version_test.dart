@@ -33,10 +33,12 @@ void main() {
     test('should be executable', () async {
       await initGit(d);
 
-      // Execute bin/gg_version.dart and check if it prints help
+      // Execute bin/gg_version.dart and check if it prints help.
+      // Invoke through `dart` (not the shebang directly) so the test also
+      // runs on Windows, where `.dart` files are not directly executable.
       final result = await Process.run(
-        './bin/gg_version.dart',
-        ['from-git', '--head-only', '--input', d.path],
+        'dart',
+        ['./bin/gg_version.dart', 'from-git', '--head-only', '--input', d.path],
         stdoutEncoding: utf8,
         stderrEncoding: utf8,
       );

@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.1.0] - 2026-06-08
 
 ### Added
 
@@ -12,6 +12,12 @@
 - Enable pipelines with caching
 - Update CHANGELOG.md
 - Recalc hashes
+- feat: read package version via gg\_lang Manifest (Dart pubspec + TypeScript package.json)
+- feat(do add): auto-clone transitive deps into master before graph build & P:\programs\flutter/bin/internal/exit\_with\_errorlevel.bat
+- gg\_multi: changed references to git
+- gg\_multi: changed references to git
+- gg\_multi: changed references to git
+- Gg Multi: changed references to pub.dev
 
 ### Fixed
 
@@ -152,7 +158,7 @@ is\_versionsed or consistent\_version
 
 - Initial version.
 
-[Unreleased]: https://github.com/inlavigo/gg_version/compare/4.0.4...HEAD
+[4.1.0]: https://github.com/inlavigo/gg_version/compare/4.0.4...4.1.0
 [4.0.4]: https://github.com/inlavigo/gg_version/compare/4.0.3...4.0.4
 [4.0.3]: https://github.com/inlavigo/gg_version/compare/4.0.2...4.0.3
 [4.0.2]: https://github.com/inlavigo/gg_version/compare/4.0.1...4.0.2

@@ -12,3 +12,8 @@ coverage
 build
 *.vm.json
 .DS_Store
+.gg
+!.gg/.gg.json
+
+# Local cross-repo dev override (not for commit)
+pubspec_overrides.yaml
