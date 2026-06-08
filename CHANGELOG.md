@@ -13,7 +13,8 @@
 - Update CHANGELOG.md
 - Recalc hashes
 - feat: read package version via gg\_lang Manifest (Dart pubspec + TypeScript package.json)
-- feat(do add): auto-clone transitive deps into master before graph build &amp; P:\programs\flutter/bin/internal/exit\_with\_errorlevel.bat
+- feat(do add): auto-clone transitive deps into master before graph build & P:\programs\flutter/bin/internal/exit\_with\_errorlevel.bat
+- gg\_multi: changed references to git
 
 ### Fixed
 

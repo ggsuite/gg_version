@@ -164,9 +164,11 @@ packages:
   gg_lang:
     dependency: "direct main"
     description:
-      path: "../gg_lang"
-      relative: true
-    source: path
+      path: "."
+      ref: lang_universal
+      resolved-ref: "4d2d510a4c57bbf2669caf1fbb5346de519a3e59"
+      url: "https://github.com/ggsuite/gg_lang.git"
+    source: git
     version: "0.0.1"
   gg_log:
     dependency: "direct main"
