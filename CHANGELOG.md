@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Publish bridges as TypeScript: pnpm-aware publish, dual-manifest version bump, non-swallowed publish errors, idempotent resume, review skips merged repos, link: for local TS deps, package.json scripts check
+
 ## [4.1.0] - 2026-06-08
 
 ### Added
@@ -158,6 +164,7 @@ is\_versionsed or consistent\_version
 
 - Initial version.
 
+[Unreleased]: https://github.com/inlavigo/gg_version/compare/4.1.0...HEAD
 [4.1.0]: https://github.com/inlavigo/gg_version/compare/4.0.4...4.1.0
 [4.0.4]: https://github.com/inlavigo/gg_version/compare/4.0.3...4.0.4
 [4.0.3]: https://github.com/inlavigo/gg_version/compare/4.0.2...4.0.3

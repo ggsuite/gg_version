@@ -57,7 +57,12 @@ class FromPubspec extends DirCommand<Version> {
     // manifest file exists; a missing manifest surfaces as a thrown exception.
     final Manifest manifest;
     try {
-      manifest = Manifest.detect(directory, catalog);
+      // A bridge's published version lives in its package.json (TypeScript).
+      manifest = Manifest.detect(
+        directory,
+        catalog,
+        treatBridgeAsTypeScript: true,
+      );
     } catch (_) {
       throw Exception('File "$dirName/pubspec.yaml" does not exist.');
     }
