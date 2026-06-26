@@ -165,10 +165,10 @@ packages:
     dependency: "direct main"
     description:
       name: gg_lang
-      sha256: "46291297f10f57c83c7649ba2a7e091b150d998badb99fcb1d37f247e54dc93b"
+      sha256: "6a98e2c7600bef5df70f93e11c736e29bd7ef18df0258a413b4496053be1fbd0"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.0"
+    version: "0.2.1"
   gg_log:
     dependency: "direct main"
     description:
