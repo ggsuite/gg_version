@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- feat(gg): do checkout + .gg/.ticket.json ticket marker; TS format no direct eslint &amp; P:\programs\flutter/bin/internal/exit\_with\_errorlevel.bat
+
 ## [4.2.1] - 2026-06-26
 
 ### Changed
@@ -171,6 +177,7 @@ is\_versionsed or consistent\_version
 
 - Initial version.
 
+[Unreleased]: https://github.com/inlavigo/gg_version/compare/4.2.1...HEAD
 [4.2.1]: https://github.com/inlavigo/gg_version/compare/4.2.0...4.2.1
 [4.2.0]: https://github.com/inlavigo/gg_version/compare/4.1.0...4.2.0
 [4.1.0]: https://github.com/inlavigo/gg_version/compare/4.0.4...4.1.0
