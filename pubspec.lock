@@ -140,9 +140,11 @@ packages:
   gg_git:
     dependency: "direct main"
     description:
-      path: "../gg_git"
-      relative: true
-    source: path
+      path: "."
+      ref: ts_format_no_direct_eslint
+      resolved-ref: "647fa23cf19a8214058113921c31726d1f5320b4"
+      url: "git@github.com:ggsuite/gg_git.git"
+    source: git
     version: "3.0.6"
   gg_hash:
     dependency: transitive
