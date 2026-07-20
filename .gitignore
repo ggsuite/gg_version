@@ -17,3 +17,4 @@ build
 
 # Local cross-repo dev override (not for commit)
 pubspec_overrides.yaml
+.gg/.gg-publish.json

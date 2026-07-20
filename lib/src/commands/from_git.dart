@@ -77,6 +77,17 @@ class FromGit extends GgGitBase<Version?> {
     required GgLog ggLog,
     required Directory directory,
   }) async {
+    final versions = await allVersions(ggLog: ggLog, directory: directory);
+    return versions.firstOrNull;
+  }
+
+  // ...........................................................................
+  /// Returns all versions found in the repository's tags, including
+  /// prereleases. Empty when no tag parses as a version.
+  Future<List<Version>> allVersions({
+    required GgLog ggLog,
+    required Directory directory,
+  }) async {
     await check(directory: directory);
 
     final tags = await GetTags(
@@ -84,8 +95,7 @@ class FromGit extends GgGitBase<Version?> {
       processWrapper: processWrapper,
     ).all(ggLog: ggLog, directory: directory);
 
-    final versions = _getVersions(tags);
-    return versions.firstOrNull;
+    return _getVersions(tags);
   }
 
   // ...........................................................................

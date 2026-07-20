@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.4.0] - 2026-07-20
+
+### Added
+
+- Add rc prerelease channel to gg do publish (channel field/flag, X.Y.Z-rc.N computation, npm --tag rc, single + multi repo)
+- Address review: wrap registry version-parse errors as RegistryException, clarify spent-version rc message, lock cider rc changelog format
+
+### Changed
+
+- gg\_multi: changed references to git
+
 ## [4.3.0] - 2026-07-01
 
 ### Changed
@@ -178,6 +189,7 @@ is\_versionsed or consistent\_version
 
 - Initial version.
 
+[4.4.0]: https://github.com/inlavigo/gg_version/compare/4.3.0...4.4.0
 [4.3.0]: https://github.com/inlavigo/gg_version/compare/4.2.1...4.3.0
 [4.2.1]: https://github.com/inlavigo/gg_version/compare/4.2.0...4.2.1
 [4.2.0]: https://github.com/inlavigo/gg_version/compare/4.1.0...4.2.0

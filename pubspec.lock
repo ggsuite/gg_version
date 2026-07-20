@@ -5,18 +5,18 @@ packages:
     dependency: transitive
     description:
       name: _fe_analyzer_shared
-      sha256: f6526c100095fd63a916824e3da344bbbd50c25c8f56bcd52d13c59d35bbe422
+      sha256: "9a3386eea899815698dd55995277cf7cb8572ee52b399a6edfb7ae2b50e5fc19"
       url: "https://pub.dev"
     source: hosted
-    version: "104.0.0"
+    version: "105.0.0"
   analyzer:
     dependency: transitive
     description:
       name: analyzer
-      sha256: "6c6d751533496152e78f71c46ad001260c5e74e0f9ec1f1cbc165a0467c086d6"
+      sha256: "62993bed6eadbe9596c5c20d5c167e7bc563c5fe266657a04ddeb93bdb84f4c9"
       url: "https://pub.dev"
     source: hosted
-    version: "14.0.0"
+    version: "14.1.0"
   args:
     dependency: "direct main"
     description:
@@ -149,10 +149,10 @@ packages:
     dependency: transitive
     description:
       name: gg_hash
-      sha256: "1e55a43dc4ef5cbf2bff254290b890333c9b18d71b898a58a5e25db717f6472b"
+      sha256: "33bfca21684213c93b329c05d91c4233678b159a68415b287e796da4701c0e1a"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.4"
+    version: "1.1.0"
   gg_is_github:
     dependency: transitive
     description:
@@ -165,10 +165,10 @@ packages:
     dependency: "direct main"
     description:
       name: gg_lang
-      sha256: "6a98e2c7600bef5df70f93e11c736e29bd7ef18df0258a413b4496053be1fbd0"
+      sha256: f56d3cb418065feecd6dd0ea0c30bbd1f9abe6b34e89016dec8a4939146b9fb5
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.1"
+    version: "0.2.3"
   gg_log:
     dependency: "direct main"
     description:
@@ -269,10 +269,10 @@ packages:
     dependency: "direct main"
     description:
       name: meta
-      sha256: c82594181e3312f3d0695fc95aaaf7758d75b8d4ae2bbecf223b9fd5109a059d
+      sha256: "307249ce4ff29d58a18e97f6345f539382eb9c9c29ecda628900f31de0443dd9"
       url: "https://pub.dev"
     source: hosted
-    version: "1.18.3"
+    version: "1.19.0"
   mime:
     dependency: transitive
     description:

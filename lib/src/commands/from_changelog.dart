@@ -58,8 +58,13 @@ class FromChangelog extends DirCommand<Version?> {
           continue;
         }
 
+        // Also matches prerelease/build suffixes (e.g. 1.2.3-rc.1).
         final regExp = RegExp(
-          r'##\s+\[?(\d+\.\d+\.\d+)\]?',
+          r'##\s+\[?'
+          r'(\d+\.\d+\.\d+'
+          r'(?:-[0-9A-Za-z.\-]+)?'
+          r'(?:\+[0-9A-Za-z.\-]+)?)'
+          r'\]?',
           caseSensitive: true,
         );
         final match = regExp.firstMatch(line);

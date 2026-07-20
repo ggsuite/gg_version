@@ -157,6 +157,33 @@ void main() {
       });
     });
 
+    group('allVersions(...)', () {
+      test('returns an empty list when no tag parses as a version', () async {
+        await initGit(d);
+        await addAndCommitSampleFile(d);
+        await addTags(d, ['X', 'ABC']); // No version tags
+        expect(
+          fromGit.allVersions(ggLog: messages.add, directory: d),
+          completion(isEmpty),
+        );
+      });
+
+      test('returns all version tags including prereleases', () async {
+        await initGit(d);
+        await addAndCommitSampleFile(d);
+        await addTags(d, ['1.0.0', 'not-a-version']);
+        await updateAndCommitSampleFile(d);
+        await addTags(d, ['1.1.0-rc.1']);
+        final versions = await fromGit.allVersions(
+          ggLog: messages.add,
+          directory: d,
+        );
+        expect(versions, contains(Version(1, 0, 0)));
+        expect(versions, contains(Version.parse('1.1.0-rc.1')));
+        expect(versions.length, 2);
+      });
+    });
+
     group('run()', () {
       group('should log', () {
         group('the head version tag', () {

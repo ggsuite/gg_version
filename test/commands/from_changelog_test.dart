@@ -93,6 +93,39 @@ void main() {
             final version = fromChangelog.fromString(content: content);
             expect(version, Version.parse('01.02.003'));
           });
+
+          test('with an rc prerelease version', () {
+            const content =
+                '# Change Log\n\n## [1.3.0-rc.1] - 2024-04-05\n\n- test';
+            final version = fromChangelog.fromString(content: content);
+            expect(version, Version.parse('1.3.0-rc.1'));
+          });
+
+          test('with a build suffix', () {
+            const content = '# Change Log\n\n## 1.3.0+2 - 2024-04-05\n\n- test';
+            final version = fromChangelog.fromString(content: content);
+            expect(version, Version.parse('1.3.0+2'));
+          });
+
+          test('does not absorb the date after an unbracketed version', () {
+            const content = '# Change Log\n\n## 1.2.3 - 2024-05-01\n\n- test';
+            final version = fromChangelog.fromString(content: content);
+            expect(version, Version.parse('1.2.3'));
+          });
+
+          test('does not absorb the date after a bracketed version', () {
+            const content = '# Change Log\n\n## [1.2.3] - 2024-05-01\n\n- test';
+            final version = fromChangelog.fromString(content: content);
+            expect(version, Version.parse('1.2.3'));
+          });
+
+          test('captures a bracketed rc version with a trailing date '
+              '(the cider-generated format for an rc release)', () {
+            const content =
+                '# Change Log\n\n## [1.2.3-rc.1] - 2024-05-01\n\n- test';
+            final version = fromChangelog.fromString(content: content);
+            expect(version, Version.parse('1.2.3-rc.1'));
+          });
         });
       });
     });
