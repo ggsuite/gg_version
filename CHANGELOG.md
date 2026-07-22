@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- gg\_multi: changed references to git
+
 ## [4.4.0] - 2026-07-20
 
 ### Added
@@ -189,6 +195,7 @@ is\_versionsed or consistent\_version
 
 - Initial version.
 
+[Unreleased]: https://github.com/inlavigo/gg_version/compare/4.4.0...HEAD
 [4.4.0]: https://github.com/inlavigo/gg_version/compare/4.3.0...4.4.0
 [4.3.0]: https://github.com/inlavigo/gg_version/compare/4.2.1...4.3.0
 [4.2.1]: https://github.com/inlavigo/gg_version/compare/4.2.0...4.2.1
