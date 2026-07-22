@@ -164,10 +164,9 @@ packages:
   gg_lang:
     dependency: "direct main"
     description:
-      name: gg_lang
-      sha256: f56d3cb418065feecd6dd0ea0c30bbd1f9abe6b34e89016dec8a4939146b9fb5
-      url: "https://pub.dev"
-    source: hosted
+      path: "../gg_lang"
+      relative: true
+    source: path
     version: "0.2.3"
   gg_log:
     dependency: "direct main"
