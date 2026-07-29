@@ -167,7 +167,7 @@ packages:
       path: "../gg_lang"
       relative: true
     source: path
-    version: "0.2.6"
+    version: "0.2.7"
   gg_log:
     dependency: "direct main"
     description:
