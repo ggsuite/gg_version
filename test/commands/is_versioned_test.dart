@@ -218,6 +218,19 @@ void main() {
 
     group('get(directory, VersionType? ignoreVersion)', () {
       group('should return true', () {
+        test('when the project has no manifest', () async {
+          await initGit(d);
+          await addAndCommitSampleFile(d);
+
+          final result = await isVersioned.get(
+            ggLog: messages.add,
+            directory: d,
+          );
+
+          expect(result, isTrue);
+          expect(messages[0], contains('Check skipped'));
+        });
+
         group(
           'when pubspec.yaml, CHANGELOG.md and git have the same version',
           () {

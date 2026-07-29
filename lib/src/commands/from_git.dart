@@ -109,6 +109,9 @@ class FromGit extends GgGitBase<Version?> {
         // ignore
       }
     }
+    // Git delivers tags in lexicographic order where e.g. 9.0.0 sorts after
+    // 10.0.0 — sort semver-descending so firstOrNull is the highest version.
+    versions.sort((a, b) => b.compareTo(a));
     return versions;
   }
 

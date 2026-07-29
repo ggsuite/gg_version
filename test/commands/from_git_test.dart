@@ -151,6 +151,18 @@ void main() {
                   completion(equals(Version(2, 0, 0))), // New version
                 );
               });
+
+              test('also when tags sort differently as strings', () async {
+                await initGit(d);
+                await addAndCommitSampleFile(d);
+                await addTags(d, ['9.0.0']); // Lexicographically last
+                await updateAndCommitSampleFile(d);
+                await addTags(d, ['10.0.0']); // Semantically the highest
+                expect(
+                  fromGit.latest(ggLog: messages.add, directory: d),
+                  completion(equals(Version(10, 0, 0))),
+                );
+              });
             });
           });
         });
