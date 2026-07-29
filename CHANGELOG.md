@@ -1,12 +1,20 @@
 # Changelog
 
-## [4.4.1] - 2026-07-22
+## 4.5.0 - 2026-07-29
+
+### Changed
+
+- Support projects without manifest: ProjectType.none, checks skipped, version tracked as git tag only
+- gg\_multi: changed references to git
+- gg\_multi: changed references to git
+
+## 4.4.1 - 2026-07-22
 
 ### Changed
 
 - gg\_multi: changed references to git
 
-## [4.4.0] - 2026-07-20
+## 4.4.0 - 2026-07-20
 
 ### Added
 
@@ -17,27 +25,27 @@
 
 - gg\_multi: changed references to git
 
-## [4.3.0] - 2026-07-01
+## 4.3.0 - 2026-07-01
 
 ### Changed
 
 - feat(gg): do checkout + .gg/.ticket.json ticket marker; TS format no direct eslint & P:\programs\flutter/bin/internal/exit\_with\_errorlevel.bat
 - gg\_multi: changed references to git
 
-## [4.2.1] - 2026-06-26
+## 4.2.1 - 2026-06-26
 
 ### Changed
 
 - gg\_multi: changed references to git
 
-## [4.2.0] - 2026-06-19
+## 4.2.0 - 2026-06-19
 
 ### Changed
 
 - Publish bridges as TypeScript: pnpm-aware publish, dual-manifest version bump, non-swallowed publish errors, idempotent resume, review skips merged repos, link: for local TS deps, package.json scripts check
 - gg\_multi: changed references to git
 
-## [4.1.0] - 2026-06-08
+## 4.1.0 - 2026-06-08
 
 ### Added
 
@@ -60,38 +68,38 @@
 
 - Fix pipeline
 
-## [4.0.4] - 2025-08-11
+## 4.0.4 - 2025-08-11
 
 ### Changed
 
 - Update to gg\_git 3.0.0
 
-## [4.0.3] - 2024-04-13
+## 4.0.3 - 2024-04-13
 
 ### Removed
 
 - dependency to gg\_install\_gg, remove ./check script
 - dependency pana
 
-## [4.0.2] - 2024-04-11
+## 4.0.2 - 2024-04-11
 
 ### Changed
 
 - Upgrade dependencies
 
-## [4.0.1] - 2024-04-09
+## 4.0.1 - 2024-04-09
 
 ### Removed
 
 - 'Pipline: Disable cache'
 
-## [4.0.0] - 2024-04-09
+## 4.0.0 - 2024-04-09
 
 ### Changed
 
 - BREAKING CHANGE: FromChangelog returns null when no version is contained
 
-## [3.0.1] - 2024-04-08
+## 3.0.1 - 2024-04-08
 
 ### Added
 
@@ -101,7 +109,7 @@
 
 - sample\_package used to test the functions moved to gg\_publish
 
-## [3.0.0] - 2024-04-08
+## 3.0.0 - 2024-04-08
 
 ### Changed
 
@@ -194,17 +202,3 @@ is\_versionsed or consistent\_version
 ## 1.0.0 - 2024-01-01
 
 - Initial version.
-
-[4.4.1]: https://github.com/inlavigo/gg_version/compare/4.4.0...4.4.1
-[4.4.0]: https://github.com/inlavigo/gg_version/compare/4.3.0...4.4.0
-[4.3.0]: https://github.com/inlavigo/gg_version/compare/4.2.1...4.3.0
-[4.2.1]: https://github.com/inlavigo/gg_version/compare/4.2.0...4.2.1
-[4.2.0]: https://github.com/inlavigo/gg_version/compare/4.1.0...4.2.0
-[4.1.0]: https://github.com/inlavigo/gg_version/compare/4.0.4...4.1.0
-[4.0.4]: https://github.com/inlavigo/gg_version/compare/4.0.3...4.0.4
-[4.0.3]: https://github.com/inlavigo/gg_version/compare/4.0.2...4.0.3
-[4.0.2]: https://github.com/inlavigo/gg_version/compare/4.0.1...4.0.2
-[4.0.1]: https://github.com/inlavigo/gg_version/compare/4.0.0...4.0.1
-[4.0.0]: https://github.com/inlavigo/gg_version/compare/3.0.1...4.0.0
-[3.0.1]: https://github.com/inlavigo/gg_version/compare/3.0.0...3.0.1
-[3.0.0]: https://github.com/inlavigo/gg_version/compare/2.0.2...3.0.0

@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_git/gg_git.dart';
+import 'package:gg_lang/gg_lang.dart';
 import 'package:gg_log/gg_log.dart';
 import 'package:gg_status_printer/gg_status_printer.dart';
 import 'package:gg_version/gg_version.dart';
@@ -65,6 +66,14 @@ class IsVersioned extends GgGitBase<void> {
     required GgLog ggLog,
     VersionType? ignoreVersion,
   }) async {
+    if (detectProjectType(directory) == ProjectType.none) {
+      ggLog(
+        'No manifest — the version is tracked via git tags only. '
+        'Check skipped.',
+      );
+      return true;
+    }
+
     try {
       final version = await ConsistentVersion(
         ggLog: ggLog,
