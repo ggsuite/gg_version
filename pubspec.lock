@@ -166,7 +166,7 @@ packages:
     description:
       path: "."
       ref: support_projects_without_manifest
-      resolved-ref: "4a174251d7a5445ad350fe35fcbccb93244a2037"
+      resolved-ref: d0ae16f87f1aaeb6c1c72b4a6d2b3a6988d70103
       url: "git@github.com:ggsuite/gg_lang.git"
     source: git
     version: "0.2.7"

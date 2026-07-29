@@ -6,6 +6,7 @@
 
 - Support projects without manifest: ProjectType.none, checks skipped, version tracked as git tag only
 - gg\_multi: changed references to git
+- gg\_multi: changed references to git
 
 ## 4.4.1 - 2026-07-22
 
