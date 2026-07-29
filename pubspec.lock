@@ -164,12 +164,11 @@ packages:
   gg_lang:
     dependency: "direct main"
     description:
-      path: "."
-      ref: support_projects_without_manifest
-      resolved-ref: d0ae16f87f1aaeb6c1c72b4a6d2b3a6988d70103
-      url: "git@github.com:ggsuite/gg_lang.git"
-    source: git
-    version: "0.2.7"
+      name: gg_lang
+      sha256: "0eda855db8b9d019fdf791a1ab2ba07fc3412d7be58ce2b1d17ca7bf50910850"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   gg_log:
     dependency: "direct main"
     description:
