@@ -117,10 +117,10 @@ packages:
     dependency: "direct main"
     description:
       name: gg_args
-      sha256: "09b00669b1d8d5a7a206340f72860549fd7bab4eb17facb50b1e7f0dabef9e23"
+      sha256: "6da9eadd8613b72451dd832bc44efbf4ee71add3215fd70314864279740bc014"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.4"
+    version: "2.0.5"
   gg_capture_print:
     dependency: "direct dev"
     description:
@@ -164,11 +164,10 @@ packages:
   gg_lang:
     dependency: "direct main"
     description:
-      name: gg_lang
-      sha256: f46a9c46bd367b8abb8bff86eab3f5a43b4e5c3efe774dba2faba01a058c5852
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.4"
+      path: "../gg_lang"
+      relative: true
+    source: path
+    version: "0.2.6"
   gg_log:
     dependency: "direct main"
     description:
