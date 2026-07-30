@@ -1,5 +1,5 @@
 // @license
-// Copyright (c) 2019 - 2024 Dr. Gabriel Gatzsche. All Rights Reserved.
+// Copyright (c) ggsuite
 //
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
@@ -17,4 +17,5 @@ export 'src/commands/from_pubspec.dart';
 export 'src/commands/increase_build.dart';
 export 'src/commands/is_versioned.dart';
 
+export 'src/tools/version_file_spec.dart';
 export 'src/tools/version_type.dart';
