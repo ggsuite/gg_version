@@ -276,8 +276,10 @@ import '{{TEST_IMPORT}}';
 
 // {{MARKER}} - DO NOT EDIT.
 //
-// Repairs {{SOURCE}} when it drifts from {{MANIFEST}}. Drift is not an error
-// here: the version literal is rewritten and the test passes.
+// Repairs the version literal in
+// {{SOURCE}}
+// when it drifts from {{MANIFEST}}. Drift is not an error here: the literal
+// is rewritten and the test passes.
 
 void main() {
   group('{{SLUG}}_version.{{EXT}}', () {
@@ -316,8 +318,10 @@ import { {{ID}} } from '../{{SOURCE_DIR}}/{{SLUG}}_version';
 
 // {{MARKER}} - DO NOT EDIT.
 //
-// Repairs {{SOURCE}} when it drifts from {{MANIFEST}}. Drift is not an error
-// here: the version literal is rewritten and the test passes.
+// Repairs the version literal in
+// {{SOURCE}}
+// when it drifts from {{MANIFEST}}. Drift is not an error here: the literal
+// is rewritten and the test passes.
 
 describe('{{SLUG}}_version.{{EXT}}', () => {
   it('matches the version in {{MANIFEST}}', () => {

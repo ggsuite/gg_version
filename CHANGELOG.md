@@ -1,18 +1,24 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Add package version number code to each package
+
 ## 4.5.0 - 2026-07-29
 
 ### Changed
 
 - Support projects without manifest: ProjectType.none, checks skipped, version tracked as git tag only
-- gg\_multi: changed references to git
-- gg\_multi: changed references to git
+- gg_multi: changed references to git
+- gg_multi: changed references to git
 
 ## 4.4.1 - 2026-07-22
 
 ### Changed
 
-- gg\_multi: changed references to git
+- gg_multi: changed references to git
 
 ## 4.4.0 - 2026-07-20
 
@@ -23,27 +29,27 @@
 
 ### Changed
 
-- gg\_multi: changed references to git
+- gg_multi: changed references to git
 
 ## 4.3.0 - 2026-07-01
 
 ### Changed
 
-- feat(gg): do checkout + .gg/.ticket.json ticket marker; TS format no direct eslint & P:\programs\flutter/bin/internal/exit\_with\_errorlevel.bat
-- gg\_multi: changed references to git
+- feat(gg): do checkout + .gg/.ticket.json ticket marker; TS format no direct eslint & P:\programs\flutter/bin/internal/exit_with_errorlevel.bat
+- gg_multi: changed references to git
 
 ## 4.2.1 - 2026-06-26
 
 ### Changed
 
-- gg\_multi: changed references to git
+- gg_multi: changed references to git
 
 ## 4.2.0 - 2026-06-19
 
 ### Changed
 
 - Publish bridges as TypeScript: pnpm-aware publish, dual-manifest version bump, non-swallowed publish errors, idempotent resume, review skips merged repos, link: for local TS deps, package.json scripts check
-- gg\_multi: changed references to git
+- gg_multi: changed references to git
 
 ## 4.1.0 - 2026-06-08
 
@@ -57,11 +63,11 @@
 - Enable pipelines with caching
 - Update CHANGELOG.md
 - Recalc hashes
-- feat: read package version via gg\_lang Manifest (Dart pubspec + TypeScript package.json)
-- feat(do add): auto-clone transitive deps into master before graph build & P:\programs\flutter/bin/internal/exit\_with\_errorlevel.bat
-- gg\_multi: changed references to git
-- gg\_multi: changed references to git
-- gg\_multi: changed references to git
+- feat: read package version via gg_lang Manifest (Dart pubspec + TypeScript package.json)
+- feat(do add): auto-clone transitive deps into master before graph build & P:\programs\flutter/bin/internal/exit_with_errorlevel.bat
+- gg_multi: changed references to git
+- gg_multi: changed references to git
+- gg_multi: changed references to git
 - Gg Multi: changed references to pub.dev
 
 ### Fixed
@@ -72,13 +78,13 @@
 
 ### Changed
 
-- Update to gg\_git 3.0.0
+- Update to gg_git 3.0.0
 
 ## 4.0.3 - 2024-04-13
 
 ### Removed
 
-- dependency to gg\_install\_gg, remove ./check script
+- dependency to gg_install_gg, remove ./check script
 - dependency pana
 
 ## 4.0.2 - 2024-04-11
@@ -107,7 +113,7 @@
 
 ### Removed
 
-- sample\_package used to test the functions moved to gg\_publish
+- sample_package used to test the functions moved to gg_publish
 
 ## 3.0.0 - 2024-04-08
 
@@ -121,8 +127,8 @@
 
 - pubspec.lock
 - Add pubspec.lock to .gitignore
-- test/sample\_package/pubspec.lock
-- test/sample\_package/pubspec.lock after test execution
+- test/sample_package/pubspec.lock
+- test/sample_package/pubspec.lock after test execution
 - Breaking change: Move PrepareNextVersion, PublishedVersion, IsVersionPrepared to GgPublish library
 
 ## 2.0.2 - 2024-01-01
@@ -131,7 +137,7 @@
 
 ## 2.0.1 - 2024-01-01
 
-- \[Unreleased\] section at the beginning of CHANGELOG.md will not affect `FromChangeLog`
+- [Unreleased] section at the beginning of CHANGELOG.md will not affect `FromChangeLog`
 - Add option `treatUnpublishedAsOk` to `IsVersionPrepared.get()`
 
 ## 2.0.0 - 2024-01-01
@@ -172,7 +178,7 @@ the version from pubspec.yaml.
 ## 1.0.10 - 2024-01-01
 
 - Add ignoreVersion param to ignore one of the versions when executing
-is\_versionsed or consistent\_version
+is_versionsed or consistent_version
 
 ## 1.0.9 - 2024-01-01
 
