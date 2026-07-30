@@ -1,5 +1,5 @@
 // @license
-// Copyright (c) 2019 - 2024 Dr. Gabriel Gatzsche. All Rights Reserved.
+// Copyright (c) ggsuite
 //
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:gg_args/gg_args.dart';
 import 'package:gg_log/gg_log.dart';
+import 'package:gg_version/gg_version.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
@@ -18,9 +19,10 @@ class IncreaseBuild extends DirCommand<void> {
   /// Constructor.
   IncreaseBuild({
     required super.ggLog,
+    WriteVersionFile? writeVersionFile,
     super.name = 'increase-build',
     super.description = 'Increase the build number in the pubspec.yaml file.',
-  });
+  }) : _writeVersionFile = writeVersionFile ?? WriteVersionFile(ggLog: ggLog);
 
   @override
   Future<void> get({required Directory directory, required GgLog ggLog}) async {
@@ -31,6 +33,9 @@ class IncreaseBuild extends DirCommand<void> {
     }
 
     await inFile(file: file);
+
+    // The generated version file must not fall behind the build number.
+    await _writeVersionFile.apply(directory: directory, ggLog: ggLog);
   }
 
   // ...........................................................................
@@ -74,4 +79,10 @@ class IncreaseBuild extends DirCommand<void> {
     // Write the new contents back to the pubspec.yaml
     return yamlEditor.toString();
   }
+
+  // ######################
+  // Private
+  // ######################
+
+  final WriteVersionFile _writeVersionFile;
 }
