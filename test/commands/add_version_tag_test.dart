@@ -7,6 +7,7 @@
 import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:gg_process/gg_process.dart';
+import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_version/gg_version.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -236,7 +237,7 @@ void main() {
             expect(result, isTrue);
 
             // Should log that version is already set
-            expect(messages.last, 'Version already set.');
+            expect(messages.last, cDetail('Version already set.'));
           });
         });
 
@@ -270,7 +271,7 @@ void main() {
               Version(4, 5, 6),
             );
 
-            expect(messages.last, 'Tag 4.5.6 added.');
+            expect(messages.last, cDetail('Tag 4.5.6 added.'));
           });
         });
       });
@@ -321,7 +322,7 @@ void main() {
 
           // A log message should have been written
           expect(messages.length, 1);
-          expect(messages[0], 'Tag 4.5.6 added.');
+          expect(messages[0], cDetail('Tag 4.5.6 added.'));
         });
       });
     });
