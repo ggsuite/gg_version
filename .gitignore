@@ -13,7 +13,7 @@ build
 *.vm.json
 .DS_Store
 .gg/*
-!.gg/.gg.json
+!.gg/gg.json
 
 # Local cross-repo dev override (not for commit)
 .gg/.gg-publish.json
