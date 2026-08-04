@@ -6,6 +6,7 @@
 
 import 'dart:io';
 
+import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_git/gg_git.dart';
 import 'package:gg_log/gg_log.dart';
 import 'package:gg_version/gg_version.dart';
@@ -61,7 +62,7 @@ class AddVersionTag extends GgGitBase<void> {
     final latestVersion = versions.gitLatest;
 
     if (pubspecVersion == changeLogVersion && pubspecVersion == tagVersion) {
-      ggLog('Version already set.');
+      ggLog(cDetail('Version already set.'));
       return true;
     }
 
@@ -96,7 +97,7 @@ class AddVersionTag extends GgGitBase<void> {
     ], workingDirectory: directory.path);
 
     if (result.exitCode == 0) {
-      ggLog('Tag $version added.');
+      ggLog(cDetail('Tag $version added.'));
       return true;
     } else {
       throw Exception('Could not add tag $version: ${result.stderr}');

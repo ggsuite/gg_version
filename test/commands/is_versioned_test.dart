@@ -7,10 +7,19 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:gg_status_printer/gg_status_printer.dart';
 import 'package:gg_version/gg_version.dart';
 import 'package:test/test.dart';
 
 import 'package:gg_git/gg_git_test_helpers.dart';
+
+/// The message without its color escapes.
+///
+/// `rmControls` only removes the cursor movement of [GgStatusPrinter]; the
+/// status line is dimmed, so the color codes sit between the mark and the
+/// text and would break every `contains` below.
+String plain(String message) =>
+    message.replaceAll(RegExp(r'\x1B\[[0-9;]*m'), '');
 
 void main() {
   late Directory tmp;
@@ -25,10 +34,10 @@ void main() {
     tmp = await Directory.systemTemp.createTemp();
     d = Directory('${tmp.path}/test');
     await d.create();
-    isVersioned = IsVersioned(ggLog: messages.add);
+    isVersioned = IsVersioned(ggLog: (msg) => messages.add(rmControls(msg)));
     messages.clear();
     runner = CommandRunner<void>('test', 'test')
-      ..addCommand(IsVersioned(ggLog: messages.add));
+      ..addCommand(IsVersioned(ggLog: (msg) => messages.add(rmControls(msg))));
   });
 
   // ...........................................................................
@@ -40,7 +49,7 @@ void main() {
   group('IsConsistent', () {
     group('run(directory)', () {
       group('should throw', () {
-        group('and print »❌ Versions are consistent«', () {
+        group('and print »Versions are consistent«', () {
           group('when pubspec.yaml, CHANGELOG.md as well git tag', () {
             test('are not the same', () async {
               await initGit(d);
@@ -62,15 +71,19 @@ void main() {
                 ),
               );
 
-              expect(messages[0], contains('⌛️ Versions are consistent'));
-              expect(messages[1], contains('❌ Versions are consistent'));
+              // Inconsistent versions — the line is marked as failed.
+              expect(
+                plain(messages[0]),
+                contains('⌛️ Versions are consistent'),
+              );
+              expect(plain(messages[1]), contains('✗ Versions are consistent'));
             });
           });
         });
       });
 
       group('should print', () {
-        group(' »✅ Versions are consistent«', () {
+        group(' »✓ Versions are consistent«', () {
           group('when pubspec.yaml, CHANGELOG.md as well git tag '
               'have the same version', () {
             test('using command runner', () async {
@@ -83,8 +96,11 @@ void main() {
               );
 
               await runner.run(['is-versioned', '--input', d.path]);
-              expect(messages[0], contains('⌛️ Versions are consistent'));
-              expect(messages[1], contains('✅ Versions are consistent'));
+              expect(
+                plain(messages[0]),
+                contains('⌛️ Versions are consistent'),
+              );
+              expect(plain(messages[1]), contains('✓ Versions are consistent'));
             });
 
             test('using isVersioned.run()', () async {
@@ -97,8 +113,11 @@ void main() {
               );
 
               await isVersioned.exec(directory: d, ggLog: messages.add);
-              expect(messages[0], contains('⌛️ Versions are consistent'));
-              expect(messages[1], contains('✅ Versions are consistent'));
+              expect(
+                plain(messages[0]),
+                contains('⌛️ Versions are consistent'),
+              );
+              expect(plain(messages[1]), contains('✓ Versions are consistent'));
             });
           });
 
@@ -121,8 +140,14 @@ void main() {
                   'pubspec',
                 ]);
 
-                expect(messages[0], contains('⌛️ Versions are consistent'));
-                expect(messages[1], contains('✅ Versions are consistent'));
+                expect(
+                  plain(messages[0]),
+                  contains('⌛️ Versions are consistent'),
+                );
+                expect(
+                  plain(messages[1]),
+                  contains('✓ Versions are consistent'),
+                );
               });
 
               test('with isVersioned.run()', () async {
@@ -140,8 +165,14 @@ void main() {
                   ignoreVersion: VersionType.pubspec,
                 );
 
-                expect(messages[0], contains('⌛️ Versions are consistent'));
-                expect(messages[1], contains('✅ Versions are consistent'));
+                expect(
+                  plain(messages[0]),
+                  contains('⌛️ Versions are consistent'),
+                );
+                expect(
+                  plain(messages[1]),
+                  contains('✓ Versions are consistent'),
+                );
               });
             });
 
@@ -162,8 +193,11 @@ void main() {
                 'changeLog',
               ]);
 
-              expect(messages[0], contains('⌛️ Versions are consistent'));
-              expect(messages[1], contains('✅ Versions are consistent'));
+              expect(
+                plain(messages[0]),
+                contains('⌛️ Versions are consistent'),
+              );
+              expect(plain(messages[1]), contains('✓ Versions are consistent'));
             });
 
             test('gitHead', () async {
@@ -183,8 +217,11 @@ void main() {
                 'gitHead',
               ]);
 
-              expect(messages[0], contains('⌛️ Versions are consistent'));
-              expect(messages[1], contains('✅ Versions are consistent'));
+              expect(
+                plain(messages[0]),
+                contains('⌛️ Versions are consistent'),
+              );
+              expect(plain(messages[1]), contains('✓ Versions are consistent'));
             });
           });
         });

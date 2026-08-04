@@ -42,6 +42,7 @@ class IsVersioned extends GgGitBase<void> {
     final printer = GgStatusPrinter<bool>(
       message: 'Versions are consistent.',
       ggLog: ggLog,
+      dark: true,
     );
 
     final isConsistent = await printer.logTask(
