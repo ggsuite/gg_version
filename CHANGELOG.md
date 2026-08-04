@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Merge origin/main and tighten dependency constraints (dart pub upgrade --tighten)
+
 ## 4.6.0 - 2026-08-04
 
 ### Changed
