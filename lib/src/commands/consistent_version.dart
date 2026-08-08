@@ -29,6 +29,7 @@ class ConsistentVersion extends GgGitBase<void> {
     required Directory directory,
     required GgLog ggLog,
     VersionType? ignoreVersion,
+    Map<String, dynamic> options = const {},
   }) async {
     final messages = <String>[];
 

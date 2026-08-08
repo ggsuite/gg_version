@@ -44,7 +44,11 @@ class AllVersions
       Version? gitLatest,
     })
   >
-  exec({required Directory directory, required GgLog ggLog}) async {
+  exec({
+    required Directory directory,
+    required GgLog ggLog,
+    Map<String, dynamic> options = const {},
+  }) async {
     final messages = <String>[];
 
     try {
