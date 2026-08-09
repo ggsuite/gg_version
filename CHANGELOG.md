@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.2.0 - 2026-08-09
+
+### Changed
+
+- Improve commit behavior
+
 ## 5.1.0 - 2026-08-09
 
 ## 5.0.0 - 2026-08-08
