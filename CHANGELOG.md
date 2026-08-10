@@ -1,5 +1,25 @@
 # Changelog
 
+## 5.2.1 - 2026-08-10
+
+### Fixed
+
+- Various fixes
+
+## 5.2.0 - 2026-08-09
+
+### Changed
+
+- Improve commit behavior
+
+## 5.1.0 - 2026-08-09
+
+## 5.0.0 - 2026-08-08
+
+### Changed
+
+- Allow to pass custom options to exec of dir commands.
+
 ## 4.6.1 - 2026-08-04
 
 ### Changed
