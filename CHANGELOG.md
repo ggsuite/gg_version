@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Various fixes
+
 ## 5.2.0 - 2026-08-09
 
 ### Changed
