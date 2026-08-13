@@ -26,11 +26,11 @@ class WriteVersionFile extends DirCommand<void> {
   /// Constructor.
   WriteVersionFile({
     required super.ggLog,
-    LanguageCatalog? catalog,
+    this._catalog,
     super.name = 'write-version-file',
     super.description =
         'Writes the package version into a generated source file.',
-  }) : _catalog = catalog;
+  });
 
   // ...........................................................................
   @override

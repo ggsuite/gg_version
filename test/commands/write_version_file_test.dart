@@ -32,9 +32,8 @@ void main() {
 
   // ...........................................................................
   void addDartPackage({String name = 'my_package', String version = '1.2.3'}) {
-    File(
-      '${d.path}/pubspec.yaml',
-    ).writeAsStringSync('name: $name\nversion: $version\n');
+    File('${d.path}/pubspec.yaml')
+        .writeAsStringSync('name: $name\nversion: $version\n');
   }
 
   void addTypeScriptPackage({
@@ -205,9 +204,9 @@ void main() {
             contains("from 'vitest'"),
           );
 
-          final pkg =
-              jsonDecode(File('${d.path}/package.json').readAsStringSync())
-                  as Map<String, dynamic>;
+          final pkg = jsonDecode(
+            File('${d.path}/package.json').readAsStringSync(),
+          ) as Map<String, dynamic>;
           expect(
             (pkg['devDependencies'] as Map<String, dynamic>).keys,
             contains('@types/node'),
@@ -223,9 +222,9 @@ void main() {
 
           await writeVersionFile.apply(directory: d, ggLog: messages.add);
 
-          final pkg =
-              jsonDecode(File('${d.path}/package.json').readAsStringSync())
-                  as Map<String, dynamic>;
+          final pkg = jsonDecode(
+            File('${d.path}/package.json').readAsStringSync(),
+          ) as Map<String, dynamic>;
           expect(
             (pkg['devDependencies'] as Map<String, dynamic>)['@types/node'],
             '^20.0.0',
@@ -255,9 +254,8 @@ void main() {
             // dart. Writing only one of them would leave the other language's
             // constant permanently stale.
             addTypeScriptPackage(name: '@scope/bridge', version: '2.5.0');
-            File(
-              '${d.path}/pubspec.yaml',
-            ).writeAsStringSync('name: bridge_dart\nversion: 2.5.0\n');
+            File('${d.path}/pubspec.yaml')
+                .writeAsStringSync('name: bridge_dart\nversion: 2.5.0\n');
 
             await writeVersionFile.apply(directory: d, ggLog: messages.add);
 
@@ -292,9 +290,8 @@ void main() {
           // The generator also runs as a side effect of IncreaseBuild and
           // PrepareNextVersion, so a degenerate manifest must not make those
           // commands fail.
-          File(
-            '${d.path}/pubspec.yaml',
-          ).writeAsStringSync('version: 1.2.3+4\n');
+          File('${d.path}/pubspec.yaml')
+              .writeAsStringSync('version: 1.2.3+4\n');
 
           final written = await writeVersionFile.apply(
             directory: d,
@@ -308,9 +305,8 @@ void main() {
 
       group('should throw', () {
         test('when the manifest carries no version', () async {
-          File(
-            '${d.path}/pubspec.yaml',
-          ).writeAsStringSync('name: my_package\n');
+          File('${d.path}/pubspec.yaml')
+              .writeAsStringSync('name: my_package\n');
 
           await expectLater(
             writeVersionFile.apply(directory: d, ggLog: messages.add),
