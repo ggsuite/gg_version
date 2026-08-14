@@ -19,9 +19,8 @@ import 'package:mocktail/mocktail.dart' as mocktail;
 /// Provides "ggGit current-version-tag dir" command
 class FromPubspec extends DirCommand<Version> {
   /// Constructor
-  FromPubspec({required super.ggLog, LanguageCatalog? catalog})
-    : _catalog = catalog,
-      super(
+  FromPubspec({required super.ggLog, this._catalog})
+    : super(
         name: 'from-pubspec',
         description:
             'Returns the version found in the package manifest '

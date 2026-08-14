@@ -88,17 +88,14 @@ class AllVersions
           processWrapper: processWrapper,
         ).get(ggLog: ggLog, directory: directory);
 
-    final pubspecVersion = await FromPubspec(
-      ggLog: ggLog,
-    ).fromDirectory(directory: directory);
-    final changelogVersion = await FromChangelog(
-      ggLog: ggLog,
-    ).fromDirectory(directory: directory);
+    final pubspecVersion = await FromPubspec(ggLog: ggLog)
+        .fromDirectory(directory: directory);
+    final changelogVersion = await FromChangelog(ggLog: ggLog)
+        .fromDirectory(directory: directory);
 
     final gitHeadVersion = isCommitted
-        ? await FromGit(
-            ggLog: ggLog,
-          ).fromHead(ggLog: ggLog, directory: directory)
+        ? await FromGit(ggLog: ggLog)
+              .fromHead(ggLog: ggLog, directory: directory)
         : null;
 
     final gitLatestVersion =
