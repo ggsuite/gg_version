@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.4.0 - 2026-09-02
+
+### Changed
+
+- Install the dna_ggsuite DNA
+
 ## 5.3.1 - 2026-09-01
 
 ### Changed
