@@ -130,6 +130,49 @@ void main() {
       });
     });
 
+    group('allFromString(content)', () {
+      test('returns every released version in document order', () {
+        const content =
+            '# Change Log\n\n'
+            '## Unreleased\n\n- pending\n\n'
+            '## [1.2.3] - 2024-05-01\n\n'
+            '## 1.2.2\n\n'
+            '## [1.0.0-rc.1] - 2024-04-01\n\n'
+            '## no version here\n';
+        final versions = fromChangelog.allFromString(content: content);
+        expect(versions, [
+          Version.parse('1.2.3'),
+          Version.parse('1.2.2'),
+          Version.parse('1.0.0-rc.1'),
+        ]);
+      });
+
+      test('returns an empty list when no version is found', () {
+        expect(fromChangelog.allFromString(content: '# Change Log\n'), isEmpty);
+      });
+    });
+
+    group('allFromDirectory(directory)', () {
+      test('throws if no CHANGELOG.md file is found in directory', () async {
+        await expectLater(
+          () => fromChangelog.allFromDirectory(directory: d),
+          throwsA(
+            isA<Exception>().having(
+              (e) => e.toString(),
+              'message',
+              'Exception: File "test/CHANGELOG.md" does not exist.',
+            ),
+          ),
+        );
+      });
+
+      test('returns the versions found in CHANGELOG.md', () async {
+        await addChangeLogWithoutCommitting(d, version: '0.0.1');
+        final versions = await fromChangelog.allFromDirectory(directory: d);
+        expect(versions, [Version.parse('0.0.1')]);
+      });
+    });
+
     group('run()', () {
       group('should return the version', () {
         test('when found in CHANGELOG.md', () async {

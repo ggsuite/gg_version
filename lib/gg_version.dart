@@ -17,6 +17,7 @@ export 'src/commands/from_git.dart';
 export 'src/commands/from_pubspec.dart';
 export 'src/commands/increase_build.dart';
 export 'src/commands/is_versioned.dart';
+export 'src/commands/no_future_versions.dart';
 export 'src/commands/write_version_file.dart';
 
 export 'src/tools/version_file_spec.dart';

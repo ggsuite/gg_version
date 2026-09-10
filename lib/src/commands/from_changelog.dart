@@ -49,8 +49,30 @@ class FromChangelog extends DirCommand<Version?> {
   }
 
   // ...........................................................................
-  /// Parses version from CHANGELOG.md
-  Version? fromString({required String content}) {
+  /// Parses the version of the first released section from CHANGELOG.md
+  Version? fromString({required String content}) =>
+      allFromString(content: content).firstOrNull;
+
+  // ...........................................................................
+  /// Returns the versions of all released sections found in CHANGELOG.md,
+  /// in document order. `## Unreleased` is skipped.
+  Future<List<Version>> allFromDirectory({required Directory directory}) async {
+    await check(directory: directory);
+    final changelog = File('${directory.path}/CHANGELOG.md');
+    final dirName = basename(canonicalize(directory.path));
+
+    if (!changelog.existsSync()) {
+      throw Exception('File "$dirName/CHANGELOG.md" does not exist.');
+    }
+
+    return allFromString(content: changelog.readAsStringSync());
+  }
+
+  // ...........................................................................
+  /// Parses the versions of all released sections from [content],
+  /// in document order. `## Unreleased` is skipped.
+  List<Version> allFromString({required String content}) {
+    final result = <Version>[];
     final lines = content.split('\n');
     for (final line in lines) {
       if (line.startsWith('## ')) {
@@ -58,7 +80,6 @@ class FromChangelog extends DirCommand<Version?> {
           continue;
         }
 
-        // Also matches prerelease/build suffixes (e.g. 1.2.3-rc.1).
         final regExp = RegExp(
           r'##\s+\[?'
           r'(\d+\.\d+\.\d+'
@@ -70,12 +91,12 @@ class FromChangelog extends DirCommand<Version?> {
         final match = regExp.firstMatch(line);
         final version = match?.group(1);
         if (version != null) {
-          return Version.parse(version);
+          result.add(Version.parse(version));
         }
       }
     }
 
-    return null;
+    return result;
   }
 }
 
