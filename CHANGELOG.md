@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `NoFutureVersions` (`no-future-versions`) fails when `CHANGELOG.md` lists a version above the manifest version
+- `FromChangelog.allFromString` and `allFromDirectory` return every released version of a changelog
+
 ## 5.4.0 - 2026-09-02
 
 ### Changed
