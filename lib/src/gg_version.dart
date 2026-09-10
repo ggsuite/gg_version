@@ -15,6 +15,7 @@ class GgVersion extends Command<dynamic> {
   GgVersion({required this.ggLog}) {
     addSubcommand(AddVersionTag(ggLog: ggLog));
     addSubcommand(IsVersioned(ggLog: ggLog));
+    addSubcommand(NoFutureVersions(ggLog: ggLog));
     addSubcommand(FromGit(ggLog: ggLog));
     addSubcommand(FromPubspec(ggLog: ggLog));
     addSubcommand(FromChangelog(ggLog: ggLog));
