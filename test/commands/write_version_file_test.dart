@@ -318,6 +318,155 @@ void main() {
         );
       });
 
+      group('for a bridge keeping its code in typescript/', () {
+        void addBridge() {
+          addTypeScriptPackage(name: '@scope/bridge', version: '2.5.0');
+          File('${d.path}/pubspec.yaml')
+              .writeAsStringSync('name: bridge_dart\nversion: 2.5.0\n');
+          File('${d.path}/tsconfig.json').writeAsStringSync('''
+{
+  // comments are allowed in tsconfig.json
+  "compilerOptions": { "rootDir": "./typescript/", },
+}
+''');
+          File('${d.path}/typescript/test/runtime.test.ts')
+            ..createSync(recursive: true)
+            ..writeAsStringSync('');
+        }
+
+        File at(String path) => File('${d.path}/$path');
+
+        test('should write the typescript files next to its code', () async {
+          addBridge();
+
+          await writeVersionFile.apply(directory: d, ggLog: messages.add);
+
+          expect(
+            at('typescript/bridge_version.ts').readAsStringSync(),
+            contains("export const bridgeVersion = '2.5.0';"),
+          );
+          final test = at('typescript/test/bridge_version.test.ts');
+          expect(test.readAsStringSync(), contains("from '../bridge_version'"));
+          expect(
+            test.readAsStringSync(),
+            contains("const path = 'typescript/bridge_version.ts';"),
+          );
+          expect(at('src/bridge_version.ts').existsSync(), isFalse);
+
+          // The Dart side keeps its place.
+          expect(sourceOf('bridge_dart').existsSync(), isTrue);
+          expect(testOf('bridge_dart').existsSync(), isTrue);
+        });
+
+        test(
+          'should delete what an older gg generated in src and test',
+          () async {
+            addBridge();
+            const generated = '// $versionFileMarker - DO NOT EDIT.\n';
+            for (final path in [
+              'src/bridge_version.ts',
+              'test/bridge_version.test.ts',
+              'test/bridge_version.spec.ts',
+            ]) {
+              at(path)
+                ..createSync(recursive: true)
+                ..writeAsStringSync(generated);
+            }
+
+            final written = await writeVersionFile.apply(
+              directory: d,
+              ggLog: messages.add,
+            );
+
+            expect(at('src/bridge_version.ts').existsSync(), isFalse);
+            expect(at('test/bridge_version.test.ts').existsSync(), isFalse);
+            expect(at('test/bridge_version.spec.ts').existsSync(), isFalse);
+            expect(
+              written.map((f) => f.path),
+              contains(at('src/bridge_version.ts').path),
+            );
+          },
+        );
+
+        test('should keep a hand-written file in src', () async {
+          addBridge();
+          at('src/bridge_version.ts')
+            ..createSync(recursive: true)
+            ..writeAsStringSync('// mine\n');
+
+          await writeVersionFile.apply(directory: d, ggLog: messages.add);
+
+          expect(at('src/bridge_version.ts').readAsStringSync(), '// mine\n');
+        });
+
+        test('should not touch anything on a second run', () async {
+          addBridge();
+          await writeVersionFile.apply(directory: d, ggLog: messages.add);
+
+          final written = await writeVersionFile.apply(
+            directory: d,
+            ggLog: messages.add,
+          );
+
+          expect(written, isEmpty);
+        });
+      });
+
+      group('for a hybrid without typescript code', () {
+        void addDnaPackage() {
+          File('${d.path}/package.json').writeAsStringSync(
+            jsonEncode({'name': '@scope/dna_x', 'version': '1.0.0'}),
+          );
+          File('${d.path}/pubspec.yaml')
+              .writeAsStringSync('name: dna_x\nversion: 1.0.0\n');
+        }
+
+        test('should write the dart files only', () async {
+          addDnaPackage();
+
+          await writeVersionFile.apply(directory: d, ggLog: messages.add);
+
+          expect(sourceOf('dna_x').existsSync(), isTrue);
+          expect(sourceOf('dna_x', dart: false).existsSync(), isFalse);
+          expect(testOf('dna_x', dart: false).existsSync(), isFalse);
+          expect(
+            messages,
+            contains(
+              'No tsconfig.json - no TypeScript version file is written.',
+            ),
+          );
+          final pkg = File('${d.path}/package.json').readAsStringSync();
+          expect(pkg, isNot(contains('@types/node')));
+        });
+
+        test(
+          'should delete the typescript files an older gg generated',
+          () async {
+            addDnaPackage();
+            const generated = '// $versionFileMarker - DO NOT EDIT.\n';
+            final old = [
+              File('${d.path}/src/dna_x_version.ts'),
+              File('${d.path}/test/dna_x_version.test.ts'),
+            ];
+            for (final file in old) {
+              file
+                ..createSync(recursive: true)
+                ..writeAsStringSync(generated);
+            }
+
+            final written = await writeVersionFile.apply(
+              directory: d,
+              ggLog: messages.add,
+            );
+
+            for (final file in old) {
+              expect(file.existsSync(), isFalse);
+              expect(written.map((f) => f.path), contains(file.path));
+            }
+          },
+        );
+      });
+
       group('for a project without a manifest', () {
         test('should write nothing and say so', () async {
           final written = await writeVersionFile.apply(

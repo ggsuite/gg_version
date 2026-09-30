@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Place generated TypeScript version files where hybrid packages keep their TypeScript, and skip them for hybrids without TypeScript
+
 ## 5.6.0 - 2026-09-30
 
 ### Changed

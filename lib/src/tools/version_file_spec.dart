@@ -93,7 +93,75 @@ class VersionFileSpec {
     required this.testImport,
     required this.isDart,
     this.legacyTestSuffix,
+    this.testDir = 'test',
   });
+
+  // ...........................................................................
+  /// The spec for [type] as laid out in [directory], or null when no version
+  /// file of that language belongs there.
+  ///
+  /// Dart and Flutter packages always use the fixed [dartSpec] and
+  /// [flutterSpec]. TypeScript follows the package: see [typeScriptSpecFor].
+  static VersionFileSpec? forDirectory(ProjectType type, Directory directory) =>
+      type == ProjectType.typescript
+      ? typeScriptSpecFor(directory)
+      : forProjectType(type);
+
+  // ...........................................................................
+  /// The TypeScript spec for the package in [directory], or null when the
+  /// package has no TypeScript code.
+  ///
+  /// - A hybrid without `tsconfig.json` ships its npm package without any
+  ///   TypeScript (the DNA packages), so it gets no TypeScript version file.
+  /// - The version file goes to the `rootDir` of `tsconfig.json`, `src` when
+  ///   none is set. A bridge keeps its code in `typescript/`.
+  /// - The mirror test goes to `<rootDir>/test` when that folder exists, to
+  ///   `test` otherwise.
+  /// - The mirror test ends in `.test.ts` when the tests next to it all do,
+  ///   in `.spec.ts` otherwise, so the vitest `include` of the package picks
+  ///   it up.
+  static VersionFileSpec? typeScriptSpecFor(Directory directory) {
+    final tsconfig = File(join(directory.path, 'tsconfig.json'));
+    if (!tsconfig.existsSync()) {
+      return isHybridProject(directory) ? null : typeScriptSpec;
+    }
+
+    final sourceDir = _rootDirOf(tsconfig) ?? typeScriptSpec.sourceDir;
+    final nestedTests = '$sourceDir/test';
+    final testDir =
+        Directory(join(directory.path, joinAll(nestedTests.split('/'))))
+            .existsSync()
+        ? nestedTests
+        : typeScriptSpec.testDir;
+
+    return typeScriptSpec._copyWith(
+      sourceDir: sourceDir,
+      testDir: testDir,
+      testSuffix: _testSuffixIn(
+        Directory(join(directory.path, joinAll(testDir.split('/')))),
+      ),
+    );
+  }
+
+  // ...........................................................................
+  /// Every place a TypeScript version file or mirror test for [slug] was
+  /// ever written to inside [directory], whatever the current layout.
+  ///
+  /// Older gg versions always used `src/` and `test/`, and named the mirror
+  /// test `.test.ts`. The writer deletes each of these that it generated and
+  /// that is not a target of the current layout.
+  static List<File> typeScriptLocations(Directory directory, String slug) {
+    final spec = typeScriptSpecFor(directory) ?? typeScriptSpec;
+    final sourceDirs = {typeScriptSpec.sourceDir, spec.sourceDir};
+    final testDirs = {typeScriptSpec.testDir, spec.testDir};
+    const suffixes = [_specSuffix, _testTsSuffix];
+
+    return [
+      for (final dir in sourceDirs) '$dir/${slug}_version.ts',
+      for (final dir in testDirs)
+        for (final suffix in suffixes) '$dir/$slug$suffix',
+    ].map((p) => File(join(directory.path, joinAll(p.split('/'))))).toList();
+  }
 
   // ...........................................................................
   /// The spec for [type], or null when [type] has no manifest to read a
@@ -134,10 +202,10 @@ class VersionFileSpec {
   static const VersionFileSpec typeScriptSpec = VersionFileSpec(
     sourceDir: 'src',
     sourceExtension: 'ts',
-    testSuffix: '_version.spec.ts',
+    testSuffix: _specSuffix,
     testImport: 'vitest',
     isDart: false,
-    legacyTestSuffix: '_version.test.ts',
+    legacyTestSuffix: _testTsSuffix,
   );
 
   /// The directory holding the version file, relative to the package root.
@@ -163,6 +231,9 @@ class VersionFileSpec {
   /// Whether this spec describes a Dart-family package.
   final bool isDart;
 
+  /// The directory holding the mirror test, relative to the package root.
+  final String testDir;
+
   // ...........................................................................
   /// The version file path for [slug], relative to the package root, always
   /// with forward slashes so it can be embedded in generated source.
@@ -172,7 +243,7 @@ class VersionFileSpec {
   // ...........................................................................
   /// The mirror test path for [slug], relative to the package root, always
   /// with forward slashes.
-  String testPath(String slug) => 'test/$slug$testSuffix';
+  String testPath(String slug) => '$testDir/$slug$testSuffix';
 
   // ...........................................................................
   /// The mirror test file of an older gg inside [directory], or null when
@@ -242,7 +313,7 @@ class VersionFileSpec {
         'MARKER': versionFileMarker,
         'TEST_IMPORT': testImport,
         'SOURCE': sourcePath(slug),
-        'SOURCE_DIR': sourceDir,
+        'SOURCE_IMPORT': _sourceImport(slug),
         'MANIFEST': manifestFile,
         'SLUG': slug,
         'ID': versionFileIdentifier(slug),
@@ -257,6 +328,76 @@ class VersionFileSpec {
   // ...........................................................................
   /// The header block prefixed to generated Dart files, empty for TypeScript.
   String get _header => isDart ? '$versionFileLicenseHeader\n\n' : '';
+
+  // ...........................................................................
+  static const String _specSuffix = '_version.spec.ts';
+  static const String _testTsSuffix = '_version.test.ts';
+
+  // ...........................................................................
+  VersionFileSpec _copyWith({
+    required String sourceDir,
+    required String testDir,
+    required String testSuffix,
+  }) => VersionFileSpec(
+    sourceDir: sourceDir,
+    sourceExtension: sourceExtension,
+    testSuffix: testSuffix,
+    testImport: testImport,
+    isDart: isDart,
+    legacyTestSuffix: legacyTestSuffix,
+    testDir: testDir,
+  );
+
+  // ...........................................................................
+  /// The import specifier of the version file, relative to the mirror test.
+  String _sourceImport(String slug) {
+    final target = '$sourceDir/${slug}_version';
+    final relative = posix.relative(target, from: testDir);
+    return relative.startsWith('.') ? relative : './$relative';
+  }
+
+  // ...........................................................................
+  /// The `compilerOptions.rootDir` of [tsconfig], or null when it sets none or
+  /// points at the package root.
+  ///
+  /// Read with a pattern instead of a JSON parser: `tsconfig.json` allows
+  /// comments and trailing commas, which `jsonDecode` rejects.
+  static String? _rootDirOf(File tsconfig) {
+    final match = RegExp(r'"rootDir"\s*:\s*"([^"]*)"')
+        .firstMatch(tsconfig.readAsStringSync());
+
+    var dir = match?.group(1)?.trim() ?? '';
+    if (dir.startsWith('./')) {
+      dir = dir.substring(2);
+    }
+    dir = dir.replaceAll(RegExp(r'/+$'), '');
+
+    return dir.isEmpty || dir == '.' ? null : dir;
+  }
+
+  // ...........................................................................
+  /// `.test.ts` when every test in [testDir] ends in `.test.ts`, `.spec.ts`
+  /// otherwise.
+  ///
+  /// Generated mirror tests are left out: an old `.test.ts` one must not keep
+  /// the package on `.test.ts` forever.
+  static String _testSuffixIn(Directory testDir) {
+    if (!testDir.existsSync()) {
+      return _specSuffix;
+    }
+
+    final names = testDir
+        .listSync(recursive: true)
+        .whereType<File>()
+        .map((f) => basename(f.path))
+        .where((n) => !n.endsWith(_specSuffix) && !n.endsWith(_testTsSuffix))
+        .toList();
+
+    final hasTest = names.any((n) => n.endsWith('.test.ts'));
+    final hasSpec = names.any((n) => n.endsWith('.spec.ts'));
+
+    return hasTest && !hasSpec ? _testTsSuffix : _specSuffix;
+  }
 
   // ...........................................................................
   static String _fill(String template, Map<String, String> values) {
@@ -332,7 +473,7 @@ void main() {
 import { readFileSync, writeFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-import { {{ID}} } from '../{{SOURCE_DIR}}/{{SLUG}}_version';
+import { {{ID}} } from '{{SOURCE_IMPORT}}';
 
 // {{MARKER}} - DO NOT EDIT.
 //

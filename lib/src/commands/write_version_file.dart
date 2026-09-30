@@ -12,6 +12,7 @@ import 'package:gg_lang/gg_lang.dart';
 import 'package:gg_log/gg_log.dart';
 import 'package:gg_version/gg_version.dart';
 import 'package:mocktail/mocktail.dart' as mocktail;
+import 'package:path/path.dart' show canonicalize;
 
 // #############################################################################
 /// Writes the package version into a generated source file.
@@ -53,8 +54,11 @@ class WriteVersionFile extends DirCommand<void> {
   /// is what distinguishes a real generated test from the boilerplate stub
   /// `gg_test` plants for any `lib/src` file without a test.
   ///
-  /// A generated mirror test left under an older name, such as a TypeScript
-  /// `.test.ts`, is deleted in favor of the current name.
+  /// Generated TypeScript files left where an older gg put them — `src/` and
+  /// `test/` of a bridge that keeps its code in `typescript/`, a mirror test
+  /// under the other suffix — are deleted in favor of the current layout. A
+  /// hybrid without `tsconfig.json` gets no TypeScript version file at all,
+  /// and its old generated ones are deleted.
   Future<List<File>> apply({
     required Directory directory,
     required GgLog ggLog,
@@ -80,9 +84,9 @@ class WriteVersionFile extends DirCommand<void> {
     ];
 
     for (final projectType in types) {
-      // ProjectType.none is the only type without a spec, and it returned
-      // above. A bridge's Dart side is always dart or flutter.
-      final spec = VersionFileSpec.forProjectType(projectType)!;
+      // Null only for TypeScript in a hybrid without TypeScript code: its old
+      // generated files are still cleaned up.
+      final spec = VersionFileSpec.forDirectory(projectType, directory);
 
       written.addAll(
         await _writeFor(
@@ -109,7 +113,7 @@ class WriteVersionFile extends DirCommand<void> {
   Future<List<File>> _writeFor({
     required Directory directory,
     required ProjectType projectType,
-    required VersionFileSpec spec,
+    required VersionFileSpec? spec,
     required LanguageCatalog catalog,
     required String? version,
     required GgLog ggLog,
@@ -135,6 +139,14 @@ class WriteVersionFile extends DirCommand<void> {
 
     final slug = versionFileSlug(packageName);
     final written = <File>[];
+
+    if (spec == null) {
+      ggLog('No tsconfig.json - no TypeScript version file is written.');
+      return _deleteStale(
+        candidates: VersionFileSpec.typeScriptLocations(directory, slug),
+        keep: const [],
+      );
+    }
 
     // The version file - rewritten whenever the version literal changed.
     final sourceFile = spec.sourceFile(directory, slug);
@@ -162,14 +174,41 @@ class WriteVersionFile extends DirCommand<void> {
       }
     }
 
-    // The mirror test under an older name - removed when we generated it.
-    final legacyTestFile = spec.legacyTestFile(directory, slug);
-    if (legacyTestFile != null && await _isGenerated(legacyTestFile)) {
-      await legacyTestFile.delete();
-      written.add(legacyTestFile);
+    // Files an older gg generated elsewhere - under an older name, or in a
+    // folder the package does not keep its TypeScript in.
+    if (!spec.isDart) {
+      written.addAll(
+        await _deleteStale(
+          candidates: VersionFileSpec.typeScriptLocations(directory, slug),
+          keep: [sourceFile, testFile],
+        ),
+      );
     }
 
     return written;
+  }
+
+  // ...........................................................................
+  /// Deletes every file of [candidates] that we generated and that is not in
+  /// [keep], and returns the deleted ones.
+  Future<List<File>> _deleteStale({
+    required List<File> candidates,
+    required List<File> keep,
+  }) async {
+    final kept = keep.map((f) => canonicalize(f.path)).toSet();
+    final deleted = <File>[];
+
+    for (final file in candidates) {
+      if (kept.contains(canonicalize(file.path))) {
+        continue;
+      }
+      if (await _isGenerated(file)) {
+        await file.delete();
+        deleted.add(file);
+      }
+    }
+
+    return deleted;
   }
 
   // ...........................................................................
