@@ -119,6 +119,137 @@ void main() {
         expect(spec.testPath('ts_fixture'), 'test/ts_fixture_version.spec.ts');
       });
 
+      group('typeScriptSpecFor', () {
+        late Directory dir;
+
+        setUp(() {
+          dir = Directory.systemTemp.createTempSync();
+        });
+
+        tearDown(() => dir.deleteSync(recursive: true));
+
+        void write(String path, String content) => File('${dir.path}/$path')
+          ..createSync(recursive: true)
+          ..writeAsStringSync(content);
+
+        test('should keep the default layout without tsconfig.json', () {
+          write('package.json', '{"name": "p", "version": "1.0.0"}');
+
+          final spec = VersionFileSpec.typeScriptSpecFor(dir)!;
+
+          expect(spec.sourcePath('p'), 'src/p_version.ts');
+          expect(spec.testPath('p'), 'test/p_version.spec.ts');
+        });
+
+        test('should return null for a hybrid without tsconfig.json', () {
+          write('package.json', '{"name": "p", "version": "1.0.0"}');
+          write('pubspec.yaml', 'name: p\nversion: 1.0.0\n');
+
+          expect(VersionFileSpec.typeScriptSpecFor(dir), isNull);
+          expect(
+            VersionFileSpec.forDirectory(ProjectType.typescript, dir),
+            isNull,
+          );
+          expect(
+            VersionFileSpec.forDirectory(ProjectType.dart, dir),
+            VersionFileSpec.dartSpec,
+          );
+        });
+
+        test('should follow rootDir and its test folder', () {
+          write('tsconfig.json', '{"compilerOptions": {"rootDir": "lib_ts"}}');
+          write('lib_ts/test/a.spec.ts', '');
+
+          final spec = VersionFileSpec.typeScriptSpecFor(dir)!;
+
+          expect(spec.sourcePath('p'), 'lib_ts/p_version.ts');
+          expect(spec.testPath('p'), 'lib_ts/test/p_version.spec.ts');
+          expect(
+            spec.renderTest(slug: 'p', manifestFile: 'package.json'),
+            contains("from '../p_version'"),
+          );
+        });
+
+        test('should fall back to test/ when rootDir has no test folder', () {
+          write('tsconfig.json', '{"compilerOptions": {"rootDir": "."}}');
+
+          final spec = VersionFileSpec.typeScriptSpecFor(dir)!;
+
+          expect(spec.sourcePath('p'), 'src/p_version.ts');
+          expect(spec.testPath('p'), 'test/p_version.spec.ts');
+          expect(
+            spec.renderTest(slug: 'p', manifestFile: 'package.json'),
+            contains("from '../src/p_version'"),
+          );
+        });
+
+        test('should import a sibling version file with ./', () {
+          // rootDir and test folder coincide.
+          write('tsconfig.json', '{"compilerOptions": {"rootDir": "test"}}');
+
+          final spec = VersionFileSpec.typeScriptSpecFor(dir)!;
+
+          expect(
+            spec.renderTest(slug: 'p', manifestFile: 'package.json'),
+            contains("from './p_version'"),
+          );
+        });
+
+        group('should pick the suffix the tests around use', () {
+          test('.test.ts when all tests end in .test.ts', () {
+            write('tsconfig.json', '{}');
+            write('test/a.test.ts', '');
+            // An old generated mirror test does not count.
+            write('test/p_version.test.ts', '');
+
+            expect(
+              VersionFileSpec.typeScriptSpecFor(dir)!.testPath('p'),
+              'test/p_version.test.ts',
+            );
+          });
+
+          test('.spec.ts when the tests are mixed', () {
+            write('tsconfig.json', '{}');
+            write('test/a.test.ts', '');
+            write('test/b.spec.ts', '');
+
+            expect(
+              VersionFileSpec.typeScriptSpecFor(dir)!.testPath('p'),
+              'test/p_version.spec.ts',
+            );
+          });
+
+          test('.spec.ts when only a generated mirror test is there', () {
+            write('tsconfig.json', '{}');
+            write('test/p_version.test.ts', '');
+
+            expect(
+              VersionFileSpec.typeScriptSpecFor(dir)!.testPath('p'),
+              'test/p_version.spec.ts',
+            );
+          });
+        });
+
+        test('should list every place a typescript file was written', () {
+          write('tsconfig.json', '{"compilerOptions": {"rootDir": "ts"}}');
+          write('ts/test/a.test.ts', '');
+
+          final paths = VersionFileSpec.typeScriptSpecFor(dir)!
+              .typeScriptLocations(dir, 'p')
+              .map((f) => f.path.substring(dir.path.length + 1))
+              .toSet();
+
+          expect(paths, {
+            'src/p_version.ts',
+            'ts/p_version.ts',
+            'test/p_version.spec.ts',
+            'test/p_version.test.ts',
+            'ts/test/p_version.spec.ts',
+            'ts/test/p_version.test.ts',
+          });
+        });
+      });
+
       test('should know the legacy typescript mirror test', () {
         final dir = Directory('/tmp/pkg');
         expect(
