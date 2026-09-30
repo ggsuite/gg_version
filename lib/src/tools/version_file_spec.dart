@@ -80,8 +80,9 @@ String versionFileIdentifier(String slug) {
 /// Describes where a package's generated version file and its mirror test
 /// live, and renders their contents.
 ///
-/// One spec per language. Commands look the spec up via [forProjectType] and
-/// never branch on the language themselves. The shape mirrors `gg_lang`'s
+/// One spec per language, laid out per package for TypeScript. Commands
+/// look the spec up via [forDirectory] and never branch on the language
+/// themselves. The shape mirrors `gg_lang`'s
 /// `catalog.spec(type)` so the data can move into the language catalog later
 /// without touching call sites.
 class VersionFileSpec {
@@ -128,39 +129,35 @@ class VersionFileSpec {
 
     final sourceDir = _rootDirOf(tsconfig) ?? typeScriptSpec.sourceDir;
     final nestedTests = '$sourceDir/test';
-    final testDir =
-        Directory(join(directory.path, joinAll(nestedTests.split('/'))))
-            .existsSync()
+    final testDir = Directory(_resolve(directory, nestedTests)).existsSync()
         ? nestedTests
         : typeScriptSpec.testDir;
 
     return typeScriptSpec._copyWith(
       sourceDir: sourceDir,
       testDir: testDir,
-      testSuffix: _testSuffixIn(
-        Directory(join(directory.path, joinAll(testDir.split('/')))),
-      ),
+      testSuffix: _testSuffixIn(Directory(_resolve(directory, testDir))),
     );
   }
 
   // ...........................................................................
   /// Every place a TypeScript version file or mirror test for [slug] was
-  /// ever written to inside [directory], whatever the current layout.
+  /// ever written to inside [directory]: this layout's folders plus the `src/`
+  /// and `test/` older gg versions always used, each mirror test under both
+  /// suffixes.
   ///
-  /// Older gg versions always used `src/` and `test/`, and named the mirror
-  /// test `.test.ts`. The writer deletes each of these that it generated and
-  /// that is not a target of the current layout.
-  static List<File> typeScriptLocations(Directory directory, String slug) {
-    final spec = typeScriptSpecFor(directory) ?? typeScriptSpec;
-    final sourceDirs = {typeScriptSpec.sourceDir, spec.sourceDir};
-    final testDirs = {typeScriptSpec.testDir, spec.testDir};
+  /// The writer deletes each of these that it generated and that is not a
+  /// target of the current layout.
+  List<File> typeScriptLocations(Directory directory, String slug) {
+    final sourceDirs = {typeScriptSpec.sourceDir, sourceDir};
+    final testDirs = {typeScriptSpec.testDir, testDir};
     const suffixes = [_specSuffix, _testTsSuffix];
 
     return [
       for (final dir in sourceDirs) '$dir/${slug}_version.ts',
       for (final dir in testDirs)
         for (final suffix in suffixes) '$dir/$slug$suffix',
-    ].map((p) => File(join(directory.path, joinAll(p.split('/'))))).toList();
+    ].map((p) => File(_resolve(directory, p))).toList();
   }
 
   // ...........................................................................
@@ -251,17 +248,17 @@ class VersionFileSpec {
   File? legacyTestFile(Directory directory, String slug) =>
       legacyTestSuffix == null
       ? null
-      : File(join(directory.path, 'test', '$slug$legacyTestSuffix'));
+      : File(_resolve(directory, 'test/$slug$legacyTestSuffix'));
 
   // ...........................................................................
   /// The version file inside [directory].
   File sourceFile(Directory directory, String slug) =>
-      File(join(directory.path, joinAll(sourcePath(slug).split('/'))));
+      File(_resolve(directory, sourcePath(slug)));
 
   // ...........................................................................
   /// The mirror test file inside [directory].
   File testFile(Directory directory, String slug) =>
-      File(join(directory.path, joinAll(testPath(slug).split('/'))));
+      File(_resolve(directory, testPath(slug)));
 
   // ...........................................................................
   /// The declaration prefix the mirror test searches for and rewrites.
@@ -332,6 +329,11 @@ class VersionFileSpec {
   // ...........................................................................
   static const String _specSuffix = '_version.spec.ts';
   static const String _testTsSuffix = '_version.test.ts';
+
+  // ...........................................................................
+  /// [relativePath], written with forward slashes, inside [directory].
+  static String _resolve(Directory directory, String relativePath) =>
+      joinAll([directory.path, ...relativePath.split('/')]);
 
   // ...........................................................................
   VersionFileSpec _copyWith({

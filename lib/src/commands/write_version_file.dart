@@ -143,7 +143,10 @@ class WriteVersionFile extends DirCommand<void> {
     if (spec == null) {
       ggLog('No tsconfig.json - no TypeScript version file is written.');
       return _deleteStale(
-        candidates: VersionFileSpec.typeScriptLocations(directory, slug),
+        candidates: VersionFileSpec.typeScriptSpec.typeScriptLocations(
+          directory,
+          slug,
+        ),
         keep: const [],
       );
     }
@@ -179,7 +182,7 @@ class WriteVersionFile extends DirCommand<void> {
     if (!spec.isDart) {
       written.addAll(
         await _deleteStale(
-          candidates: VersionFileSpec.typeScriptLocations(directory, slug),
+          candidates: spec.typeScriptLocations(directory, slug),
           keep: [sourceFile, testFile],
         ),
       );

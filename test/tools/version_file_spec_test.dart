@@ -234,10 +234,10 @@ void main() {
           write('tsconfig.json', '{"compilerOptions": {"rootDir": "ts"}}');
           write('ts/test/a.test.ts', '');
 
-          final paths = VersionFileSpec.typeScriptLocations(
-            dir,
-            'p',
-          ).map((f) => f.path.substring(dir.path.length + 1)).toSet();
+          final paths = VersionFileSpec.typeScriptSpecFor(dir)!
+              .typeScriptLocations(dir, 'p')
+              .map((f) => f.path.substring(dir.path.length + 1))
+              .toSet();
 
           expect(paths, {
             'src/p_version.ts',
