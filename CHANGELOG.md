@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.6.0 - 2026-09-30
+
+### Changed
+
+- Name generated TypeScript version tests *.spec.ts instead of *.test.ts
+
 ## 5.5.1 - 2026-09-22
 
 ### Changed

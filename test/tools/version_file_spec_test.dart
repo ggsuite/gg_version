@@ -116,7 +116,18 @@ void main() {
       test('should place typescript files in src and test', () {
         const spec = VersionFileSpec.typeScriptSpec;
         expect(spec.sourcePath('ts_fixture'), 'src/ts_fixture_version.ts');
-        expect(spec.testPath('ts_fixture'), 'test/ts_fixture_version.test.ts');
+        expect(spec.testPath('ts_fixture'), 'test/ts_fixture_version.spec.ts');
+      });
+
+      test('should know the legacy typescript mirror test', () {
+        final dir = Directory('/tmp/pkg');
+        expect(
+          VersionFileSpec.typeScriptSpec
+              .legacyTestFile(dir, 'ts_fixture')!
+              .path,
+          endsWith('ts_fixture_version.test.ts'),
+        );
+        expect(VersionFileSpec.dartSpec.legacyTestFile(dir, 'x'), isNull);
       });
 
       test('should resolve files inside a directory', () {

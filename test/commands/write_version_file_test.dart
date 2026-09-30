@@ -56,7 +56,7 @@ void main() {
   File testOf(String slug, {bool dart = true}) => File(
     dart
         ? '${d.path}/test/${slug}_version_test.dart'
-        : '${d.path}/test/${slug}_version.test.ts',
+        : '${d.path}/test/${slug}_version.spec.ts',
   );
 
   group('WriteVersionFile', () {
@@ -229,6 +229,51 @@ void main() {
             (pkg['devDependencies'] as Map<String, dynamic>)['@types/node'],
             '^20.0.0',
           );
+        });
+
+        test('should name the mirror test *.spec.ts', () async {
+          // Most vitest configs include only *.spec.ts, and a mirror test that
+          // never runs leaves the version file uncovered.
+          addTypeScriptPackage();
+
+          await writeVersionFile.apply(directory: d, ggLog: messages.add);
+
+          expect(testOf('ts_fixture', dart: false).existsSync(), isTrue);
+          expect(
+            File('${d.path}/test/ts_fixture_version.test.ts').existsSync(),
+            isFalse,
+          );
+        });
+
+        test('should replace a generated *.test.ts mirror test', () async {
+          addTypeScriptPackage();
+          final legacy = File('${d.path}/test/ts_fixture_version.test.ts')
+            ..createSync(recursive: true)
+            ..writeAsStringSync('// $versionFileMarker - DO NOT EDIT.\n');
+
+          final written = await writeVersionFile.apply(
+            directory: d,
+            ggLog: messages.add,
+          );
+
+          expect(legacy.existsSync(), isFalse);
+          expect(written.map((f) => f.path), contains(legacy.path));
+          expect(
+            testOf('ts_fixture', dart: false).readAsStringSync(),
+            contains(versionFileMarker),
+          );
+        });
+
+        test('should keep a hand-written *.test.ts', () async {
+          addTypeScriptPackage();
+          final own = File('${d.path}/test/ts_fixture_version.test.ts')
+            ..createSync(recursive: true)
+            ..writeAsStringSync('// written by hand\n');
+
+          await writeVersionFile.apply(directory: d, ggLog: messages.add);
+
+          expect(own.readAsStringSync(), '// written by hand\n');
+          expect(testOf('ts_fixture', dart: false).existsSync(), isTrue);
         });
 
         test('should sanitize a scoped package name', () async {
