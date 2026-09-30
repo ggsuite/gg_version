@@ -92,6 +92,7 @@ class VersionFileSpec {
     required this.testSuffix,
     required this.testImport,
     required this.isDart,
+    this.legacyTestSuffix,
   });
 
   // ...........................................................................
@@ -133,9 +134,10 @@ class VersionFileSpec {
   static const VersionFileSpec typeScriptSpec = VersionFileSpec(
     sourceDir: 'src',
     sourceExtension: 'ts',
-    testSuffix: '_version.test.ts',
+    testSuffix: '_version.spec.ts',
     testImport: 'vitest',
     isDart: false,
+    legacyTestSuffix: '_version.test.ts',
   );
 
   /// The directory holding the version file, relative to the package root.
@@ -150,6 +152,14 @@ class VersionFileSpec {
   /// The import the mirror test needs for its test framework.
   final String testImport;
 
+  /// The suffix an older gg used for the mirror test, or null when the name
+  /// never changed.
+  ///
+  /// TypeScript mirror tests used to end in `.test.ts`, which vitest configs
+  /// that only include `*.spec.ts` never run. A generated test found under the
+  /// old name is replaced by one under the new name.
+  final String? legacyTestSuffix;
+
   /// Whether this spec describes a Dart-family package.
   final bool isDart;
 
@@ -163,6 +173,14 @@ class VersionFileSpec {
   /// The mirror test path for [slug], relative to the package root, always
   /// with forward slashes.
   String testPath(String slug) => 'test/$slug$testSuffix';
+
+  // ...........................................................................
+  /// The mirror test file of an older gg inside [directory], or null when
+  /// this spec has no [legacyTestSuffix].
+  File? legacyTestFile(Directory directory, String slug) =>
+      legacyTestSuffix == null
+      ? null
+      : File(join(directory.path, 'test', '$slug$legacyTestSuffix'));
 
   // ...........................................................................
   /// The version file inside [directory].
