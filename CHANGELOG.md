@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.7.1 - 2026-10-06
+
+### Changed
+
+- Version file tests compare paths independent of the platform separator, so they pass on Windows
+
 ## 5.7.0 - 2026-09-30
 
 ### Changed

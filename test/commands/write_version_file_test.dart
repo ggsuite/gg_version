@@ -10,6 +10,7 @@ import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:gg_capture_print/gg_capture_print.dart';
 import 'package:gg_version/gg_version.dart';
+import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
 void main() {
@@ -29,6 +30,11 @@ void main() {
   tearDown(() async {
     await tmp.delete(recursive: true);
   });
+
+  /// The paths of [files], with the separators of the platform: the tests
+  /// spell paths with `/`, the command joins them natively.
+  Iterable<String> pathsOf(Iterable<File> files) =>
+      files.map((f) => p.normalize(f.path));
 
   // ...........................................................................
   void addDartPackage({String name = 'my_package', String version = '1.2.3'}) {
@@ -257,7 +263,7 @@ void main() {
           );
 
           expect(legacy.existsSync(), isFalse);
-          expect(written.map((f) => f.path), contains(legacy.path));
+          expect(pathsOf(written), contains(p.normalize(legacy.path)));
           expect(
             testOf('ts_fixture', dart: false).readAsStringSync(),
             contains(versionFileMarker),
@@ -382,8 +388,8 @@ void main() {
             expect(at('test/bridge_version.test.ts').existsSync(), isFalse);
             expect(at('test/bridge_version.spec.ts').existsSync(), isFalse);
             expect(
-              written.map((f) => f.path),
-              contains(at('src/bridge_version.ts').path),
+              pathsOf(written),
+              contains(p.normalize(at('src/bridge_version.ts').path)),
             );
           },
         );
@@ -461,7 +467,7 @@ void main() {
 
             for (final file in old) {
               expect(file.existsSync(), isFalse);
-              expect(written.map((f) => f.path), contains(file.path));
+              expect(pathsOf(written), contains(p.normalize(file.path)));
             }
           },
         );
