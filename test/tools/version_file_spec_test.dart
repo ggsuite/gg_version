@@ -237,6 +237,8 @@ void main() {
           final paths = VersionFileSpec.typeScriptSpecFor(dir)!
               .typeScriptLocations(dir, 'p')
               .map((f) => f.path.substring(dir.path.length + 1))
+              // The spec joins natively; the expectation is spelled with `/`.
+              .map((path) => path.replaceAll(r'\', '/'))
               .toSet();
 
           expect(paths, {
