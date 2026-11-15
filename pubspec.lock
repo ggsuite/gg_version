@@ -221,10 +221,10 @@ packages:
     dependency: "direct main"
     description:
       name: gg_args
-      sha256: aa52bf0322fa315ea552e092a236394edd6ce403edc2cc29776d81bf787c8294
+      sha256: "16b93244b8a344bc9899230cc9556dc142b54a880f65e1ea36ec7293ca8f982b"
       url: "https://pub.dev"
     source: hosted
-    version: "3.2.0"
+    version: "3.2.1"
   gg_capture_print:
     dependency: "direct dev"
     description:
@@ -245,10 +245,10 @@ packages:
     dependency: "direct main"
     description:
       name: gg_git
-      sha256: "5c46712f1612e0180a94f43deccc80e40e313ae09c604b16f1933c35dbe1c66c"
+      sha256: ff827e1e267bcd33d68b4009b3f7d2b8393db8c4e8ab32413419e3ee06e5bf82
       url: "https://pub.dev"
     source: hosted
-    version: "4.8.1"
+    version: "4.9.0"
   gg_hash:
     dependency: transitive
     description:
@@ -293,10 +293,10 @@ packages:
     dependency: "direct main"
     description:
       name: gg_process
-      sha256: "871dd6ba60a00679d48a7f7e4c184470e44382fa5e61b8c0307beaf2ec4f597a"
+      sha256: d617786addbc00fe417a512a3f18ea24eaf29771b2bbb3fd15903351b760d3d5
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.0"
+    version: "1.5.0"
   gg_status_printer:
     dependency: "direct main"
     description:
@@ -317,10 +317,10 @@ packages:
     dependency: "direct dev"
     description:
       name: helix
-      sha256: b537b80216f6fa539e209da123ca3bc42a293629530c31aa3dd42c0ae62db0ec
+      sha256: b4751fde19f6e9fd3ec930213b0cb868859a3eb85fe75d67bcb2a76e4d026490
       url: "https://pub.dev"
     source: hosted
-    version: "1.15.1"
+    version: "1.15.2"
   http:
     dependency: transitive
     description:
@@ -650,4 +650,4 @@ packages:
     source: hosted
     version: "2.2.4"
 sdks:
-  dart: ">=3.13.0 <4.0.0"
+  dart: ">=3.14.0 <4.0.0"
